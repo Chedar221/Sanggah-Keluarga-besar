@@ -1,82 +1,1230 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#173d32"><meta name="description" content="Sistem Manajemen Sanggah Keluarga Besar">
-<link rel="manifest" href="manifest.webmanifest">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173d32">
 <title>SANGGAH KELUARGA BESAR</title>
+<link rel="manifest" href="manifest.webmanifest">
 <style>
-:root{--green:#173d32;--green2:#245847;--gold:#c89b4b;--cream:#f7f4ec;--ink:#20332c;--muted:#718078;--line:#e5e8e2;--white:#fff;--red:#a83d35}
-*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:linear-gradient(145deg,var(--green),#285b46);color:white;padding:22px 18px 25px;border-radius:0 0 24px 24px}
-.brand{display:flex;align-items:center;gap:12px}.emblem{width:48px;height:48px;border:1px solid #d8bd82;border-radius:15px;display:grid;place-items:center;color:#f2d69c;font-size:25px}
-h1{font-size:18px;margin:0;letter-spacing:.5px}header p{margin:5px 0 0;color:#e6dec9;font-size:12px}.welcome{margin-top:22px;font-size:24px;font-weight:700}.sub{font-size:13px;color:#e6dec9;margin-top:4px}
-main{max-width:900px;margin:auto;padding:16px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px;box-shadow:0 3px 12px #183b2a08}
-h2{font-size:16px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;text-align:left;min-height:98px;cursor:pointer;color:var(--ink)}.tile b{display:block;margin-top:9px;font-size:13px}.tile span{font-size:22px;color:var(--gold)}
-button,.btn{border:0;border-radius:11px;padding:11px 14px;background:var(--green);color:white;font-weight:650;cursor:pointer;font-size:13px}.btn.secondary,button.secondary{background:#edf2ed;color:var(--green)}button.danger{background:#fff0ee;color:var(--red)}input,select,textarea{width:100%;padding:12px;border:1px solid #dce2da;border-radius:10px;background:white;font:inherit;margin:5px 0 12px;color:var(--ink)}label{font-size:12px;font-weight:650}
-.actions{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none!important}.pill{display:inline-block;background:#eaf2ec;color:#285b46;padding:5px 9px;border-radius:20px;font-size:11px}
-.listitem{padding:12px 0;border-bottom:1px solid var(--line)}.listitem:last-child{border:0}.stat{font-size:25px;font-weight:750}.nav{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.nav button{white-space:nowrap;background:#e9eee8;color:var(--green)}.nav button.active{background:var(--green);color:white}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
-#login{max-width:440px;margin:25px auto}#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#203d32;color:white;padding:12px 16px;border-radius:12px;font-size:13px;display:none;max-width:90%;z-index:5}
-@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.welcome{font-size:30px}}
+:root {
+  --green:#173d32;
+  --green2:#285b46;
+  --gold:#c89b4b;
+  --cream:#f7f4ec;
+  --ink:#20332c;
+  --muted:#718078;
+  --line:#e5e8e2;
+  --red:#a83d35;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+header {
+  background:linear-gradient(145deg,var(--green),var(--green2));
+  color:white;
+  padding:22px 18px 25px;
+  border-radius:0 0 24px 24px;
+}
+.brand {display:flex;align-items:center;gap:12px}
+.emblem {
+  width:48px;height:48px;border:1px solid #d8bd82;
+  border-radius:15px;display:grid;place-items:center;
+  color:#f2d69c;font-size:25px;
+}
+h1 {font-size:18px;margin:0}
+header p {margin:5px 0;color:#e6dec9;font-size:12px}
+.welcome {margin-top:22px;font-size:24px;font-weight:700}
+.sub {font-size:13px;color:#e6dec9}
+main {max-width:950px;margin:auto;padding:16px}
+.card {
+  background:white;border:1px solid var(--line);
+  border-radius:16px;padding:16px;margin-bottom:13px;
+  box-shadow:0 3px 12px #183b2a08;
+}
+h2 {font-size:16px;margin:0 0 12px}
+.muted {color:var(--muted);font-size:12px}
+.row {display:flex;gap:10px;align-items:center;justify-content:space-between}
+.grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile {
+  background:white;border:1px solid var(--line);
+  border-radius:15px;padding:15px;text-align:left;
+  min-height:95px;cursor:pointer;color:var(--ink);
+}
+.tile b {display:block;margin-top:9px;font-size:13px}
+.tile span {font-size:22px;color:var(--gold)}
+button {
+  border:0;border-radius:11px;padding:11px 14px;
+  background:var(--green);color:white;font-weight:650;
+  cursor:pointer;font-size:13px;
+}
+button.secondary {background:#edf2ed;color:var(--green)}
+button.danger {background:#fff0ee;color:var(--red)}
+button:disabled {opacity:.5;cursor:not-allowed}
+input,select,textarea {
+  width:100%;padding:12px;border:1px solid #dce2da;
+  border-radius:10px;background:white;font:inherit;
+  margin:5px 0 12px;color:var(--ink);
+}
+label {font-size:12px;font-weight:650}
+.actions {display:flex;gap:8px;flex-wrap:wrap}
+.hidden {display:none!important}
+.pill {
+  display:inline-block;background:#eaf2ec;color:#285b46;
+  padding:5px 9px;border-radius:20px;font-size:11px;
+}
+.listitem {padding:12px 0;border-bottom:1px solid var(--line)}
+.listitem:last-child {border:0}
+.stat {font-size:24px;font-weight:750;overflow-wrap:anywhere}
+.nav {display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
+.nav button {white-space:nowrap;background:#e9eee8;color:var(--green)}
+.nav button.active {background:var(--green);color:white}
+footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
+#login {max-width:440px;margin:25px auto}
+#toast {
+  position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%);background:#203d32;color:white;
+  padding:12px 16px;border-radius:12px;font-size:13px;
+  display:none;max-width:90%;z-index:10;
+}
+.public-link {color:var(--green);font-weight:650}
+@media(min-width:650px) {
+  .grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+  .welcome {font-size:30px}
+}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="emblem">ॐ</div><div><h1>SANGGAH KELUARGA BESAR</h1><p>Sistem Informasi & Manajemen Keluarga</p></div></div><div class="welcome">Om Swastyastu 🙏</div><div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi keluarga.</div></header>
-<main>
-<section id="setup" class="card hidden">
-<h2>Hubungkan database Supabase</h2><p class="muted">Masukkan Project URL dan anon/public key dari proyek Supabase. Jangan pernah masukkan service_role key.</p>
-<label>Supabase Project URL</label><input id="sburl" placeholder="https://xxxxxxxx.supabase.co">
-<label>Supabase anon / publishable key</label><textarea id="sbkey" rows="3" placeholder="Tempel anon/public key di sini"></textarea>
-<div class="actions"><button onclick="saveConfig()">Simpan koneksi</button><button class="secondary" onclick="hideSetup()">Batal</button></div>
-</section>
-<section id="login" class="card hidden">
-<h2>Masuk ke aplikasi</h2><p class="muted">Gunakan akun yang dibuat oleh admin keluarga.</p>
-<label>Email</label><input id="email" type="email" placeholder="nama@email.com">
-<label>Password</label><input id="password" type="password" placeholder="Password">
-<div class="actions"><button onclick="signIn()">Masuk</button><button class="secondary" onclick="showSetup()">Pengaturan koneksi</button></div>
-<p class="muted">Belum punya akun? Minta admin membuat akun untuk Anda.</p>
-</section>
-<section id="app" class="hidden">
-<div class="card"><div class="row"><div><div class="muted">Selamat datang</div><b id="userName">Pengguna</b><div class="muted" id="userRole">Anggota keluarga</div></div><button class="secondary" onclick="signOut()">Keluar</button></div></div>
-<div class="nav" id="nav"></div>
-<div id="view"></div>
-</section>
-<section id="offline" class="card hidden"><h2>Mode pratinjau</h2><p>Aplikasi sudah terbuka, tetapi database belum dihubungkan. Hubungkan Supabase untuk login multi-HP dan menyimpan data online.</p><button onclick="showSetup()">Atur koneksi database</button></section>
-</main>
-<footer> SANGGAH KELUARGA BESAR · Om Santih, Santih, Santih Om </footer><div id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-let sb=null, session=null, profile=null, active='dashboard';
-const $=id=>document.getElementById(id);
-function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2800)}
-function showSetup(){$('setup').classList.remove('hidden');$('login').classList.add('hidden');$('offline').classList.add('hidden')}
-function hideSetup(){$('setup').classList.add('hidden');if(sb)$('login').classList.remove('hidden');else $('offline').classList.remove('hidden')}
-function saveConfig(){let u=$('sburl').value.trim(),k=$('sbkey').value.trim();if(!u.startsWith('https://')||!k){toast('Periksa Project URL dan anon key.');return}localStorage.setItem('sburl',u);localStorage.setItem('sbkey',k);init();toast('Koneksi disimpan di perangkat ini.');}
-function init(){let u=localStorage.getItem('sburl'),k=localStorage.getItem('sbkey');if(u&&k&&window.supabase){sb=window.supabase.createClient(u,k);$('setup').classList.add('hidden');$('login').classList.remove('hidden');sb.auth.getSession().then(({data})=>{if(data.session){session=data.session;loadProfile()}})}else{$('offline').classList.remove('hidden')}}
-async function signIn(){if(!sb){showSetup();return}let {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){toast(error.message);return}session=data.session;await loadProfile()}
-async function signOut(){await sb.auth.signOut();session=null;profile=null;$('app').classList.add('hidden');$('login').classList.remove('hidden')}
-async function loadProfile(){let {data,error}=await sb.from('profiles').select('full_name,role,member_id').eq('id',session.user.id).single();if(error){toast('Akun masuk, tetapi profil belum disiapkan admin.');$('login').classList.remove('hidden');return}profile=data;$('login').classList.add('hidden');$('app').classList.remove('hidden');$('userName').textContent=data.full_name||session.user.email;$('userRole').textContent=roleName(data.role);renderNav();renderView()}
-function roleName(r){return ({ketua:'Ketua',wakil:'Wakil Ketua',sekretaris:'Sekretaris',bendahara:'Bendahara',koordinator:'Koordinator Bidang',anggota:'Anggota Keluarga'})[r]||r}
-const pages=[['dashboard','⌂','Beranda'],['anggota','♙','Anggota'],['keuangan','Rp','Keuangan'],['iuran','♡','Iuran'],['upacara','◷','Upacara'],['ngayah','✣','Ngayah'],['inventaris','▣','Inventaris'],['pengumuman','▤','Pengumuman'],['dokumen','▧','Arsip']];
-function renderNav(){$('nav').innerHTML=pages.map(p=>`<button class="${active===p[0]?'active':''}" onclick="go('${p[0]}')">${p[1]} ${p[2]}</button>`).join('')}
-function go(p){active=p;renderNav();renderView()}
-function canFinance(){return ['ketua','wakil','bendahara'].includes(profile?.role)}
-function renderView(){let v=$('view');if(active==='dashboard'){v.innerHTML=`<div class="grid"><div class="card"><div class="muted">Anggota keluarga</div><div class="stat" id="countMembers">—</div></div><div class="card"><div class="muted">Saldo kas</div><div class="stat" id="balance">—</div></div></div><div class="card"><h2>Menu utama</h2><p class="muted">Pilih menu di atas untuk mengelola administrasi Sanggah Keluarga Besar.</p><span class="pill">Akses: ${roleName(profile.role)}</span></div>`;loadStats();return}
-let title=pages.find(p=>p[0]===active)?.[2]||'Menu';let allowed=true;if(['keuangan','iuran'].includes(active)&&!canFinance())allowed=false;
-if(!allowed){v.innerHTML=`<div class="card"><h2>Akses terbatas</h2><p class="muted">Menu ini hanya dapat diakses oleh ketua, wakil ketua, dan bendahara.</p></div>`;return}
-let cfg={anggota:['Data Anggota','members','full_name','Nama lengkap','family_name','Nama keluarga'],keuangan:['Transaksi Kas','transactions','description','Keterangan','amount','Jumlah (Rp)'],iuran:['Pembayaran Iuran','dues','description','Keterangan','amount','Jumlah (Rp)'],upacara:['Jadwal Upacara','events','title','Nama kegiatan','event_date','Tanggal (YYYY-MM-DD)'],ngayah:['Jadwal Ngayah','ngayah','task','Tugas ngayah','event_date','Tanggal (YYYY-MM-DD)'],inventaris:['Inventaris','inventory','item_name','Nama barang','quantity','Jumlah'],pengumuman:['Pengumuman','announcements','title','Judul','body','Isi pengumuman'],dokumen:['Arsip Dokumen','documents','title','Nama dokumen','file_url','Link dokumen']}[active];
-if(active==='keuangan'){
-v.innerHTML=`<div class="card"><h2>Ringkasan kas</h2><div class="grid"><div><div class="muted">Total pemasukan</div><div class="stat" id="totalIn">Rp 0</div></div><div><div class="muted">Total pengeluaran</div><div class="stat" id="totalOut">Rp 0</div></div></div><div class="muted">Saldo = pemasukan dikurangi pengeluaran</div></div><div class="card"><div class="row"><h2>Riwayat transaksi kas</h2><button onclick="loadRows('transactions')">Muat ulang</button></div><div id="rows" class="muted">Memuat data…</div></div><div class="card"><h2>Tambah transaksi</h2><form onsubmit="addTransaction(event)"><label>Jenis transaksi</label><select id="txType" required><option value="pemasukan">Pemasukan</option><option value="pengeluaran">Pengeluaran</option></select><label>Tanggal transaksi</label><input id="txDate" type="date" required><label>Keterangan</label><input id="txDescription" placeholder="Contoh: Beli pengange" required><label>Jumlah (Rp)</label><input id="txAmount" type="number" min="1" step="1" inputmode="numeric" required><button type="submit">Simpan transaksi</button></form></div>`;
-$('txDate').value=new Date().toISOString().slice(0,10);loadRows('transactions');loadFinanceSummary();return}
-v.innerHTML=`<div class="card"><div class="row"><h2>${cfg[0]}</h2><button onclick="loadRows('${cfg[1]}')">Muat ulang</button></div><div id="rows" class="muted">Memuat data…</div></div><div class="card"><h2>Tambah data</h2><form onsubmit="addRow(event,'${cfg[1]}','${cfg[2]}','${cfg[4]}')"><label>${cfg[3]}</label><input id="f1" required><label>${cfg[5]}</label><input id="f2" required><button type="submit">Simpan data</button></form></div>`;
-loadRows(cfg[1])}
-async function loadStats(){let a=await sb.from('members').select('*',{count:'exact',head:true});$('countMembers').textContent=a.count??'—';let t=await sb.from('transactions').select('type,amount');if(!t.error){let n=0;(t.data||[]).forEach(x=>n+=x.type==='pemasukan'?Number(x.amount):-Number(x.amount));$('balance').textContent='Rp '+n.toLocaleString('id-ID')}else $('balance').textContent='—'}
-async function loadRows(table){let el=$('rows');if(!el)return;el.textContent='Memuat…';let {data,error}=await sb.from(table).select('*').order('created_at',{ascending:false}).limit(50);if(error){el.textContent='Belum ada data atau akses belum tersedia.';return}if(!data.length){el.textContent='Belum ada data.';return}el.innerHTML=data.map(x=>`<div class="listitem"><b>${esc(x.full_name||x.description||x.title||x.task||x.item_name||'Data')}</b><div class="muted">${table==='transactions'?`${x.type==='pengeluaran'?'Pengeluaran':'Pemasukan'} · ${esc(String(x.transaction_date||''))} · Rp ${Number(x.amount||0).toLocaleString('id-ID')}`:esc(String(x.amount??x.event_date??x.family_name??x.body??x.quantity??''))}</div></div>`).join('')}
 
-async function addTransaction(e){e.preventDefault();let amount=Number($('txAmount').value);if(!Number.isFinite(amount)||amount<=0){toast('Masukkan jumlah yang benar.');return}let obj={type:$('txType').value,transaction_date:$('txDate').value,description:$('txDescription').value.trim(),amount,created_by:session.user.id};let {error}=await sb.from('transactions').insert(obj);if(error){toast(error.message);return}toast('Transaksi berhasil disimpan.');e.target.reset();$('txDate').value=new Date().toISOString().slice(0,10);loadRows('transactions');loadFinanceSummary();loadStats()}
-async function loadFinanceSummary(){let {data,error}=await sb.from('transactions').select('type,amount');if(error){toast('Ringkasan kas gagal dimuat.');return}let income=0,expense=0;(data||[]).forEach(x=>{if(x.type==='pengeluaran')expense+=Number(x.amount||0);else income+=Number(x.amount||0)});if($('totalIn'))$('totalIn').textContent='Rp '+income.toLocaleString('id-ID');if($('totalOut'))$('totalOut').textContent='Rp '+expense.toLocaleString('id-ID')}
-async function addRow(e,table,k1,k2){e.preventDefault();let obj={[k1]:$('f1').value,[k2]:k2==='amount'||k2==='quantity'?Number($('f2').value):$('f2').value};if(table==='transactions'||table==='dues')obj.type='pemasukan';if(table==='members')obj.created_by=session.user.id;let {error}=await sb.from(table).insert(obj);if(error){toast(error.message);return}toast('Data berhasil disimpan.');e.target.reset();loadRows(table);if(table==='transactions')loadStats()}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-init();
-</script></body></html>
+<header>
+  <div class="brand">
+    <div class="emblem">ॐ</div>
+    <div>
+      <h1>SANGGAH KELUARGA BESAR</h1>
+      <p>Sistem Informasi & Manajemen Keluarga</p>
+    </div>
+  </div>
+  <div class="welcome">Om Swastyastu 🙏</div>
+  <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi keluarga.</div>
+</header>
+
+<main>
+
+<section id="publicPage">
+  <div class="card">
+    <h2>Selamat Datang</h2>
+    <p class="muted">
+      Website informasi dan administrasi Sanggah Keluarga Besar.
+      Mari bersama menjaga kekeluargaan, kegiatan, dan transparansi.
+    </p>
+    <button onclick="showLogin()">Masuk Pengurus</button>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <h2>Laporan Keuangan Keluarga</h2>
+      <button class="secondary" onclick="loadPublicFinance()">Muat ulang</button>
+    </div>
+    <div class="grid">
+      <div>
+        <div class="muted">Total Pemasukan</div>
+        <div class="stat" id="publicIncome">Rp 0</div>
+      </div>
+      <div>
+        <div class="muted">Total Pengeluaran</div>
+        <div class="stat" id="publicExpense">Rp 0</div>
+      </div>
+      <div>
+        <div class="muted">Saldo Kas</div>
+        <div class="stat" id="publicBalance">Rp 0</div>
+      </div>
+    </div>
+    <p class="muted" id="publicStatus">Memuat laporan keuangan...</p>
+  </div>
+
+  <div class="card">
+    <h2>Riwayat Kas</h2>
+    <div id="publicTransactions" class="muted">
+      Data transaksi akan ditampilkan di sini.
+    </div>
+    <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">
+      Muat transaksi berikutnya
+    </button>
+  </div>
+</section>
+
+<section id="login" class="card hidden">
+  <h2>Login Pengurus</h2>
+  <p class="muted">Masuk menggunakan akun yang telah dibuat oleh administrator.</p>
+
+  <label>Email</label>
+  <input id="email" type="email" placeholder="nama@email.com" autocomplete="username">
+
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+
+  <div class="actions">
+    <button onclick="signIn()">Masuk</button>
+    <button class="secondary" onclick="showPublic()">Kembali</button>
+  </div>
+</section>
+
+<section id="app" class="hidden">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="muted">Selamat datang</div>
+        <b id="userName">Pengguna</b>
+        <div class="muted" id="userRole">Anggota keluarga</div>
+      </div>
+      <button class="secondary" onclick="signOut()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="nav" id="nav"></div>
+  <div id="view"></div>
+</section>
+
+<section id="setup" class="card hidden">
+  <h2>Pengaturan Koneksi</h2>
+  <p class="muted">
+    Gunakan Project URL dan publishable key Supabase.
+    Jangan pernah memasukkan service_role key di halaman website.
+  </p>
+  <label>Project URL</label>
+  <input id="sburl" placeholder="https://project.supabase.co">
+  <label>Publishable / anon key</label>
+  <textarea id="sbkey" rows="3" placeholder="Tempel publishable key"></textarea>
+  <div class="actions">
+    <button onclick="saveConfig()">Simpan koneksi</button>
+    <button class="secondary" onclick="showPublic()">Kembali</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  SANGGAH KELUARGA BESAR · Om Santih, Santih, Santih Om
+</footer>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+/* =====================================
+   KONFIGURASI DAN KONEKSI SUPABASE
+===================================== */
+
+let sb = null;
+let session = null;
+let profile = null;
+let active = 'dashboard';
+
+let publicOffset = 0;
+const PAGE_SIZE = 50;
+
+const $ = id => document.getElementById(id);
+
+function toast(message) {
+  const el = $('toast');
+  el.textContent = message;
+  el.style.display = 'block';
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    el.style.display = 'none';
+  }, 3000);
+}
+
+function rupiah(value) {
+  return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[c]);
+}
+
+function roleName(role) {
+  return ({
+    ketua:'Ketua',
+    wakil:'Wakil Ketua',
+    sekretaris:'Sekretaris',
+    bendahara:'Bendahara',
+    koordinator:'Koordinator',
+    anggota:'Anggota Keluarga'
+  })[role] || role;
+}
+
+function showPublic() {
+  $('publicPage').classList.remove('hidden');
+  $('login').classList.add('hidden');
+  $('app').classList.add('hidden');
+  $('setup').classList.add('hidden');
+}
+
+function showLogin() {
+  $('publicPage').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('setup').classList.add('hidden');
+}
+
+function showSetup() {
+  $('publicPage').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+}
+
+function saveConfig() {
+  const url = $('sburl').value.trim();
+  const key = $('sbkey').value.trim();
+
+  if (!url.startsWith('https://') || !key) {
+    toast('Project URL atau key belum benar.');
+    return;
+  }
+
+  localStorage.setItem('sburl', url);
+  localStorage.setItem('sbkey', key);
+
+  connectSupabase();
+}
+
+function connectSupabase() {
+  const url = localStorage.getItem('sburl');
+  const key = localStorage.getItem('sbkey');
+
+  if (!url || !key || !window.supabase) {
+    showPublic();
+    return false;
+  }
+
+  sb = window.supabase.createClient(url, key);
+
+  $('setup').classList.add('hidden');
+  return true;
+}
+
+/* =====================================
+   LOGIN DAN SESSION
+===================================== */
+
+async function signIn() {
+  if (!sb) {
+    showSetup();
+    return;
+  }
+
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if (!email || !password) {
+    toast('Isi email dan password.');
+    return;
+  }
+
+  const { data, error } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    toast(error.message);
+    return;
+  }
+
+  session = data.session;
+  await loadProfile();
+}
+
+async function signOut() {
+  if (sb) await sb.auth.signOut();
+
+  session = null;
+  profile = null;
+
+  $('app').classList.add('hidden');
+  showPublic();
+  toast('Anda sudah keluar.');
+}
+
+async function loadProfile() {
+  if (!session || !sb) return;
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('full_name,role,member_id')
+    .eq('id', session.user.id)
+    .single();
+
+  if (error || !data) {
+    toast('Profil belum dibuat. Hubungi administrator.');
+    $('app').classList.add('hidden');
+    showLogin();
+    return;
+  }
+
+  profile = data;
+
+  $('publicPage').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('setup').classList.add('hidden');
+  $('app').classList.remove('hidden');
+
+  $('userName').textContent = data.full_name || session.user.email;
+  $('userRole').textContent = roleName(data.role);
+
+  active = 'dashboard';
+  renderNav();
+  renderView();
+}
+
+/* =====================================
+   HAK AKSES
+===================================== */
+
+function isRole(roles) {
+  return !!profile && roles.includes(profile.role);
+}
+
+function canFinance() {
+  return isRole(['ketua','wakil','bendahara']);
+}
+
+function canManageGeneral() {
+  return isRole(['ketua','wakil','sekretaris','koordinator']);
+}
+
+function canManageInventory() {
+  return isRole(['ketua','wakil','koordinator']);
+}
+
+function canManageDocuments() {
+  return isRole(['ketua','wakil','sekretaris']);
+}
+
+function canDelete(table) {
+  if (table === 'transactions' || table === 'dues') {
+    return canFinance();
+  }
+  if (table === 'inventory') return canManageInventory();
+  if (table === 'documents') return canManageDocuments();
+  if (table === 'members') return canManageGeneral();
+  return canManageGeneral();
+}
+
+/* =====================================
+   MENU APLIKASI
+===================================== */
+
+const pages = [
+  ['dashboard','⌂','Beranda'],
+  ['anggota','♙','Anggota'],
+  ['keuangan','Rp','Keuangan'],
+  ['iuran','♡','Iuran'],
+  ['upacara','◷','Upacara'],
+  ['ngayah','✣','Ngayah'],
+  ['inventaris','▣','Inventaris'],
+  ['pengumuman','▤','Pengumuman'],
+  ['dokumen','▧','Arsip']
+];
+
+function renderNav() {
+  $('nav').innerHTML = pages.map(p => `
+    <button
+      class="${active === p[0] ? 'active' : ''}"
+      onclick="go('${p[0]}')">
+      ${p[1]} ${p[2]}
+    </button>
+  `).join('');
+}
+
+function go(page) {
+  active = page;
+  renderNav();
+  renderView();
+}
+
+/* =====================================
+   DASHBOARD
+===================================== */
+
+async function loadStats() {
+  const memberResult = await sb
+    .from('members')
+    .select('id', {count:'exact', head:true});
+
+  $('countMembers').textContent =
+    memberResult.error ? '—' : (memberResult.count ?? 0);
+
+  if (canFinance()) {
+    const {data,error} = await sb
+      .from('transactions')
+      .select('type,amount');
+
+    if (!error) {
+      let balance = 0;
+
+      (data || []).forEach(x => {
+        balance += x.type === 'pemasukan'
+          ? Number(x.amount)
+          : -Number(x.amount);
+      });
+
+      $('balance').textContent = rupiah(balance);
+    } else {
+      $('balance').textContent = '—';
+    }
+  } else {
+    $('balance').textContent = 'Terbatas';
+  }
+}
+
+/* =====================================
+   DEFINISI FORM DATA
+===================================== */
+
+const configs = {
+  anggota: {
+    title:'Data Anggota',
+    table:'members',
+    fields:[
+      {key:'full_name',label:'Nama lengkap',required:true},
+      {key:'family_name',label:'Nama keluarga'},
+      {key:'phone',label:'Nomor telepon'},
+      {key:'address',label:'Alamat'},
+      {key:'relation',label:'Hubungan keluarga'}
+    ]
+  },
+  iuran: {
+    title:'Pembayaran Iuran',
+    table:'dues',
+    fields:[
+      {key:'description',label:'Keterangan iuran',required:true},
+      {key:'amount',label:'Jumlah (Rp)',type:'number',required:true},
+      {key:'type',label:'Jenis',type:'select',options:[
+        ['pemasukan','Pemasukan'],
+        ['pengeluaran','Pengeluaran']
+      ]}
+    ]
+  },
+  upacara: {
+    title:'Jadwal Upacara',
+    table:'events',
+    fields:[
+      {key:'title',label:'Nama kegiatan',required:true},
+      {key:'event_date',label:'Tanggal',type:'date'},
+      {key:'location',label:'Lokasi'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  ngayah: {
+    title:'Jadwal Ngayah',
+    table:'ngayah',
+    fields:[
+      {key:'task',label:'Tugas ngayah',required:true},
+      {key:'event_date',label:'Tanggal',type:'date'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  inventaris: {
+    title:'Inventaris',
+    table:'inventory',
+    fields:[
+      {key:'item_name',label:'Nama barang',required:true},
+      {key:'quantity',label:'Jumlah',type:'number'},
+      {key:'condition',label:'Kondisi'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  pengumuman: {
+    title:'Pengumuman',
+    table:'announcements',
+    fields:[
+      {key:'title',label:'Judul',required:true},
+      {key:'body',label:'Isi pengumuman',type:'textarea'}
+    ]
+  },
+  dokumen: {
+    title:'Arsip Dokumen',
+    table:'documents',
+    fields:[
+      {key:'title',label:'Nama dokumen',required:true},
+      {key:'file_url',label:'Link dokumen'},
+      {key:'notes',label:'Catatan'}
+    ]
+  }
+};
+
+/* =====================================
+   TAMPILAN MENU
+===================================== */
+
+function renderView() {
+  const v = $('view');
+
+  if (active === 'dashboard') {
+    v.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <div class="muted">Anggota keluarga</div>
+          <div class="stat" id="countMembers">—</div>
+        </div>
+        <div class="card">
+          <div class="muted">Saldo kas</div>
+          <div class="stat" id="balance">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Menu Utama</h2>
+        <p class="muted">Pilih menu untuk mengelola administrasi keluarga.</p>
+        <span class="pill">Akses: ${esc(roleName(profile.role))}</span>
+      </div>
+    `;
+
+    loadStats();
+    return;
+  }
+
+  if (active === 'keuangan') {
+    if (!canFinance()) {
+      v.innerHTML = '<div class="card">Akses keuangan terbatas.</div>';
+      return;
+    }
+    renderFinance();
+    return;
+  }
+
+  const cfg = configs[active];
+
+  if (!cfg) return;
+
+  const canWrite =
+    active === 'anggota' ? canManageGeneral() :
+    active === 'inventaris' ? canManageInventory() :
+    active === 'dokumen' ? canManageDocuments() :
+    canManageGeneral();
+
+  v.innerHTML = `
+    <div class="card">
+      <div class="row">
+        <h2>${esc(cfg.title)}</h2>
+        <button class="secondary" onclick="loadRows('${cfg.table}')">Muat ulang</button>
+      </div>
+      <div id="rows" class="muted">Memuat data...</div>
+    </div>
+
+    ${canWrite ? `
+      <div class="card">
+        <h2>Tambah Data</h2>
+        <form id="dataForm" onsubmit="saveGeneric(event,'${cfg.table}')">
+          ${cfg.fields.map((f,i) => `
+            <label>${esc(f.label)}</label>
+            ${
+              f.type === 'textarea'
+              ? `<textarea id="field${i}" rows="3" ${f.required?'required':''}></textarea>`
+              : f.type === 'select'
+              ? `<select id="field${i}">${f.options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`
+              : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''}>`
+            }
+          `).join('')}
+          <button type="submit">Simpan Data</button>
+        </form>
+      </div>
+    ` : ''}
+  `;
+
+  loadRows(cfg.table);
+}
+
+/* =====================================
+   SIMPAN DATA UMUM
+===================================== */
+
+async function saveGeneric(event, table) {
+  event.preventDefault();
+
+  const cfg = Object.values(configs).find(x => x.table === table);
+  if (!cfg) return;
+
+  const obj = {};
+
+  cfg.fields.forEach((f,i) => {
+    const input = $('field'+i);
+    if (!input) return;
+
+    let value = input.value.trim();
+
+    if (f.type === 'number') {
+      value = Number(value || 0);
+    }
+
+    obj[f.key] = value === '' ? null : value;
+  });
+
+  if (table === 'members') {
+    obj.created_by = session.user.id;
+  }
+
+  const {error} = await sb.from(table).insert(obj);
+
+  if (error) {
+    toast('Gagal menyimpan: ' + error.message);
+    return;
+  }
+
+  toast('Data berhasil disimpan.');
+  event.target.reset();
+  loadRows(table);
+  if (table === 'members') loadStats();
+}
+
+/* =====================================
+   MUAT DATA
+===================================== */
+
+
+function displayValue(row, table) {
+  const title =
+    row.full_name ||
+    row.description ||
+    row.title ||
+    row.task ||
+    row.item_name ||
+    'Data';
+
+  let detail = '';
+
+  if (table === 'transactions' || table === 'dues') {
+    detail = `${row.type || ''} · ${rupiah(row.amount)}`;
+  } else if (table === 'members') {
+    detail = row.relation || row.family_name || '';
+  } else if (table === 'events' || table === 'ngayah') {
+    detail = row.event_date || '';
+  } else if (table === 'inventory') {
+    detail = `Jumlah: ${row.quantity ?? 0} · ${row.condition || ''}`;
+  } else if (table === 'announcements') {
+    detail = row.body || '';
+  } else if (table === 'documents') {
+    detail = row.file_url || row.notes || '';
+  }
+
+  return `
+    <div class="listitem">
+      <b>${esc(title)}</b>
+      <div class="muted">${esc(detail)}</div>
+    </div>
+  `;
+}
+
+
+async function loadRows(table) {
+  const el = $('rows');
+  if (!el) return;
+
+  el.textContent = 'Memuat data...';
+
+  const {data,error} = await sb
+    .from(table)
+    .select('*')
+    .order('created_at',{ascending:false})
+    .limit(100);
+
+  if (error) {
+    el.textContent = 'Gagal memuat data: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    el.textContent = 'Belum ada data.';
+    return;
+  }
+
+  el.innerHTML = data.map(row => displayValue(row,table)).join('');
+}
+
+/* =====================================
+   LAPORAN KEUANGAN PUBLIK
+===================================== */
+
+async function loadPublicFinance() {
+  const status = $('publicStatus');
+  if (!status) return;
+
+  status.textContent = 'Memuat laporan...';
+  publicOffset = 0;
+
+  let income = 0;
+  let expense = 0;
+  let allRows = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const {data,error} = await sb
+      .from('public_transactions')
+      .select('id,type,description,amount,transaction_date,created_at')
+      .order('transaction_date',{ascending:false})
+      .range(publicOffset,publicOffset + 499);
+
+    if (error) {
+      status.textContent = 'Laporan belum dapat dimuat. Periksa pengaturan akses Supabase.';
+      return;
+    }
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    rows.forEach(row => {
+      if (row.type === 'pengeluaran') {
+        expense += Number(row.amount || 0);
+      } else {
+        income += Number(row.amount || 0);
+      }
+    });
+
+    publicOffset += rows.length;
+    hasMore = rows.length === 500;
+  }
+
+  $('publicIncome').textContent = rupiah(income);
+  $('publicExpense').textContent = rupiah(expense);
+  $('publicBalance').textContent = rupiah(income-expense);
+
+  const list = $('publicTransactions');
+
+  if (!allRows.length) {
+    list.textContent = 'Belum ada transaksi.';
+  } else {
+    list.innerHTML = allRows.slice(0,50).map(row => `
+      <div class="listitem">
+        <b>${esc(row.description)}</b>
+        <div class="muted">
+          ${esc(row.transaction_date || '')} ·
+          ${row.type === 'pengeluaran' ? 'Pengeluaran' : 'Pemasukan'}
+        </div>
+        <b>${rupiah(row.amount)}</b>
+      </div>
+    `).join('');
+  }
+
+  $('morePublic').style.display = allRows.length > 50 ? 'block' : 'none';
+  status.textContent = 'Laporan berhasil diperbarui.';
+}
+
+async function loadMorePublic() {
+  toast('Untuk riwayat berikutnya, fitur halaman lanjutan akan disambungkan di bagian 3.');
+}
+
+/* =====================================
+   FORM TRANSAKSI
+===================================== */
+
+function renderFinance() {
+  $('view').innerHTML = `
+    <div class="card">
+      <h2>Ringkasan Kas</h2>
+      <div class="grid">
+        <div>
+          <div class="muted">Pemasukan</div>
+          <div class="stat" id="totalIn">Rp 0</div>
+        </div>
+        <div>
+          <div class="muted">Pengeluaran</div>
+          <div class="stat" id="totalOut">Rp 0</div>
+        </div>
+        <div>
+          <div class="muted">Saldo</div>
+          <div class="stat" id="totalBalance">Rp 0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tambah Transaksi</h2>
+      <form onsubmit="addTransaction(event)">
+        <label>Jenis transaksi</label>
+        <select id="txType">
+          <option value="pemasukan">Pemasukan</option>
+          <option value="pengeluaran">Pengeluaran</option>
+        </select>
+        <label>Tanggal</label>
+        <input type="date" id="txDate" required>
+        <label>Keterangan</label>
+        <input id="txDescription" required>
+        <label>Jumlah (Rp)</label>
+        <input id="txAmount" type="number" min="1" required>
+        <button type="submit">Simpan Transaksi</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Riwayat Transaksi</h2>
+      <div id="rows">Memuat data...</div>
+    </div>
+  `;
+
+  $('txDate').value = new Date().toISOString().slice(0,10);
+  loadRows('transactions');
+  loadFinanceSummary();
+}
+
+async function addTransaction(event) {
+  event.preventDefault();
+
+  const obj = {
+    type:$('txType').value,
+    transaction_date:$('txDate').value,
+    description:$('txDescription').value.trim(),
+    amount:Number($('txAmount').value),
+    created_by:session.user.id
+  };
+
+  if (!obj.description || obj.amount <= 0) {
+    toast('Periksa keterangan dan jumlah transaksi.');
+    return;
+  }
+
+  const {error} = await sb.from('transactions').insert(obj);
+
+  if (error) {
+    toast('Gagal: ' + error.message);
+    return;
+  }
+
+  toast('Transaksi berhasil disimpan.');
+  event.target.reset();
+  $('txDate').value = new Date().toISOString().slice(0,10);
+
+  loadRows('transactions');
+  loadFinanceSummary();
+  loadStats();
+}
+
+async function loadFinanceSummary() {
+  const {data,error} = await sb
+    .from('transactions')
+    .select('type,amount');
+
+  if (error) {
+    toast('Ringkasan keuangan gagal dimuat.');
+    return;
+  }
+
+  let income = 0;
+  let expense = 0;
+
+  (data || []).forEach(row => {
+    if (row.type === 'pengeluaran') {
+      expense += Number(row.amount || 0);
+    } else {
+      income += Number(row.amount || 0);
+    }
+  });
+
+  if ($('totalIn')) $('totalIn').textContent = rupiah(income);
+  if ($('totalOut')) $('totalOut').textContent = rupiah(expense);
+  if ($('totalBalance')) $('totalBalance').textContent = rupiah(income-expense);
+}
+
+/* =====================================
+   MULAI APLIKASI
+===================================== */
+
+async function initializeApp() {
+  if (!connectSupabase()) {
+    showPublic();
+    return;
+  }
+
+  // Ambil laporan publik walaupun belum login.
+  await loadPublicFinance();
+
+  const {data,error} = await sb.auth.getSession();
+
+  if (!error && data.session) {
+    session = data.session;
+    await loadProfile();
+  } else {
+    showPublic();
+  }
+
+  // Listener baru dipasang setelah client Supabase tersedia.
+  sb.auth.onAuthStateChange(async (event,newSession) => {
+    if (event === 'SIGNED_OUT') {
+      session = null;
+      profile = null;
+      showPublic();
+    }
+
+    if (event === 'SIGNED_IN' && newSession) {
+      session = newSession;
+      await loadProfile();
+    }
+  });
+}
+
+// ==========================================
+// BAGIAN 3 - EDIT, HAPUS, DAN KEAMANAN DATA
+// ==========================================
+
+
+const editableFields = {
+  members: [
+    ['full_name', 'Nama lengkap', 'text'],
+    ['family_name', 'Nama keluarga', 'text'],
+    ['relation', 'Hubungan keluarga', 'text']
+  ],
+
+  transactions: [
+    ['type', 'Jenis (pemasukan/pengeluaran)', 'text'],
+    ['description', 'Keterangan', 'text'],
+    ['amount', 'Jumlah uang', 'number'],
+    ['transaction_date', 'Tanggal (YYYY-MM-DD)', 'date']
+  ],
+
+  dues: [
+    ['description', 'Keterangan', 'text'],
+    ['amount', 'Jumlah uang', 'number'],
+    ['member_id', 'ID anggota (kosongkan jika tidak ada)', 'text'],
+    ['type', 'Jenis (pemasukan/pengeluaran)', 'text']
+  ],
+
+  events: [
+    ['title', 'Nama kegiatan', 'text'],
+    ['event_date', 'Tanggal kegiatan', 'date'],
+    ['location', 'Lokasi', 'text'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  ngayah: [
+    ['task', 'Tugas ngayah', 'text'],
+    ['event_date', 'Tanggal kegiatan', 'date'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  inventory: [
+    ['item_name', 'Nama barang', 'text'],
+    ['quantity', 'Jumlah', 'number'],
+    ['condition', 'Kondisi barang', 'text'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  announcements: [
+    ['title', 'Judul pengumuman', 'text'],
+    ['body', 'Isi pengumuman', 'text']
+  ],
+
+  documents: [
+    ['title', 'Nama dokumen', 'text'],
+    ['file_url', 'Link dokumen', 'text'],
+    ['notes', 'Catatan', 'text']
+  ]
+};
+
+
+function allowedToEdit(table) {
+  const role = profile?.role;
+
+  const permissions = {
+    members: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    transactions: ['ketua', 'wakil', 'bendahara'],
+    dues: ['ketua', 'wakil', 'bendahara'],
+    events: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    ngayah: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    inventory: ['ketua', 'wakil', 'koordinator'],
+    announcements: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    documents: ['ketua', 'wakil', 'sekretaris']
+  };
+
+  return permissions[table]?.includes(role) || false;
+}
+
+function allowedToDelete(table) {
+  return allowedToEdit(table);
+}
+
+async function editRecord(table, id) {
+  if (!allowedToEdit(table)) {
+    alert('Jabatan Anda tidak memiliki izin mengedit data ini.');
+    return;
+  }
+
+  const fields = editableFields[table];
+
+  if (!fields) {
+    alert('Tabel ini tidak dapat diedit.');
+    return;
+  }
+
+  const { data, error } = await sb
+    .from(table)
+
+    .select(
+      table === 'members'
+        ? 'id,full_name,family_name,relation,created_at'
+        : '*'
+    )
+    .eq('id', id)
+    .single();
+
+
+  if (error || !data) {
+    alert('Gagal mengambil data: ' + (error?.message || 'Data tidak ditemukan.'));
+    return;
+  }
+
+  const changes = {};
+
+  for (const [column, label, type] of fields) {
+    const oldValue = data[column] ?? '';
+    const answer = prompt(
+      'Edit ' + label + '\nKosongkan jika ingin mengosongkan nilai:',
+      String(oldValue)
+    );
+
+    if (answer === null) return;
+
+    if (type === 'number' && answer.trim() !== '') {
+      const numberValue = Number(answer);
+
+      if (!Number.isFinite(numberValue) || numberValue < 0) {
+        alert(label + ' harus berupa angka yang valid dan tidak negatif.');
+        return;
+      }
+
+      changes[column] = numberValue;
+    } else {
+      changes[column] = answer.trim() === '' ? null : answer.trim();
+    }
+  }
+
+  if (table === 'transactions' || table === 'dues') {
+    if (!['pemasukan', 'pengeluaran'].includes(changes.type)) {
+      alert('Jenis harus diisi pemasukan atau pengeluaran.');
+      return;
+    }
+  }
+
+  const { error: updateError } = await sb
+    .from(table)
+    .update(changes)
+    .eq('id', id);
+
+  if (updateError) {
+    alert('Gagal menyimpan perubahan: ' + updateError.message);
+    return;
+  }
+
+  alert('Data berhasil diperbarui.');
+  await loadRows(table);
+}
+
+async function deleteRecord(table, id) {
+  if (!allowedToDelete(table)) {
+    alert('Jabatan Anda tidak memiliki izin menghapus data ini.');
+    return;
+  }
+
+  const approved = confirm(
+    'Yakin ingin menghapus data ini?\nData yang sudah dihapus tidak dapat dikembalikan.'
+  );
+
+  if (!approved) return;
+
+  const { error } = await sb
+    .from(table)
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert('Gagal menghapus data: ' + error.message);
+    return;
+  }
+
+  alert('Data berhasil dihapus.');
+  await loadRows(table);
+}
+
+// Memuat data dan tombol tindakan sesuai hak akses.
+
+async function loadRows(table) {
+  const el = $('rows');
+  if (!el) return;
+
+  el.textContent = 'Memuat data...';
+
+  const columns = table === 'members'
+    ? 'id,full_name,family_name,relation,created_at'
+    : '*';
+
+  const { data, error } = await sb
+    .from(table)
+    .select(columns)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (error) {
+    el.textContent = 'Gagal memuat data: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    el.textContent = 'Belum ada data.';
+    return;
+  }
+
+  el.innerHTML = data.map(row => {
+    const content = displayValue(row, table);
+
+    let actions = '';
+
+    if (allowedToEdit(table)) {
+      actions += `
+        <button type="button"
+          onclick="editRecord('${table}','${esc(String(row.id))}')">
+          ✏️ Edit
+        </button>
+      `;
+    }
+
+    if (allowedToDelete(table)) {
+      actions += `
+        <button type="button"
+          onclick="deleteRecord('${table}','${esc(String(row.id))}')">
+          🗑️ Hapus
+        </button>
+      `;
+    }
+
+    return `
+      <div class="record-item">
+        ${content}
+        <div class="record-actions">
+          ${actions}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+// ==========================================
+// AKHIR BAGIAN 3
+// ==========================================
+
+initializeApp();
+</script>
+
+</body>
+</html>
