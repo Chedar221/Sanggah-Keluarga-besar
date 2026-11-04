@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173d32"><meta name="description" content="Sistem Manajemen Sanggah Keluarga Besar">
+<link rel="manifest" href="manifest.webmanifest">
+<title>SANGGAH KELUARGA BESAR</title>
+<style>
+:root{--green:#173d32;--green2:#245847;--gold:#c89b4b;--cream:#f7f4ec;--ink:#20332c;--muted:#718078;--line:#e5e8e2;--white:#fff;--red:#a83d35}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(145deg,var(--green),#285b46);color:white;padding:22px 18px 25px;border-radius:0 0 24px 24px}
+.brand{display:flex;align-items:center;gap:12px}.emblem{width:48px;height:48px;border:1px solid #d8bd82;border-radius:15px;display:grid;place-items:center;color:#f2d69c;font-size:25px}
+h1{font-size:18px;margin:0;letter-spacing:.5px}header p{margin:5px 0 0;color:#e6dec9;font-size:12px}.welcome{margin-top:22px;font-size:24px;font-weight:700}.sub{font-size:13px;color:#e6dec9;margin-top:4px}
+main{max-width:900px;margin:auto;padding:16px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px;box-shadow:0 3px 12px #183b2a08}
+h2{font-size:16px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;text-align:left;min-height:98px;cursor:pointer;color:var(--ink)}.tile b{display:block;margin-top:9px;font-size:13px}.tile span{font-size:22px;color:var(--gold)}
+button,.btn{border:0;border-radius:11px;padding:11px 14px;background:var(--green);color:white;font-weight:650;cursor:pointer;font-size:13px}.btn.secondary,button.secondary{background:#edf2ed;color:var(--green)}button.danger{background:#fff0ee;color:var(--red)}input,select,textarea{width:100%;padding:12px;border:1px solid #dce2da;border-radius:10px;background:white;font:inherit;margin:5px 0 12px;color:var(--ink)}label{font-size:12px;font-weight:650}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none!important}.pill{display:inline-block;background:#eaf2ec;color:#285b46;padding:5px 9px;border-radius:20px;font-size:11px}
+.listitem{padding:12px 0;border-bottom:1px solid var(--line)}.listitem:last-child{border:0}.stat{font-size:25px;font-weight:750}.nav{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.nav button{white-space:nowrap;background:#e9eee8;color:var(--green)}.nav button.active{background:var(--green);color:white}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+#login{max-width:440px;margin:25px auto}#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#203d32;color:white;padding:12px 16px;border-radius:12px;font-size:13px;display:none;max-width:90%;z-index:5}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.welcome{font-size:30px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="emblem">ॐ</div><div><h1>SANGGAH KELUARGA BESAR</h1><p>Sistem Informasi & Manajemen Keluarga</p></div></div><div class="welcome">Om Swastyastu 🙏</div><div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi keluarga.</div></header>
+<main>
+<section id="setup" class="card hidden">
+<h2>Hubungkan database Supabase</h2><p class="muted">Masukkan Project URL dan anon/public key dari proyek Supabase. Jangan pernah masukkan service_role key.</p>
+<label>Supabase Project URL</label><input id="sburl" placeholder="https://xxxxxxxx.supabase.co">
+<label>Supabase anon / publishable key</label><textarea id="sbkey" rows="3" placeholder="Tempel anon/public key di sini"></textarea>
+<div class="actions"><button onclick="saveConfig()">Simpan koneksi</button><button class="secondary" onclick="hideSetup()">Batal</button></div>
+</section>
+<section id="login" class="card hidden">
+<h2>Masuk ke aplikasi</h2><p class="muted">Gunakan akun yang dibuat oleh admin keluarga.</p>
+<label>Email</label><input id="email" type="email" placeholder="nama@email.com">
+<label>Password</label><input id="password" type="password" placeholder="Password">
+<div class="actions"><button onclick="signIn()">Masuk</button><button class="secondary" onclick="showSetup()">Pengaturan koneksi</button></div>
+<p class="muted">Belum punya akun? Minta admin membuat akun untuk Anda.</p>
+</section>
+<section id="app" class="hidden">
+<div class="card"><div class="row"><div><div class="muted">Selamat datang</div><b id="userName">Pengguna</b><div class="muted" id="userRole">Anggota keluarga</div></div><button class="secondary" onclick="signOut()">Keluar</button></div></div>
+<div class="nav" id="nav"></div>
+<div id="view"></div>
+</section>
+<section id="offline" class="card hidden"><h2>Mode pratinjau</h2><p>Aplikasi sudah terbuka, tetapi database belum dihubungkan. Hubungkan Supabase untuk login multi-HP dan menyimpan data online.</p><button onclick="showSetup()">Atur koneksi database</button></section>
+</main>
+<footer> SANGGAH KELUARGA BESAR · Om Santih, Santih, Santih Om </footer><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let sb=null, session=null, profile=null, active='dashboard';
+const $=id=>document.getElementById(id);
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2800)}
+function showSetup(){$('setup').classList.remove('hidden');$('login').classList.add('hidden');$('offline').classList.add('hidden')}
+function hideSetup(){$('setup').classList.add('hidden');if(sb)$('login').classList.remove('hidden');else $('offline').classList.remove('hidden')}
+function saveConfig(){let u=$('sburl').value.trim(),k=$('sbkey').value.trim();if(!u.startsWith('https://')||!k){toast('Periksa Project URL dan anon key.');return}localStorage.setItem('sburl',u);localStorage.setItem('sbkey',k);init();toast('Koneksi disimpan di perangkat ini.');}
+function init(){let u=localStorage.getItem('sburl'),k=localStorage.getItem('sbkey');if(u&&k&&window.supabase){sb=window.supabase.createClient(u,k);$('setup').classList.add('hidden');$('login').classList.remove('hidden');sb.auth.getSession().then(({data})=>{if(data.session){session=data.session;loadProfile()}})}else{$('offline').classList.remove('hidden')}}
+async function signIn(){if(!sb){showSetup();return}let {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){toast(error.message);return}session=data.session;await loadProfile()}
+async function signOut(){await sb.auth.signOut();session=null;profile=null;$('app').classList.add('hidden');$('login').classList.remove('hidden')}
+async function loadProfile(){let {data,error}=await sb.from('profiles').select('full_name,role,member_id').eq('id',session.user.id).single();if(error){toast('Akun masuk, tetapi profil belum disiapkan admin.');$('login').classList.remove('hidden');return}profile=data;$('login').classList.add('hidden');$('app').classList.remove('hidden');$('userName').textContent=data.full_name||session.user.email;$('userRole').textContent=roleName(data.role);renderNav();renderView()}
+function roleName(r){return ({ketua:'Ketua',wakil:'Wakil Ketua',sekretaris:'Sekretaris',bendahara:'Bendahara',koordinator:'Koordinator Bidang',anggota:'Anggota Keluarga'})[r]||r}
+const pages=[['dashboard','⌂','Beranda'],['anggota','♙','Anggota'],['keuangan','Rp','Keuangan'],['iuran','♡','Iuran'],['upacara','◷','Upacara'],['ngayah','✣','Ngayah'],['inventaris','▣','Inventaris'],['pengumuman','▤','Pengumuman'],['dokumen','▧','Arsip']];
+function renderNav(){$('nav').innerHTML=pages.map(p=>`<button class="${active===p[0]?'active':''}" onclick="go('${p[0]}')">${p[1]} ${p[2]}</button>`).join('')}
+function go(p){active=p;renderNav();renderView()}
+function canFinance(){return ['ketua','wakil','bendahara'].includes(profile?.role)}
+function renderView(){let v=$('view');if(active==='dashboard'){v.innerHTML=`<div class="grid"><div class="card"><div class="muted">Anggota keluarga</div><div class="stat" id="countMembers">—</div></div><div class="card"><div class="muted">Saldo kas</div><div class="stat" id="balance">—</div></div></div><div class="card"><h2>Menu utama</h2><p class="muted">Pilih menu di atas untuk mengelola administrasi Sanggah Keluarga Besar.</p><span class="pill">Akses: ${roleName(profile.role)}</span></div>`;loadStats();return}
+let title=pages.find(p=>p[0]===active)?.[2]||'Menu';let allowed=true;if(['keuangan','iuran'].includes(active)&&!canFinance())allowed=false;
+if(!allowed){v.innerHTML=`<div class="card"><h2>Akses terbatas</h2><p class="muted">Menu ini hanya dapat diakses oleh ketua, wakil ketua, dan bendahara.</p></div>`;return}
+let cfg={anggota:['Data Anggota','members','full_name','Nama lengkap','family_name','Nama keluarga'],keuangan:['Transaksi Kas','transactions','description','Keterangan','amount','Jumlah (Rp)'],iuran:['Pembayaran Iuran','dues','description','Keterangan','amount','Jumlah (Rp)'],upacara:['Jadwal Upacara','events','title','Nama kegiatan','event_date','Tanggal (YYYY-MM-DD)'],ngayah:['Jadwal Ngayah','ngayah','task','Tugas ngayah','event_date','Tanggal (YYYY-MM-DD)'],inventaris:['Inventaris','inventory','item_name','Nama barang','quantity','Jumlah'],pengumuman:['Pengumuman','announcements','title','Judul','body','Isi pengumuman'],dokumen:['Arsip Dokumen','documents','title','Nama dokumen','file_url','Link dokumen']}[active];
+v.innerHTML=`<div class="card"><div class="row"><h2>${cfg[0]}</h2><button onclick="loadRows('${cfg[1]}')">Muat ulang</button></div><div id="rows" class="muted">Memuat data…</div></div><div class="card"><h2>Tambah data</h2><form onsubmit="addRow(event,'${cfg[1]}','${cfg[2]}','${cfg[4]}')"><label>${cfg[3]}</label><input id="f1" required><label>${cfg[5]}</label><input id="f2" required><button type="submit">Simpan data</button></form></div>`;
+loadRows(cfg[1])}
+async function loadStats(){let a=await sb.from('members').select('*',{count:'exact',head:true});$('countMembers').textContent=a.count??'—';let t=await sb.from('transactions').select('type,amount');if(!t.error){let n=0;(t.data||[]).forEach(x=>n+=x.type==='pemasukan'?Number(x.amount):-Number(x.amount));$('balance').textContent='Rp '+n.toLocaleString('id-ID')}else $('balance').textContent='—'}
+async function loadRows(table){let el=$('rows');if(!el)return;el.textContent='Memuat…';let {data,error}=await sb.from(table).select('*').order('created_at',{ascending:false}).limit(50);if(error){el.textContent='Belum ada data atau akses belum tersedia.';return}if(!data.length){el.textContent='Belum ada data.';return}el.innerHTML=data.map(x=>`<div class="listitem"><b>${esc(x.full_name||x.description||x.title||x.task||x.item_name||'Data')}</b><div class="muted">${esc(String(x.amount??x.event_date??x.family_name??x.body??x.quantity??''))}</div></div>`).join('')}
+async function addRow(e,table,k1,k2){e.preventDefault();let obj={[k1]:$('f1').value,[k2]:k2==='amount'||k2==='quantity'?Number($('f2').value):$('f2').value};if(table==='transactions'||table==='dues')obj.type='pemasukan';if(table==='members')obj.created_by=session.user.id;let {error}=await sb.from(table).insert(obj);if(error){toast(error.message);return}toast('Data berhasil disimpan.');e.target.reset();loadRows(table);if(table==='transactions')loadStats()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+init();
+</script></body></html>

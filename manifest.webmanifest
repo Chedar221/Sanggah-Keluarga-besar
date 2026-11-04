@@ -1,0 +1,9 @@
+{
+  "name": "SANGGAH KELUARGA BESAR",
+  "short_name": "Sanggah Keluarga",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f4ec",
+  "theme_color": "#173d32",
+  "icons": []
+}

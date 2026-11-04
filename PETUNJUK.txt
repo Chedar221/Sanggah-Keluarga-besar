@@ -1,0 +1,21 @@
+SANGGAH KELUARGA BESAR — paket awal aplikasi
+
+ISI:
+- index.html: aplikasi web responsif/PWA dengan login Supabase dan menu utama.
+- manifest.webmanifest: metadata instalasi PWA.
+- database_setup.sql: skema tabel dan kebijakan akses awal.
+
+PENTING:
+1. Pastikan proyek Supabase yang dipilih memang SANGGAH KELUARGA BESAR, bukan FEBRY LAUNDRY.
+2. Jalankan database_setup.sql melalui SQL Editor.
+3. Ambil Project URL dan anon/public key dari Project Settings > API (atau API Keys).
+4. Buka aplikasi, pilih Pengaturan koneksi, lalu tempel Project URL dan anon/public key.
+5. Buat akun pengguna melalui Authentication > Users. Setelah akun dibuat, tambahkan baris profil di tabel profiles dengan id UUID pengguna, full_name, dan role.
+6. Buat akun ketua pertama, lalu atur role-nya menjadi 'ketua' melalui Table Editor. Jangan pernah membagikan service_role key.
+7. Deploy folder ini ke hosting HTTPS (misalnya Vercel) untuk penggunaan multi-HP.
+
+CATATAN KEAMANAN:
+- SQL ini adalah fondasi awal, bukan audit keamanan final.
+- RLS membatasi akses data berdasarkan role. Pengaturan profil dan alur pembuatan akun ketua pertama harus dilakukan oleh pemilik proyek dengan hati-hati.
+- Jangan masukkan data pribadi/keuangan nyata sebelum pengujian akses selesai.
+- Aplikasi belum otomatis terpasang di internet; perlu koneksi Supabase dan deployment.
