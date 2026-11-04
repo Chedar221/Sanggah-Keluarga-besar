@@ -463,23 +463,44 @@ function go(page) {
 async function loadStats() {
   const memberResult = await sb
     .from('members')
-    .select('id', {count:'exact', head:true});
+    .select('id', { count: 'exact', head: true });
 
   $('countMembers').textContent =
     memberResult.error ? '—' : (memberResult.count ?? 0);
 
   if (canFinance()) {
-    const {data,error} = await sb
-      .from('transactions')
-      .select('type,amount');
+    let allRows = [];
+    let offset = 0;
+    const pageSize = 500;
+    let failed = false;
 
-    if (!error) {
+    while (true) {
+      const { data, error } = await sb
+        .from('transactions')
+        .select('type,amount')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + pageSize - 1);
+
+      if (error) {
+        failed = true;
+        break;
+      }
+
+      const rows = data || [];
+      allRows = allRows.concat(rows);
+
+      if (rows.length < pageSize) break;
+
+      offset += pageSize;
+    }
+
+    if (!failed) {
       let balance = 0;
 
-      (data || []).forEach(x => {
+      allRows.forEach(x => {
         balance += x.type === 'pemasukan'
-          ? Number(x.amount)
-          : -Number(x.amount);
+          ? Number(x.amount || 0)
+          : -Number(x.amount || 0);
       });
 
       $('balance').textContent = rupiah(balance);
@@ -496,17 +517,17 @@ async function loadStats() {
 ===================================== */
 
 const configs = {
-  anggota: {
-    title:'Data Anggota',
-    table:'members',
-    fields:[
-      {key:'full_name',label:'Nama lengkap',required:true},
-      {key:'family_name',label:'Nama keluarga'},
-      {key:'phone',label:'Nomor telepon'},
-      {key:'address',label:'Alamat'},
-      {key:'relation',label:'Hubungan keluarga'}
-    ]
-  },
+  
+anggota: {
+  title: 'Data Anggota',
+  table: 'members',
+  fields: [
+    {key: 'full_name', label: 'Nama lengkap', required: true},
+    {key: 'family_name', label: 'Nama keluarga'},
+    {key: 'relation', label: 'Hubungan keluarga'}
+  ]
+},
+
   iuran: {
     title:'Pembayaran Iuran',
     table:'dues',
@@ -611,10 +632,11 @@ function renderView() {
   if (!cfg) return;
 
   const canWrite =
-    active === 'anggota' ? canManageGeneral() :
-    active === 'inventaris' ? canManageInventory() :
-    active === 'dokumen' ? canManageDocuments() :
-    canManageGeneral();
+  active === 'anggota' ? canManageGeneral() :
+  active === 'iuran' ? canFinance() :
+  active === 'inventaris' ? canManageInventory() :
+  active === 'dokumen' ? canManageDocuments() :
+  canManageGeneral();
 
   v.innerHTML = `
     <div class="card">
@@ -794,7 +816,7 @@ async function loadPublicFinance() {
     });
 
     publicOffset += rows.length;
-    hasMore = rows.length === 500;
+hasMore = rows.length === 500;
   }
 
   $('publicIncome').textContent = rupiah(income);
@@ -819,12 +841,64 @@ async function loadPublicFinance() {
   }
 
   $('morePublic').style.display = allRows.length > 50 ? 'block' : 'none';
+publicOffset = Math.min(PAGE_SIZE, allRows.length);
   status.textContent = 'Laporan berhasil diperbarui.';
 }
 
+
 async function loadMorePublic() {
-  toast('Untuk riwayat berikutnya, fitur halaman lanjutan akan disambungkan di bagian 3.');
+  const button = $('morePublic');
+  const list = $('publicTransactions');
+
+  if (!button || !list) return;
+
+  button.disabled = true;
+  button.textContent = 'Memuat...';
+
+  const start = publicOffset;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await sb
+    .from('public_transactions')
+    .select('id,type,description,amount,transaction_date,created_at')
+    .order('transaction_date', { ascending: false })
+    .range(start, end);
+
+  if (error) {
+    toast('Gagal memuat transaksi berikutnya.');
+    button.disabled = false;
+    button.textContent = 'Muat Transaksi Berikutnya';
+    return;
+  }
+
+  const rows = data || [];
+
+  if (!rows.length) {
+    button.style.display = 'none';
+    return;
+  }
+
+  list.insertAdjacentHTML(
+    'beforeend',
+    rows.map(row => `
+      <div class="listitem">
+        <b>${esc(row.description)}</b>
+        <div class="muted">
+          ${esc(row.transaction_date || '')} ·
+          ${row.type === 'pengeluaran' ? 'Pengeluaran' : 'Pemasukan'}
+        </div>
+        <b>${rupiah(row.amount)}</b>
+      </div>
+    `).join('')
+  );
+
+  publicOffset += rows.length;
+
+  button.style.display = rows.length < PAGE_SIZE ? 'none' : 'block';
+  button.disabled = false;
+  button.textContent = 'Muat Transaksi Berikutnya';
 }
+
 
 /* =====================================
    FORM TRANSAKSI
@@ -912,19 +986,34 @@ async function addTransaction(event) {
 }
 
 async function loadFinanceSummary() {
-  const {data,error} = await sb
-    .from('transactions')
-    .select('type,amount');
+  let allRows = [];
+  let offset = 0;
+  const pageSize = 500;
 
-  if (error) {
-    toast('Ringkasan keuangan gagal dimuat.');
-    return;
+  while (true) {
+    const { data, error } = await sb
+      .from('transactions')
+      .select('type,amount')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      toast('Ringkasan keuangan gagal dimuat.');
+      return;
+    }
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    if (rows.length < pageSize) break;
+
+    offset += pageSize;
   }
 
   let income = 0;
   let expense = 0;
 
-  (data || []).forEach(row => {
+  allRows.forEach(row => {
     if (row.type === 'pengeluaran') {
       expense += Number(row.amount || 0);
     } else {
@@ -1051,6 +1140,7 @@ function allowedToEdit(table) {
 }
 
 function allowedToDelete(table) {
+  if (table === 'members') return false;
   return allowedToEdit(table);
 }
 
