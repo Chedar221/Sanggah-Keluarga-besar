@@ -86,6 +86,19 @@ label {font-size:12px;font-weight:650}
 .nav button.active {background:var(--green);color:white}
 footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
 #login {max-width:440px;margin:25px auto}
+
+/* Tampilan ringkas: daftar panjang tetap berada di dalam panel */
+#publicTransactions {max-height:320px;overflow-y:auto;padding-right:4px}
+#view #rows {max-height:360px;overflow-y:auto;padding-right:4px}
+.record-item {display:block;width:100%;padding:9px 10px;margin:0 0 7px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.record-actions {display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.record-actions button {padding:7px 10px;font-size:11px}
+#view #rows.member-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#view #rows.member-list .record-item {margin:0;min-width:0}
+#view .stat {font-size:clamp(17px,4vw,24px);line-height:1.25}
+@media(max-width:380px) {
+  #view #rows.member-list {grid-template-columns:1fr}
+}
 #toast {
   position:fixed;bottom:18px;left:50%;
   transform:translateX(-50%);background:#203d32;color:white;
@@ -429,6 +442,7 @@ function canDelete(table) {
 ===================================== */
 
 const pages = [
+  ['pengumuman','▤','Pengumuman'],
   ['dashboard','⌂','Beranda'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
@@ -436,7 +450,6 @@ const pages = [
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
-  ['pengumuman','▤','Pengumuman'],
   ['dokumen','▧','Arsip']
 ];
 
@@ -1253,6 +1266,8 @@ async function loadRows(table) {
   if (!el) return;
 
   el.textContent = 'Memuat data...';
+
+  el.classList.toggle('member-list', table === 'members');
 
   const columns = table === 'members'
     ? 'id,full_name,family_name,relation,created_at'
