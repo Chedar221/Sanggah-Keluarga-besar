@@ -138,6 +138,14 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
     <button onclick="showLogin()">Masuk Pengurus</button>
   </div>
 
+  <div class="card" id="publicAnnouncementsCard">
+    <div class="row">
+      <h2>Pengumuman</h2>
+      <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
+    </div>
+    <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
+  </div>
+
   <div class="card">
     <div class="row">
       <h2>Laporan Keuangan Keluarga</h2>
@@ -790,6 +798,41 @@ async function loadRows(table) {
 }
 
 /* =====================================
+   PENGUMUMAN PUBLIK
+===================================== */
+
+async function loadPublicAnnouncements() {
+  const list = $('publicAnnouncements');
+  if (!list || !sb) return;
+
+  list.textContent = 'Memuat pengumuman...';
+
+  const { data, error } = await sb
+    .from('announcements')
+    .select('title,body,created_at')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    list.textContent = 'Pengumuman belum dapat ditampilkan. Silakan hubungi pengurus.';
+    return;
+  }
+
+  if (!data || !data.length) {
+    list.textContent = 'Belum ada pengumuman.';
+    return;
+  }
+
+  list.innerHTML = data.map(item => `
+    <div class="listitem">
+      <b>${esc(item.title || 'Pengumuman')}</b>
+      <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
+      <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
+    </div>
+  `).join('');
+}
+
+/* =====================================
    LAPORAN KEUANGAN PUBLIK
 ===================================== */
 
@@ -1049,7 +1092,8 @@ async function initializeApp() {
     return;
   }
 
-  // Ambil laporan publik walaupun belum login.
+  // Tampilkan pengumuman dan laporan publik walaupun belum login.
+  await loadPublicAnnouncements();
   await loadPublicFinance();
 
   const {data,error} = await sb.auth.getSession();
