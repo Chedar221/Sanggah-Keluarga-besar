@@ -110,16 +110,18 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
   .grid {grid-template-columns:repeat(4,minmax(0,1fr))}
   .welcome {font-size:30px}
 }
+/* Menu pengurus kembali ke posisi normal seperti tampilan awal.
+   Pada layar kecil menu tetap bisa digeser mendatar bila tidak muat. */
 @media(max-width:649px) {
-  #app {padding-bottom:88px}
-  #app .nav {
-    position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:#fff;border-top:1px solid var(--line);
-    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-    margin:0;box-shadow:0 -4px 16px #183b2a12;
-    border-radius:14px 14px 0 0;
-  }
+  #app .nav {flex-wrap:nowrap}
   #app .nav button {flex:0 0 auto;padding:10px 12px;font-size:12px}
+}
+/* Daftar publik menampilkan sekitar enam nama; sisanya digulir di panel ini. */
+#publicMembers {
+  max-height:372px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-right:5px;
 }
 </style>
 </head>
