@@ -268,6 +268,7 @@ let sb = null;
 let session = null;
 let profile = null;
 let active = 'dashboard';
+let activeMemberType = 'all';
 
 let publicOffset = 0;
 const PAGE_SIZE = 50;
@@ -566,7 +567,8 @@ anggota: {
   fields: [
     {key: 'full_name', label: 'Nama lengkap', required: true},
     {key: 'family_name', label: 'Nama keluarga'},
-    {key: 'relation', label: 'Hubungan keluarga'}
+    {key: 'relation', label: 'Hubungan keluarga'},
+    {key: 'member_type', label: 'Kategori anggota', type: 'select', required: true, options: [['pengarep','Anggota Pengarep'],['keluarga','Anggota Keluarga']]}
   ]
 },
 
@@ -680,12 +682,21 @@ function renderView() {
   active === 'dokumen' ? canManageDocuments() :
   canManageGeneral();
 
+  if (active === 'anggota') activeMemberType = 'all';
+
   v.innerHTML = `
     <div class="card">
       <div class="row">
         <h2>${esc(cfg.title)}</h2>
         <button class="secondary" onclick="loadRows('${cfg.table}')">Muat ulang</button>
       </div>
+      ${active === 'anggota' ? `
+        <div class="actions" style="margin:8px 0 12px">
+          <button type="button" class="${activeMemberType === 'all' ? '' : 'secondary'}" onclick="filterMembers('all')">Semua</button>
+          <button type="button" class="${activeMemberType === 'pengarep' ? '' : 'secondary'}" onclick="filterMembers('pengarep')">Anggota Pengarep</button>
+          <button type="button" class="${activeMemberType === 'keluarga' ? '' : 'secondary'}" onclick="filterMembers('keluarga')">Anggota Keluarga</button>
+          <button type="button" class="${activeMemberType === 'uncategorized' ? '' : 'secondary'}" onclick="filterMembers('uncategorized')">Belum Dikategorikan</button>
+        </div>` : ''}
       <div id="rows" class="muted">Memuat data...</div>
     </div>
 
@@ -773,7 +784,8 @@ function displayValue(row, table) {
   if (table === 'transactions' || table === 'dues') {
     detail = `${row.type || ''} · ${rupiah(row.amount)}`;
   } else if (table === 'members') {
-    detail = row.relation || row.family_name || '';
+    const category = row.member_type === 'pengarep' ? 'Anggota Pengarep' : row.member_type === 'keluarga' ? 'Anggota Keluarga' : 'Belum dikategorikan';
+    detail = [category, row.family_name, row.relation].filter(Boolean).join(' · ');
   } else if (table === 'events' || table === 'ngayah') {
     detail = row.event_date || '';
   } else if (table === 'inventory') {
@@ -792,6 +804,15 @@ function displayValue(row, table) {
   `;
 }
 
+
+function filterMembers(type) {
+  activeMemberType = type;
+  const buttons = $('view')?.querySelectorAll('.actions button');
+  if (buttons) buttons.forEach(button => button.classList.add('secondary'));
+  const labels = {all:'Semua',pengarep:'Anggota Pengarep',keluarga:'Anggota Keluarga',uncategorized:'Belum Dikategorikan'};
+  if (buttons) buttons.forEach(button => { if (button.textContent.trim() === labels[type]) button.classList.remove('secondary'); });
+  loadRows('members');
+}
 
 async function loadRows(table) {
   const el = $('rows');
@@ -1190,7 +1211,8 @@ const editableFields = {
   members: [
     ['full_name', 'Nama lengkap', 'text'],
     ['family_name', 'Nama keluarga', 'text'],
-    ['relation', 'Hubungan keluarga', 'text']
+    ['relation', 'Hubungan keluarga', 'text'],
+    ['member_type', 'Kategori (pengarep/keluarga)', 'text']
   ],
 
   transactions: [
@@ -1378,11 +1400,17 @@ async function loadRows(table) {
     ? 'id,full_name,family_name,relation,created_at'
     : '*';
 
-  const { data, error } = await sb
+  let query = sb
     .from(table)
     .select(columns)
-    .order('created_at', { ascending: false })
-    .limit(100);
+    .order('created_at', { ascending: false });
+
+  if (table === 'members') {
+    if (activeMemberType === 'pengarep' || activeMemberType === 'keluarga') query = query.eq('member_type', activeMemberType);
+    if (activeMemberType === 'uncategorized') query = query.is('member_type', null);
+  }
+
+  const { data, error } = await query.limit(300);
 
   if (error) {
     el.textContent = 'Gagal memuat data: ' + error.message;
