@@ -1302,7 +1302,7 @@ async function editRecord(table, id) {
 
     .select(
       table === 'members'
-        ? 'id,full_name,family_name,relation,created_at'
+        ? 'id,full_name,family_name,relation,member_type,created_at'
         : '*'
     )
     .eq('id', id)
@@ -1397,7 +1397,7 @@ async function loadRows(table) {
   el.classList.toggle('member-list', table === 'members');
 
   const columns = table === 'members'
-    ? 'id,full_name,family_name,relation,created_at'
+    ? 'id,full_name,family_name,relation,member_type,created_at'
     : '*';
 
   let query = sb
