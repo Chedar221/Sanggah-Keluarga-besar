@@ -477,6 +477,7 @@ const pages = [
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
   ['iuran','♡','Iuran'],
+  ['punia','✧','Dana Punia'],
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
@@ -668,6 +669,15 @@ function renderView() {
       return;
     }
     renderFinance();
+    return;
+  }
+
+  if (active === 'punia') {
+    if (!canFinance()) {
+      v.innerHTML = '<div class="card">Akses Dana Punia terbatas.</div>';
+      return;
+    }
+    renderPunia();
     return;
   }
 
@@ -1036,6 +1046,91 @@ async function loadMorePublic() {
   button.textContent = 'Muat Transaksi Berikutnya';
 }
 
+
+/* =====================================
+   DANA PUNIA
+===================================== */
+
+function renderPunia() {
+  $('view').innerHTML = `
+    <div class="card">
+      <h2>Dana Punia</h2>
+      <p class="muted">Catat penerimaan dan penggunaan Dana Punia. Semua transaksi Dana Punia otomatis masuk ke Ringkasan Kas.</p>
+      <form onsubmit="addPunia(event)">
+        <label>Jenis transaksi</label>
+        <select id="puniaType">
+          <option value="pemasukan">Pemasukan Dana Punia</option>
+          <option value="pengeluaran">Pengeluaran Dana Punia</option>
+        </select>
+        <label>Tanggal</label>
+        <input type="date" id="puniaDate" required>
+        <label>Keterangan</label>
+        <input id="puniaDescription" placeholder="Contoh: Punia dari keluarga..." required>
+        <label>Jumlah (Rp)</label>
+        <input id="puniaAmount" type="number" min="1" required>
+        <button type="submit">Simpan Dana Punia</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Riwayat Dana Punia</h2>
+      <div id="puniaRows" class="muted">Memuat data...</div>
+    </div>
+  `;
+  $('puniaDate').value = new Date().toISOString().slice(0,10);
+  loadPuniaRows();
+}
+
+async function addPunia(event) {
+  event.preventDefault();
+  const detail = $('puniaDescription').value.trim();
+  const amount = Number($('puniaAmount').value);
+  if (!detail || amount <= 0) {
+    toast('Periksa keterangan dan jumlah Dana Punia.');
+    return;
+  }
+  const obj = {
+    type: $('puniaType').value,
+    transaction_date: $('puniaDate').value,
+    description: 'Dana Punia: ' + detail,
+    amount,
+    created_by: session.user.id
+  };
+  const {error} = await sb.from('transactions').insert(obj);
+  if (error) {
+    toast('Gagal menyimpan Dana Punia: ' + error.message);
+    return;
+  }
+  toast('Dana Punia berhasil disimpan dan saldo kas diperbarui.');
+  event.target.reset();
+  $('puniaDate').value = new Date().toISOString().slice(0,10);
+  loadPuniaRows();
+  loadFinanceSummary();
+  loadStats();
+}
+
+async function loadPuniaRows() {
+  const target = $('puniaRows');
+  if (!target) return;
+  const {data,error} = await sb.from('transactions')
+    .select('id,type,description,amount,transaction_date')
+    .ilike('description','Dana Punia:%')
+    .order('transaction_date',{ascending:false});
+  if (error) {
+    target.innerHTML = '<div class="muted">Gagal memuat riwayat Dana Punia: ' + esc(error.message) + '</div>';
+    return;
+  }
+  if (!data || !data.length) {
+    target.innerHTML = '<div class="muted">Belum ada transaksi Dana Punia.</div>';
+    return;
+  }
+  target.innerHTML = data.map(row => `
+    <div class="listitem">
+      <b>${esc(row.description.replace(/^Dana Punia:\\s*/,''))}</b>
+      <div class="muted">${row.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} · ${esc(row.transaction_date || '')}</div>
+      <strong>${rupiah(row.amount)}</strong>
+    </div>
+  `).join('');
+}
 
 /* =====================================
    FORM TRANSAKSI
