@@ -110,6 +110,17 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
   .grid {grid-template-columns:repeat(4,minmax(0,1fr))}
   .welcome {font-size:30px}
 }
+@media(max-width:649px) {
+  #app {padding-bottom:88px}
+  #app .nav {
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:#fff;border-top:1px solid var(--line);
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    margin:0;box-shadow:0 -4px 16px #183b2a12;
+    border-radius:14px 14px 0 0;
+  }
+  #app .nav button {flex:0 0 auto;padding:10px 12px;font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -144,6 +155,14 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
     </div>
     <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
+  </div>
+
+  <div class="card" id="publicMembersCard">
+    <div class="row">
+      <h2>Daftar Anggota Keluarga</h2>
+      <button class="secondary" onclick="loadPublicMembers()">Muat ulang</button>
+    </div>
+    <div id="publicMembers" class="muted">Memuat daftar anggota...</div>
   </div>
 
   <div class="card">
@@ -833,6 +852,45 @@ async function loadPublicAnnouncements() {
 }
 
 /* =====================================
+   DAFTAR ANGGOTA PUBLIK
+===================================== */
+
+async function loadPublicMembers() {
+  const list = $('publicMembers');
+  if (!list || !sb) return;
+
+  list.textContent = 'Memuat daftar anggota...';
+
+  const { data, error } = await sb
+    .from('members')
+    .select('full_name,family_name,relation')
+    .order('full_name', { ascending: true })
+    .limit(300);
+
+  if (error) {
+    list.textContent = 'Daftar anggota belum dapat ditampilkan. Silakan hubungi pengurus.';
+    return;
+  }
+
+  if (!data || !data.length) {
+    list.textContent = 'Belum ada data anggota.';
+    return;
+  }
+
+  list.innerHTML = data.map((member, index) => {
+    const detail = [member.family_name, member.relation].filter(Boolean).join(' · ');
+    return `
+      <div class="record-item">
+        <div class="row">
+          <b>${index + 1}. ${esc(member.full_name || 'Tanpa nama')}</b>
+        </div>
+        ${detail ? `<div class="muted">${esc(detail)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/* =====================================
    LAPORAN KEUANGAN PUBLIK
 ===================================== */
 
@@ -1094,6 +1152,7 @@ async function initializeApp() {
 
   // Tampilkan pengumuman dan laporan publik walaupun belum login.
   await loadPublicAnnouncements();
+  await loadPublicMembers();
   await loadPublicFinance();
 
   const {data,error} = await sb.auth.getSession();
