@@ -41,7 +41,10 @@ for select to authenticated using (
 );
 drop policy if exists "chat rooms creator insert" on public.chat_rooms;
 create policy "chat rooms creator insert" on public.chat_rooms
-for insert to authenticated with check (created_by = (select auth.uid()));
+for insert to authenticated with check (
+  created_by = (select auth.uid())
+  and exists (select 1 from public.profiles p where p.id = (select auth.uid()))
+);
 
 drop policy if exists "chat memberships read own" on public.chat_room_members;
 create policy "chat memberships read own" on public.chat_room_members
@@ -49,9 +52,12 @@ for select to authenticated using (user_id = (select auth.uid()));
 drop policy if exists "chat memberships add participants" on public.chat_room_members;
 create policy "chat memberships add participants" on public.chat_room_members
 for insert to authenticated with check (
-  user_id = (select auth.uid())
-  or exists (select 1 from public.chat_rooms r
-             where r.id = room_id and r.created_by = (select auth.uid()))
+  exists (select 1 from public.profiles p where p.id = chat_room_members.user_id)
+  and (
+    user_id = (select auth.uid())
+    or exists (select 1 from public.chat_rooms r
+               where r.id = room_id and r.created_by = (select auth.uid()))
+  )
 );
 
 drop policy if exists "chat messages read members" on public.chat_messages;
