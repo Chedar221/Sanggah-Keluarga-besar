@@ -27,6 +27,7 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      # Use the exact embedded emblem from the website's logo-sanggah.svg as the launcher icon.
       - name: Create Capacitor Android wrapper
         run: |
           mkdir -p android-wrapper/www android-wrapper/assets
