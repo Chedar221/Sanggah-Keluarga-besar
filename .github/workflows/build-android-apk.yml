@@ -1,4 +1,4 @@
-name: Build Sanggah Android APK
+name: Build SANGGAH GPR Android APK
 
 on:
   workflow_dispatch:
@@ -29,15 +29,16 @@ jobs:
 
       - name: Create Capacitor Android wrapper
         run: |
-          mkdir -p android-wrapper/www
+          mkdir -p android-wrapper/www android-wrapper/assets
           cd android-wrapper
           npm init -y
           npm install @capacitor/core@7 @capacitor/android@7
-          npm install --save-dev @capacitor/cli@7
+          npm install --save-dev @capacitor/cli@7 @capacitor/assets sharp
+          node -e "require('sharp')('../logo-sanggah.webp').resize(1024,1024,{fit:'contain',background:'#173d32'}).png().toFile('assets/icon-only.png')"
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "id.sanggahgedepanrengen.app",
-            "appName": "Sanggah Keluarga",
+            "appName": "SANGGAH GPR",
             "webDir": "www",
             "server": {
               "url": "https://sanggah-keluarga-besar.vercel.app",
@@ -52,11 +53,12 @@ jobs:
           cat > www/index.html <<'EOF'
           <!doctype html>
           <html lang="id">
-            <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sanggah Keluarga</title></head>
-            <body><p>Menghubungkan ke Sanggah Gede Pan Rengen...</p></body>
+            <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SANGGAH GPR</title></head>
+            <body><p>Menghubungkan ke SANGGAH GPR...</p></body>
           </html>
           EOF
           npx cap add android
+          npx capacitor-assets generate --android
           npx cap sync android
 
       - name: Build debug APK
@@ -66,7 +68,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: sanggah-keluarga-android-apk
+          name: sanggah-gpr-android-apk
           path: android-wrapper/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
