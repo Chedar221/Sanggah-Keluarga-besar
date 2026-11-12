@@ -107,6 +107,10 @@ $$;
 revoke all on function public.decide_chat_registration(uuid,boolean) from public, anon;
 grant execute on function public.decide_chat_registration(uuid,boolean) to authenticated;
 
+-- Formulir pendaftaran publik hanya perlu membaca ID dan nama anggota.
+-- Policy members public read sudah membatasi baris; grant ini membatasi kolom.
+grant select (id, full_name) on table public.members to anon;
+
 -- Directory chat hanya mengembalikan ID dan nama, bukan role/member_id.
 create or replace function public.chat_directory()
 returns table(id uuid, full_name text)
