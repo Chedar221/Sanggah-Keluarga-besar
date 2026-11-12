@@ -127,6 +127,23 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
   overscroll-behavior:contain;
   padding-right:5px;
 }
+
+/* CHAT KELUARGA */
+.chat-layout{display:grid;grid-template-columns: minmax(180px, .8fr) minmax(0,1.6fr);gap:12px}
+.chat-rooms{max-height:460px;overflow:auto}
+.chat-room{display:block;width:100%;text-align:left;background:#f5f7f3;color:var(--ink);border:1px solid var(--line);margin:0 0 7px}
+.chat-room.active{background:#e6efe8;border-color:var(--green)}
+.chat-room small{display:block;color:var(--muted);font-weight:400;margin-top:4px}
+.chat-panel{display:flex;flex-direction:column;min-height:420px}
+.chat-messages{height:340px;overflow:auto;background:#f7f8f5;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
+.chat-bubble{max-width:85%;width:fit-content;padding:9px 12px;border-radius:13px;background:white;border:1px solid var(--line);margin:7px 0;overflow-wrap:anywhere}
+.chat-bubble.mine{margin-left:auto;background:#e5f1e7;border-color:#d5e6d8}
+.chat-bubble .muted{font-size:10px;margin-top:4px}
+.chat-compose{display:flex;gap:8px;align-items:flex-end}
+.chat-compose textarea{margin:0;min-height:44px;max-height:110px;resize:vertical}
+.chat-compose button{flex:0 0 auto}
+@media(max-width:650px){.chat-layout{grid-template-columns:1fr}.chat-rooms{max-height:180px}.chat-panel{min-height:360px}.chat-messages{height:280px}}
+
 </style>
 </head>
 <body>
@@ -490,7 +507,8 @@ const pages = [
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
-  ['dokumen','▧','Arsip']
+  ['dokumen','▧','Arsip'],
+  ['chat','💬','Chat Keluarga']
 ];
 
 function renderNav() {
@@ -648,6 +666,11 @@ anggota: {
 
 function renderView() {
   const v = $('view');
+
+  if (active === 'chat') {
+    renderChat();
+    return;
+  }
 
   if (active === 'dashboard') {
     v.innerHTML = `
@@ -1266,6 +1289,209 @@ async function loadFinanceSummary() {
   if ($('totalOut')) $('totalOut').textContent = rupiah(expense);
   if ($('totalBalance')) $('totalBalance').textContent = rupiah(income-expense);
 }
+
+
+/* =====================================
+   CHAT KELUARGA - PESAN PRIBADI & GRUP
+===================================== */
+let activeChatRoom = null;
+let chatRealtimeChannel = null;
+let chatRoomsCache = [];
+
+function renderChat() {
+  $('view').innerHTML = `
+    <div class="card">
+      <div class="row">
+        <div><h2>Chat Keluarga</h2><div class="muted">Percakapan pribadi dan grup keluarga.</div></div>
+        <button class="secondary" onclick="loadChatRooms()">Muat ulang</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button onclick="startNewChat()">＋ Chat pribadi</button>
+        <button class="secondary" onclick="createFamilyGroup()">＋ Buat grup</button>
+        <button class="secondary" onclick="openFamilyWhatsApp()">Gabung Grup WhatsApp</button>
+      </div>
+      <p class="muted" id="chatNotice">Chat hanya tersedia untuk anggota yang sudah memiliki akun login.</p>
+    </div>
+    <div class="chat-layout">
+      <div class="card">
+        <h2>Percakapan</h2>
+        <div class="chat-rooms" id="chatRooms">Memuat percakapan...</div>
+      </div>
+      <div class="card chat-panel">
+        <div class="row"><h2 id="chatRoomTitle">Pilih percakapan</h2><span class="pill">Realtime</span></div>
+        <div class="chat-messages" id="chatMessages"><div class="muted">Pilih percakapan untuk mulai mengirim pesan.</div></div>
+        <form class="chat-compose" onsubmit="sendChatMessage(event)">
+          <textarea id="chatInput" rows="2" maxlength="3000" placeholder="Tulis pesan..." disabled></textarea>
+          <button id="chatSend" type="submit" disabled>Kirim</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="muted">Catatan: chat tidak memberi anggota hak mengubah data anggota, keuangan, iuran, upacara, ngayah, inventaris, pengumuman, atau arsip.</div>
+    </div>
+  `;
+  loadChatRooms();
+}
+
+async function loadChatRooms() {
+  const target = $('chatRooms');
+  if (!target || !session) return;
+  target.textContent = 'Memuat percakapan...';
+  const {data: memberships,error} = await sb.from('chat_room_members')
+    .select('room_id').eq('user_id',session.user.id);
+  if (error) {
+    target.textContent = 'Chat belum aktif di database. Hubungi pengurus untuk mengaktifkan fitur.';
+    return;
+  }
+  const ids = (memberships || []).map(x=>x.room_id);
+  if (!ids.length) {
+    target.textContent = 'Belum ada percakapan. Buat chat pribadi atau grup.';
+    return;
+  }
+  const {data: rooms,error: roomError} = await sb.from('chat_rooms')
+    .select('id,name,room_type,created_at').in('id',ids).order('created_at',{ascending:false});
+  if (roomError) { target.textContent='Gagal memuat percakapan: '+roomError.message; return; }
+  chatRoomsCache = rooms || [];
+  target.innerHTML = chatRoomsCache.map(room=>`
+    <button class="chat-room ${activeChatRoom===room.id?'active':''}" onclick="openChatRoom('${room.id}')">
+      <b>${esc(room.name || (room.room_type==='direct'?'Chat pribadi':'Grup keluarga'))}</b>
+      <small>${room.room_type==='direct'?'Pribadi':'Grup'} · Buka percakapan</small>
+    </button>
+  `).join('');
+  if (activeChatRoom && chatRoomsCache.some(r=>r.id===activeChatRoom)) {
+    await loadChatMessages();
+  } else if (!activeChatRoom && chatRoomsCache.length) {
+    await openChatRoom(chatRoomsCache[0].id);
+  }
+}
+
+async function startNewChat() {
+  const {data: people,error} = await sb.from('profiles')
+    .select('id,full_name').neq('id',session.user.id).order('full_name');
+  if (error) { toast('Daftar anggota chat gagal dimuat: '+error.message); return; }
+  if (!people || !people.length) {
+    toast('Belum ada akun anggota lain. Setiap anggota perlu akun login sendiri.');
+    return;
+  }
+  const options = people.map((p,i)=> (i+1)+'. '+p.full_name).join('\n');
+  const answer = prompt('Pilih nomor anggota untuk chat pribadi:\n'+options);
+  if (answer===null) return;
+  const person=people[Number(answer)-1];
+  if (!person) { toast('Pilihan tidak valid.'); return; }
+  const {data: existingRooms} = await sb.from('chat_room_members')
+    .select('room_id').eq('user_id',session.user.id);
+  const roomIds=(existingRooms||[]).map(x=>x.room_id);
+  if (roomIds.length) {
+    const {data: common}=await sb.from('chat_room_members').select('room_id')
+      .in('room_id',roomIds).eq('user_id',person.id);
+    if (common && common.length) {
+      const {data: direct}=await sb.from('chat_rooms').select('id,room_type')
+        .in('id',common.map(x=>x.room_id)).eq('room_type','direct');
+      if (direct && direct.length) { await openChatRoom(direct[0].id); return; }
+    }
+  }
+  const {data: room,error: createError}=await sb.from('chat_rooms')
+    .insert({name:person.full_name,room_type:'direct',created_by:session.user.id})
+    .select('id').single();
+  if (createError) { toast('Gagal membuat chat: '+createError.message); return; }
+  const {error: memberError}=await sb.from('chat_room_members').insert([
+    {room_id:room.id,user_id:session.user.id},
+    {room_id:room.id,user_id:person.id}
+  ]);
+  if (memberError) { toast('Chat dibuat, tetapi anggota gagal ditambahkan: '+memberError.message); return; }
+  await loadChatRooms();
+  await openChatRoom(room.id);
+}
+
+async function createFamilyGroup() {
+  const name=prompt('Nama grup keluarga:','Grup Keluarga');
+  if (!name || !name.trim()) return;
+  const {data: people,error}=await sb.from('profiles').select('id,full_name').neq('id',session.user.id).order('full_name');
+  if (error) { toast('Daftar anggota gagal dimuat: '+error.message); return; }
+  let chosen=[];
+  if (people && people.length) {
+    const list=people.map((p,i)=>(i+1)+'. '+p.full_name).join('\n');
+    const answer=prompt('Masukkan nomor anggota dipisahkan koma. Kosongkan untuk grup pribadi dulu.\n'+list,'');
+    if (answer===null) return;
+    chosen=answer.trim()?answer.split(',').map(x=>people[Number(x.trim())-1]).filter(Boolean):[];
+  }
+  const {data: room,error:createError}=await sb.from('chat_rooms')
+    .insert({name:name.trim(),room_type:'group',created_by:session.user.id}).select('id').single();
+  if (createError) { toast('Gagal membuat grup: '+createError.message); return; }
+  const rows=[session.user.id,...chosen.map(p=>p.id)].map(user_id=>({room_id:room.id,user_id}));
+  const {error: memberError}=await sb.from('chat_room_members').insert(rows);
+  if (memberError) { toast('Grup dibuat, tetapi anggota gagal ditambahkan: '+memberError.message); return; }
+  await loadChatRooms();
+  await openChatRoom(room.id);
+}
+
+async function openChatRoom(roomId) {
+  activeChatRoom=roomId;
+  const room=chatRoomsCache.find(r=>r.id===roomId);
+  if ($('chatRoomTitle')) $('chatRoomTitle').textContent=room?.name || 'Percakapan';
+  if ($('chatInput')) $('chatInput').disabled=false;
+  if ($('chatSend')) $('chatSend').disabled=false;
+  await loadChatRoomsListOnly();
+  await loadChatMessages();
+  if (chatRealtimeChannel) sb.removeChannel(chatRealtimeChannel);
+  chatRealtimeChannel=sb.channel('chat-room-'+roomId)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:'room_id=eq.'+roomId},payload=>{
+      if (payload.new) loadChatMessages();
+    }).subscribe();
+}
+
+async function loadChatRoomsListOnly() {
+  const target=$('chatRooms'); if (!target) return;
+  target.innerHTML=chatRoomsCache.map(room=>`
+    <button class="chat-room ${activeChatRoom===room.id?'active':''}" onclick="openChatRoom('${room.id}')">
+      <b>${esc(room.name || 'Percakapan')}</b><small>${room.room_type==='direct'?'Pribadi':'Grup'} · Buka percakapan</small>
+    </button>`).join('');
+}
+
+async function loadChatMessages() {
+  if (!activeChatRoom || !$('chatMessages')) return;
+  const {data,error}=await sb.from('chat_messages')
+    .select('id,room_id,sender_id,body,created_at')
+    .eq('room_id',activeChatRoom).order('created_at',{ascending:true}).limit(200);
+  if (error) { $('chatMessages').textContent='Gagal memuat pesan: '+error.message; return; }
+  const senderIds=[...new Set((data||[]).map(m=>m.sender_id))];
+  let names={};
+  if (senderIds.length) {
+    const {data: senders}=await sb.from('profiles').select('id,full_name').in('id',senderIds);
+    (senders||[]).forEach(p=>names[p.id]=p.full_name);
+  }
+  $('chatMessages').innerHTML=(data||[]).length?(data||[]).map(m=>`
+    <div class="chat-bubble ${m.sender_id===session.user.id?'mine':''}">
+      <b>${esc(m.sender_id===session.user.id?'Anda':(names[m.sender_id]||'Anggota'))}</b>
+      <div>${esc(m.body)}</div>
+      <div class="muted">${new Date(m.created_at).toLocaleString('id-ID')}</div>
+    </div>`).join(''):'<div class="muted">Belum ada pesan. Mulai percakapan sekarang.</div>';
+  $('chatMessages').scrollTop=$('chatMessages').scrollHeight;
+}
+
+async function sendChatMessage(event) {
+  event.preventDefault();
+  if (!activeChatRoom) { toast('Pilih percakapan terlebih dahulu.'); return; }
+  const input=$('chatInput');
+  const body=input.value.trim();
+  if (!body) return;
+  const {error}=await sb.from('chat_messages').insert({
+    room_id:activeChatRoom,sender_id:session.user.id,body
+  });
+  if (error) { toast('Pesan gagal dikirim: '+error.message); return; }
+  input.value='';
+  await loadChatMessages();
+}
+
+function openFamilyWhatsApp() {
+  const inviteUrl='';
+  if (!inviteUrl) {
+    toast('Tautan undangan WhatsApp keluarga belum diberikan. Chat aplikasi tetap bisa digunakan.');
+    return;
+  }
+  window.open(inviteUrl,'_blank','noopener');
+}
+
 
 /* =====================================
    MULAI APLIKASI
