@@ -1,4 +1,17 @@
 -- Chat keluarga SANGGAH GPR. Aman terpisah dari tabel administrasi keluarga.
+create schema if not exists public_private;
+revoke all on schema public_private from public, anon;
+grant usage on schema public_private to authenticated;
+create or replace function public_private.is_approved_chat_profile(p_user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = ''
+as $
+  select exists(select 1 from public.profiles p where p.id=p_user_id);
+$;
+revoke all on function public_private.is_approved_chat_profile(uuid) from public, anon;
+grant execute on function public_private.is_approved_chat_profile(uuid) to authenticated;
 create table if not exists public.chat_rooms (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -52,7 +65,7 @@ for select to authenticated using (user_id = (select auth.uid()));
 drop policy if exists "chat memberships add participants" on public.chat_room_members;
 create policy "chat memberships add participants" on public.chat_room_members
 for insert to authenticated with check (
-  exists (select 1 from public.profiles p where p.id = chat_room_members.user_id)
+  public_private.is_approved_chat_profile(chat_room_members.user_id)
   and (
     user_id = (select auth.uid())
     or exists (select 1 from public.chat_rooms r
