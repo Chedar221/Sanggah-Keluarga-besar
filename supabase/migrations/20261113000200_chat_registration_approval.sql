@@ -49,6 +49,9 @@ begin
   if not exists (select 1 from public.members m where m.id=chosen_member) then
     raise exception 'Anggota keluarga tidak ditemukan';
   end if;
+  if exists (select 1 from public.profiles p where p.member_id=chosen_member) then
+    raise exception 'Anggota keluarga ini sudah memiliki akun chat';
+  end if;
   insert into public.chat_registration_requests(user_id,member_id,full_name,email)
   values(new.id,chosen_member,chosen_name,coalesce(new.email,''))
   on conflict (user_id) do nothing;
