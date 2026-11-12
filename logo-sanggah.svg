@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Sanggah Keluarga Besar Pratisentana Pan Rengen">
+<defs>
+ <path id="topArc" d="M 72,258 A 184,184 0 0 1 440,258"/>
+ <path id="bottomArc" d="M 70,270 A 186,186 0 0 0 442,270"/>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7df83"/><stop offset="1" stop-color="#b98a32"/></linearGradient>
+</defs>
+<circle cx="256" cy="256" r="247" fill="#fff" stroke="url(#gold)" stroke-width="8"/>
+<circle cx="256" cy="256" r="177" fill="#fff" stroke="#caa34c" stroke-width="4"/>
+<text font-family="Arial,sans-serif" font-size="35" font-weight="900" letter-spacing="1.1" fill="#050505"><textPath href="#topArc" startOffset="50%" text-anchor="middle">SANGGAH KELUARGA BESAR</textPath></text>
+<text font-family="Arial,sans-serif" font-size="31" font-weight="900" letter-spacing="1.2" fill="#050505"><textPath href="#bottomArc" startOffset="50%" text-anchor="middle">PRATISENTANA PAN RENGEN</textPath></text>
+<g fill="#ffdf24" stroke="#c9a64e" stroke-width="3">
+ <path d="M256 106 Q217 127 215 165 Q256 152 297 165 Q295 127 256 106Z"/>
+ <path d="M256 406 Q217 385 215 347 Q256 360 297 347 Q295 385 256 406Z"/>
+ <path d="M106 256 Q127 217 165 215 Q152 256 165 297 Q127 295 106 256Z"/>
+ <path d="M406 256 Q385 217 347 215 Q360 256 347 297 Q385 295 406 256Z"/>
+ <path d="M151 151 Q190 145 212 174 Q179 186 174 212 Q145 190 151 151Z"/>
+ <path d="M361 151 Q322 145 300 174 Q333 186 338 212 Q367 190 361 151Z"/>
+ <path d="M151 361 Q190 367 212 338 Q179 326 174 300 Q145 322 151 361Z"/>
+ <path d="M361 361 Q322 367 300 338 Q333 326 338 300 Q367 322 361 361Z"/>
+</g>
+<circle cx="256" cy="256" r="112" fill="#ffe52a" stroke="#c9a64e" stroke-width="3"/>
+<g fill="#050505">
+ <path d="M151 299 L174 299 L174 260 L188 260 L188 234 L201 234 L201 213 L215 213 L215 188 L229 188 L229 160 L242 160 L242 299 L270 299 L270 160 L283 160 L283 188 L297 188 L297 213 L311 213 L311 234 L324 234 L324 260 L338 260 L338 299 L361 299 L361 319 L151 319Z"/>
+ <path d="M137 319 Q256 345 375 319 L365 340 Q256 365 147 340Z"/>
+ <path d="M166 269 Q146 262 145 247 Q143 232 158 236 Q166 239 164 248 Q179 245 182 257 L182 285 L166 285Z"/>
+ <path d="M346 269 Q366 262 367 247 Q369 232 354 236 Q346 239 348 248 Q333 245 330 257 L330 285 L346 285Z"/>
+</g>
+<g fill="#fff"><rect x="191" y="239" width="11" height="30" rx="4"/><rect x="310" y="239" width="11" height="30" rx="4"/><rect x="222" y="225" width="13" height="44" rx="4"/><rect x="277" y="225" width="13" height="44" rx="4"/></g>
+<g fill="#ffdf24" stroke="#c9a64e" stroke-width="2">
+ <path d="M51 256 Q66 224 80 256 Q98 234 103 257 Q82 274 77 274 Q60 273 51 256Z"/>
+ <path d="M461 256 Q446 224 432 256 Q414 234 409 257 Q430 274 435 274 Q452 273 461 256Z"/>
+ <path d="M77 223 Q62 241 78 259 Q95 247 91 230 Q86 218 77 223Z"/>
+ <path d="M435 223 Q450 241 434 259 Q417 247 421 230 Q426 218 435 223Z"/>
+</g>
+</svg>
