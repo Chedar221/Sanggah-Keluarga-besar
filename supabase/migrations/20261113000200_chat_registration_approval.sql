@@ -28,8 +28,8 @@ for select to authenticated using (
 -- Catat setiap pendaftaran Auth sebagai permintaan; metadata pengguna tidak pernah
 -- dipakai untuk memberi hak akses atau menentukan role.
 create schema if not exists public_private;
-revoke all on schema public_private from public, anon, authenticated;
-grant usage on schema public_private to supabase_auth_admin;
+revoke all on schema public_private from public, anon;
+grant usage on schema public_private to supabase_auth_admin, authenticated;
 
 create or replace function public_private.capture_chat_registration()
 returns trigger
