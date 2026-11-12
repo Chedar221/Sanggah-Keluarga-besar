@@ -12,6 +12,8 @@ create table if not exists public.chat_registration_requests (
 );
 create unique index if not exists one_pending_chat_registration_per_member
   on public.chat_registration_requests(member_id) where status='pending';
+create unique index if not exists one_chat_account_per_family_member
+  on public.profiles(member_id) where member_id is not null;
 alter table public.chat_registration_requests enable row level security;
 revoke all on public.chat_registration_requests from anon, authenticated;
 grant select on public.chat_registration_requests to authenticated;
@@ -73,7 +75,7 @@ declare
 begin
   select p.role into actor_role
   from public.profiles p where p.id=(select auth.uid());
-  if actor_role not in ('ketua','wakil','sekretaris','koordinator') then
+  if coalesce(actor_role,'') not in ('ketua','wakil','sekretaris','koordinator') then
     raise exception 'Tidak memiliki izin menyetujui pendaftaran';
   end if;
 
@@ -82,6 +84,9 @@ begin
   if not found then raise exception 'Pendaftaran tidak ditemukan atau sudah diproses'; end if;
 
   if p_approve then
+    if exists (select 1 from public.profiles p where p.member_id=req.member_id and p.id<>req.user_id) then
+      raise exception 'Anggota keluarga ini sudah memiliki akun chat';
+    end if;
     insert into public.profiles(id,full_name,role,member_id)
     values(req.user_id,req.full_name,'anggota',req.member_id)
     on conflict (id) do nothing;
