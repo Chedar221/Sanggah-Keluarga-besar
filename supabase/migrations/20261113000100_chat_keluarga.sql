@@ -69,7 +69,7 @@ create policy "chat messages send as self" on public.chat_messages
 for insert to authenticated with check (
   sender_id = (select auth.uid())
   and exists (select 1 from public.chat_room_members m
-              where m.room_id = room_id and m.user_id = (select auth.uid()))
+              where m.room_id = chat_messages.room_id and m.user_id = (select auth.uid()))
 );
 
 -- Buat grup keluarga utama secara otomatis, lalu masukkan profil yang sudah ada.
