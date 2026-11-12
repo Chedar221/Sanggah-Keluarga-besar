@@ -31,11 +31,7 @@ grant select, insert on public.chat_rooms to authenticated;
 grant select, insert on public.chat_room_members to authenticated;
 grant select, insert on public.chat_messages to authenticated;
 
--- Profil nama boleh dibaca sesama pengguna login agar daftar percakapan bisa ditampilkan.
-drop policy if exists "profiles chat directory" on public.profiles;
-create policy "profiles chat directory" on public.profiles
-for select to authenticated using (true);
-
+-- Direktori chat disediakan melalui RPC terbatas yang hanya mengembalikan ID dan nama.
 drop policy if exists "chat rooms member read" on public.chat_rooms;
 create policy "chat rooms member read" on public.chat_rooms
 for select to authenticated using (
