@@ -130,9 +130,9 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
 
 .welcome-card{padding:18px}
 .chat-entry-button{background:var(--gold);color:#173d32;font-weight:750}
-.communication-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
-.communication-actions .chat-entry-button{width:100%;min-width:0;white-space:nowrap}
-@media(max-width:380px){.communication-actions .chat-entry-button{font-size:13px;padding:10px 7px}}
+.homepage-action-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
+.homepage-action-buttons .chat-entry-button{width:100%;min-width:0;white-space:nowrap;padding:10px 4px;font-size:clamp(10px,2.7vw,14px)}
+@media(max-width:380px){.homepage-action-buttons{gap:4px}.homepage-action-buttons .chat-entry-button{font-size:10px;padding:9px 2px}}
 .compact-details{padding:14px 16px}
 .compact-details summary{cursor:pointer;font-weight:700;font-size:14px;list-style:none}
 .compact-details summary::-webkit-details-marker{display:none}
@@ -180,11 +180,9 @@ header .welcome{margin-top:14px;font-size:21px}
   <div class="card welcome-card">
     <h2>Om Swastiastu</h2>
     <p class="muted">Selamat datang di website keluarga besar Sanggah Gede Pan Rengen.</p>
-    <div class="actions">
-      <div class="communication-actions">
-        <button class="chat-entry-button" onclick="openPublicChat()">💬 Chat Keluarga</button>
-        <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WhatsApp</button>
-      </div>
+    <div class="actions homepage-action-buttons">
+      <button class="chat-entry-button" onclick="openPublicChat()">💬 Chat</button>
+      <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WhatsApp</button>
       <button class="chat-entry-button" onclick="showLogin()">Masuk</button>
       <button class="chat-entry-button" onclick="showRegister()">Daftar Chat</button>
     </div>
