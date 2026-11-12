@@ -135,3 +135,61 @@ begin
 exception when undefined_object then
   raise notice 'Publication supabase_realtime belum tersedia; aktifkan Realtime untuk chat_messages di Dashboard.';
 end $$;
+
+
+-- Membuat atau mengambil chat pribadi secara atomik.
+-- RPC ini tidak membaca daftar keanggotaan orang lain melalui kebijakan RLS.
+create or replace function public.get_or_create_direct_chat(p_other_user_id uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  actor_id uuid := (select auth.uid());
+  other_name text;
+  found_room uuid;
+  new_room uuid;
+begin
+  if actor_id is null then
+    raise exception 'Harus login untuk memulai chat';
+  end if;
+  if p_other_user_id is null or p_other_user_id = actor_id then
+    raise exception 'Pilih anggota keluarga lain';
+  end if;
+  if not exists (select 1 from public.profiles p where p.id=actor_id) then
+    raise exception 'Akun belum disetujui pengurus';
+  end if;
+  select p.full_name into other_name
+  from public.profiles p where p.id=p_other_user_id;
+  if other_name is null then
+    raise exception 'Akun anggota belum disetujui atau tidak ditemukan';
+  end if;
+
+  select r.id into found_room
+  from public.chat_rooms r
+  where r.room_type='direct'
+    and exists (select 1 from public.chat_room_members m
+                where m.room_id=r.id and m.user_id=actor_id)
+    and exists (select 1 from public.chat_room_members m
+                where m.room_id=r.id and m.user_id=p_other_user_id)
+    and (select count(*) from public.chat_room_members m where m.room_id=r.id)=2
+  order by r.created_at
+  limit 1;
+
+  if found_room is not null then
+    return found_room;
+  end if;
+
+  insert into public.chat_rooms(name,room_type,created_by)
+  values(other_name,'direct',actor_id)
+  returning id into new_room;
+
+  insert into public.chat_room_members(room_id,user_id)
+  values (new_room,actor_id),(new_room,p_other_user_id);
+
+  return new_room;
+end;
+$$;
+revoke all on function public.get_or_create_direct_chat(uuid) from public, anon;
+grant execute on function public.get_or_create_direct_chat(uuid) to authenticated;
