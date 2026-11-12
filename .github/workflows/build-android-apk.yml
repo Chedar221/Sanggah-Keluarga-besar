@@ -34,7 +34,7 @@ jobs:
           npm init -y
           npm install @capacitor/core@7 @capacitor/android@7
           npm install --save-dev @capacitor/cli@7 @capacitor/assets sharp
-          node -e "require('sharp')('../logo-sanggah.webp').resize(1024,1024,{fit:'contain',background:'#173d32'}).png().toFile('assets/icon.png')"
+          node -e 'const fs=require("fs");const svg=fs.readFileSync("../logo-sanggah.svg","utf8");const m=svg.match(/href="data:image\/webp;base64,([^"]+)"/);if(!m)throw new Error("Logo WebP embedded in logo-sanggah.svg not found");require("sharp")(Buffer.from(m[1],"base64")).resize(1024,1024,{fit:"contain",background:"#173d32"}).png().toFile("assets/icon.png").then(()=>console.log("Website logo extracted and saved as Android icon"));'
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "id.sanggahgedepanrengen.app",
