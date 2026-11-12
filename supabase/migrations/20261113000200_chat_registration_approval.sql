@@ -25,6 +25,10 @@ for select to authenticated using (
 
 -- Catat setiap pendaftaran Auth sebagai permintaan; metadata pengguna tidak pernah
 -- dipakai untuk memberi hak akses atau menentukan role.
+create schema if not exists public_private;
+revoke all on schema public_private from public, anon, authenticated;
+grant usage on schema public_private to supabase_auth_admin;
+
 create or replace function public_private.capture_chat_registration()
 returns trigger
 language plpgsql
@@ -50,9 +54,6 @@ begin
 end;
 $$;
 
-create schema if not exists public_private;
-revoke all on schema public_private from public, anon, authenticated;
-grant usage on schema public_private to supabase_auth_admin;
 grant execute on function public_private.capture_chat_registration() to supabase_auth_admin;
 drop trigger if exists on_auth_user_chat_registration on auth.users;
 create trigger on_auth_user_chat_registration
