@@ -268,6 +268,10 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
    KONFIGURASI DAN KONEKSI SUPABASE
 ===================================== */
 
+// Konfigurasi publik Supabase untuk website Sanggah.
+const SUPABASE_URL = 'https://ttiocfrvtqjqhbktohhp.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_gLUMLFkitaDgSAF5eGRPZg_salcqJS1';
+
 let sb = null;
 let session = null;
 let profile = null;
@@ -349,8 +353,10 @@ function saveConfig() {
 }
 
 function connectSupabase() {
-  const url = localStorage.getItem('sburl');
-  const key = localStorage.getItem('sbkey');
+  // Gunakan konfigurasi proyek keluarga sebagai default agar pengunjung
+  // tidak perlu mengatur koneksi secara manual di setiap perangkat.
+  const url = SUPABASE_URL;
+  const key = SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !key || !window.supabase) {
     showPublic();
@@ -358,7 +364,6 @@ function connectSupabase() {
   }
 
   sb = window.supabase.createClient(url, key);
-
   $('setup').classList.add('hidden');
   return true;
 }
