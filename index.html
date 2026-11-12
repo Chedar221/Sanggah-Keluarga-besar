@@ -1454,38 +1454,23 @@ async function loadChatRooms() {
 async function startNewChat() {
   const {data: people,error} = await sb.rpc('chat_directory');
   if (error) { toast('Daftar anggota chat gagal dimuat: '+error.message); return; }
-  if (!people || !people.length) {
+  const others=(people||[]).filter(p=>p.id!==session.user.id);
+  if (!others.length) {
     toast('Belum ada akun anggota lain. Setiap anggota perlu akun login sendiri.');
     return;
   }
-  const options = people.map((p,i)=> (i+1)+'. '+p.full_name).join('\n');
+  const options = others.map((p,i)=> (i+1)+'. '+p.full_name).join('\n');
   const answer = prompt('Pilih nomor anggota untuk chat pribadi:\n'+options);
   if (answer===null) return;
-  const person=people[Number(answer)-1];
+  const person=others[Number(answer)-1];
   if (!person) { toast('Pilihan tidak valid.'); return; }
-  const {data: existingRooms} = await sb.from('chat_room_members')
-    .select('room_id').eq('user_id',session.user.id);
-  const roomIds=(existingRooms||[]).map(x=>x.room_id);
-  if (roomIds.length) {
-    const {data: common}=await sb.from('chat_room_members').select('room_id')
-      .in('room_id',roomIds).eq('user_id',person.id);
-    if (common && common.length) {
-      const {data: direct}=await sb.from('chat_rooms').select('id,room_type')
-        .in('id',common.map(x=>x.room_id)).eq('room_type','direct');
-      if (direct && direct.length) { await openChatRoom(direct[0].id); return; }
-    }
+  const {data: roomId,error: createError}=await sb.rpc('get_or_create_direct_chat',{p_other_user_id:person.id});
+  if (createError || !roomId) {
+    toast('Chat pribadi gagal dibuat: '+(createError?.message||'Percakapan tidak ditemukan.'));
+    return;
   }
-  const {data: room,error: createError}=await sb.from('chat_rooms')
-    .insert({name:person.full_name,room_type:'direct',created_by:session.user.id})
-    .select('id').single();
-  if (createError) { toast('Gagal membuat chat: '+createError.message); return; }
-  const {error: memberError}=await sb.from('chat_room_members').insert([
-    {room_id:room.id,user_id:session.user.id},
-    {room_id:room.id,user_id:person.id}
-  ]);
-  if (memberError) { toast('Chat dibuat, tetapi anggota gagal ditambahkan: '+memberError.message); return; }
   await loadChatRooms();
-  await openChatRoom(room.id);
+  await openChatRoom(roomId);
 }
 
 async function createFamilyGroup() {
