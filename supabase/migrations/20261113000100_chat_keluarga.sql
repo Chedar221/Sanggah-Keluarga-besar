@@ -66,10 +66,10 @@ drop policy if exists "chat memberships add participants" on public.chat_room_me
 create policy "chat memberships add participants" on public.chat_room_members
 for insert to authenticated with check (
   public_private.is_approved_chat_profile(chat_room_members.user_id)
-  and (
-    user_id = (select auth.uid())
-    or exists (select 1 from public.chat_rooms r
-               where r.id = room_id and r.created_by = (select auth.uid()))
+  and exists (
+    select 1 from public.chat_rooms r
+    where r.id = chat_room_members.room_id
+      and r.created_by = (select auth.uid())
   )
 );
 
@@ -102,17 +102,22 @@ where r.name='Grup Keluarga Besar' and r.room_type='group'
 on conflict do nothing;
 
 create or replace function public.add_new_profile_to_family_chat()
-returns trigger language plpgsql security definer set search_path=public
-as $$
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
 begin
   insert into public.chat_room_members(room_id,user_id)
-  select id,new.id from public.chat_rooms
-  where name='Grup Keluarga Besar' and room_type='group'
-  order by created_at limit 1
+  select r.id,new.id
+  from public.chat_rooms r
+  where r.name='Grup Keluarga Besar' and r.room_type='group'
+  order by r.created_at
+  limit 1
   on conflict do nothing;
   return new;
 end;
-$$;
+$;
 revoke all on function public.add_new_profile_to_family_chat() from public, anon, authenticated;
 drop trigger if exists add_profile_to_family_chat on public.profiles;
 create trigger add_profile_to_family_chat after insert on public.profiles
