@@ -179,7 +179,8 @@ header .welcome{margin-top:14px;font-size:21px}
     <p class="muted">Selamat datang di website keluarga besar Sanggah Gede Pan Rengen.</p>
     <div class="actions">
       <button class="chat-entry-button" onclick="openPublicChat()">💬 Chat Keluarga</button>
-      <button class="secondary" onclick="showLogin()">Masuk Pengurus</button>
+      <button class="secondary" onclick="showLogin()">Masuk</button>
+      <button class="secondary" onclick="showRegister()">Daftar Chat</button>
     </div>
   </div>
 
@@ -215,6 +216,18 @@ header .welcome{margin-top:14px;font-size:21px}
     <div id="publicTransactions" class="muted">Data transaksi akan ditampilkan di sini.</div>
     <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">Muat transaksi berikutnya</button>
   </details>
+</section>
+
+<section id="register" class="card hidden">
+  <h2>Daftar Akun Chat Keluarga</h2>
+  <p class="muted">Pendaftaran harus disetujui pengurus sebelum akun dapat menggunakan chat.</p>
+  <form onsubmit="registerChatAccount(event)">
+    <label>Nama lengkap</label><input id="regName" required maxlength="120" placeholder="Nama sesuai daftar keluarga">
+    <label>Pilih nama pada daftar anggota</label><select id="regMember" required><option value="">Memuat daftar anggota...</option></select>
+    <label>Email aktif</label><input id="regEmail" type="email" required autocomplete="email" placeholder="nama@email.com">
+    <label>Password (minimal 8 karakter)</label><input id="regPassword" type="password" required minlength="8" autocomplete="new-password">
+    <div class="actions"><button type="submit">Kirim Pendaftaran</button><button type="button" class="secondary" onclick="showPublic()">Kembali</button></div>
+  </form>
 </section>
 
 <section id="login" class="card hidden">
@@ -335,12 +348,14 @@ function roleName(role) {
 function showPublic() {
   $('publicPage').classList.remove('hidden');
   $('login').classList.add('hidden');
+  $('register').classList.add('hidden');
   $('app').classList.add('hidden');
   $('setup').classList.add('hidden');
 }
 
 function showLogin() {
   $('publicPage').classList.add('hidden');
+  $('register').classList.add('hidden');
   $('login').classList.remove('hidden');
   $('setup').classList.add('hidden');
   const heading = $('login').querySelector('h2');
@@ -358,8 +373,35 @@ function openPublicChat() {
   showLogin();
 }
 
+function showRegister() {
+  $('publicPage').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('register').classList.remove('hidden');
+  $('setup').classList.add('hidden');
+  loadRegistrationMembers();
+}
+
+async function loadRegistrationMembers() {
+  const el=$('regMember'); if(!el || !sb) return;
+  const {data,error}=await sb.from('members').select('id,full_name').order('full_name');
+  if(error){el.innerHTML='<option value="">Daftar anggota gagal dimuat</option>';return;}
+  el.innerHTML='<option value="">Pilih nama Anda</option>'+(data||[]).map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name)+'</option>').join('');
+}
+
+async function registerChatAccount(event) {
+  event.preventDefault();
+  const fullName=$('regName').value.trim(), memberId=$('regMember').value;
+  const email=$('regEmail').value.trim(), password=$('regPassword').value;
+  if(!fullName || !memberId || !email || password.length<8){toast('Lengkapi data dengan benar.');return;}
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:fullName,member_id:memberId}}});
+  if(error){toast('Pendaftaran gagal: '+error.message);return;}
+  $('register').classList.add('hidden'); showPublic();
+  toast(data.session?'Pendaftaran terkirim. Tunggu persetujuan pengurus.':'Pendaftaran terkirim. Cek email bila diminta, lalu tunggu persetujuan pengurus.');
+}
+
 function showSetup() {
   $('publicPage').classList.add('hidden');
+  $('register').classList.add('hidden');
   $('login').classList.add('hidden');
   $('setup').classList.remove('hidden');
 }
@@ -448,7 +490,7 @@ async function loadProfile() {
     .single();
 
   if (error || !data) {
-    toast('Profil belum dibuat. Hubungi administrator.');
+    toast('Akun belum disetujui pengurus atau profil belum aktif. Silakan tunggu persetujuan.');
     $('app').classList.add('hidden');
     showLogin();
     return;
@@ -458,6 +500,7 @@ async function loadProfile() {
 
   $('publicPage').classList.add('hidden');
   $('login').classList.add('hidden');
+  $('register').classList.add('hidden');
   $('setup').classList.add('hidden');
   $('app').classList.remove('hidden');
 
@@ -517,7 +560,8 @@ const pages = [  ['pengumuman','▤','Pengumuman'],
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
-  ['dokumen','▧','Arsip']
+  ['dokumen','▧','Arsip'],
+  ['pendaftaran','✓','Pendaftaran']
 ];
 
 function renderNav() {
@@ -675,6 +719,11 @@ anggota: {
 
 function renderView() {
   const v = $('view');
+
+  if (active === 'pendaftaran') {
+    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pendaftaran hanya untuk pengurus.</div>'; return; }
+    renderRegistrationRequests(); return;
+  }
 
   if (active === 'chat') {
     renderChat();
@@ -1315,6 +1364,26 @@ let activeChatRoom = null;
 let chatRealtimeChannel = null;
 let chatRoomsCache = [];
 
+
+async function renderRegistrationRequests() {
+  $('view').innerHTML='<div class="card"><h2>Pendaftaran Chat Keluarga</h2><p class="muted">Cocokkan nama pendaftar dengan data anggota sebelum menyetujui.</p><div id="registrationRequests">Memuat...</div></div>';
+  const target=$('registrationRequests');
+  const {data,error}=await sb.from('chat_registration_requests').select('id,full_name,email,member_id,created_at').eq('status','pending').order('created_at');
+  if(error){target.textContent='Gagal memuat pendaftaran: '+error.message;return;}
+  if(!data || !data.length){target.textContent='Belum ada pendaftaran menunggu persetujuan.';return;}
+  const ids=data.map(x=>x.member_id);
+  const {data:members}=await sb.from('members').select('id,full_name').in('id',ids);
+  const names={};(members||[]).forEach(m=>names[m.id]=m.full_name);
+  target.innerHTML=data.map(r=>'<div class="listitem"><b>'+esc(r.full_name)+'</b><div class="muted">'+esc(r.email)+'</div><div class="muted">Data anggota: '+esc(names[r.member_id]||'Tidak ditemukan')+'</div><div class="actions" style="margin-top:8px"><button onclick="decideChatRegistration(\''+r.id+'\',true)">Setujui</button><button class="danger" onclick="decideChatRegistration(\''+r.id+'\',false)">Tolak</button></div></div>').join('');
+}
+async function decideChatRegistration(id,approve) {
+  if(!confirm(approve?'Setujui pendaftaran ini?':'Tolak pendaftaran ini?')) return;
+  const {error}=await sb.rpc('decide_chat_registration',{p_request_id:id,p_approve:approve});
+  if(error){toast('Gagal memproses: '+error.message);return;}
+  toast(approve?'Akun anggota disetujui.':'Pendaftaran ditolak.');
+  renderRegistrationRequests();
+}
+
 function renderChat() {
   $('view').innerHTML = `
     <div class="card">
@@ -1383,8 +1452,7 @@ async function loadChatRooms() {
 }
 
 async function startNewChat() {
-  const {data: people,error} = await sb.from('profiles')
-    .select('id,full_name').neq('id',session.user.id).order('full_name');
+  const {data: people,error} = await sb.rpc('chat_directory');
   if (error) { toast('Daftar anggota chat gagal dimuat: '+error.message); return; }
   if (!people || !people.length) {
     toast('Belum ada akun anggota lain. Setiap anggota perlu akun login sendiri.');
@@ -1423,7 +1491,7 @@ async function startNewChat() {
 async function createFamilyGroup() {
   const name=prompt('Nama grup keluarga:','Grup Keluarga');
   if (!name || !name.trim()) return;
-  const {data: people,error}=await sb.from('profiles').select('id,full_name').neq('id',session.user.id).order('full_name');
+  const {data: people,error}=await sb.rpc('chat_directory');
   if (error) { toast('Daftar anggota gagal dimuat: '+error.message); return; }
   let chosen=[];
   if (people && people.length) {
@@ -1474,7 +1542,7 @@ async function loadChatMessages() {
   const senderIds=[...new Set((data||[]).map(m=>m.sender_id))];
   let names={};
   if (senderIds.length) {
-    const {data: senders}=await sb.from('profiles').select('id,full_name').in('id',senderIds);
+    const {data: senders}=await sb.rpc('chat_directory');
     (senders||[]).forEach(p=>names[p.id]=p.full_name);
   }
   $('chatMessages').innerHTML=(data||[]).length?(data||[]).map(m=>`
