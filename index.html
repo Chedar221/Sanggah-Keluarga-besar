@@ -6,7 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#173d32">
 <title>SANGGAH GEDE PAN RENGEN</title>
-<link rel="manifest" href="manifest.webmanifest?v=3">\n<link rel="icon" type="image/svg+xml" href="logo-sanggah.svg?v=3">\n<meta name="apple-mobile-web-app-title" content="Sanggah Keluarga">
+<link rel="manifest" href="manifest.webmanifest?v=3">
+<link rel="icon" type="image/svg+xml" href="logo-sanggah.svg?v=3">
+<meta name="apple-mobile-web-app-title" content="Sanggah Keluarga">
 <style>
 :root {
   --green:#173d32;
@@ -1416,7 +1418,8 @@ async function editRecord(table, id) {
   for (const [column, label, type] of fields) {
     const oldValue = data[column] ?? '';
     const answer = prompt(
-      'Edit ' + label + '\nKosongkan jika ingin mengosongkan nilai:',
+      'Edit ' + label + '
+Kosongkan jika ingin mengosongkan nilai:',
       String(oldValue)
     );
 
@@ -1464,7 +1467,8 @@ async function deleteRecord(table, id) {
   }
 
   const approved = confirm(
-    'Yakin ingin menghapus data ini?\nData yang sudah dihapus tidak dapat dikembalikan.'
+    'Yakin ingin menghapus data ini?
+Data yang sudah dihapus tidak dapat dikembalikan.'
   );
 
   if (!approved) return;
