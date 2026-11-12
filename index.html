@@ -936,7 +936,7 @@ async function loadPublicMembers() {
    LAPORAN KEUANGAN PUBLIK
 ===================================== */
 
-async async function loadPublicFinance() {
+async function loadPublicFinance() {
   const status = $('publicStatus');
   if (!status) return;
 
@@ -1423,8 +1423,7 @@ async function editRecord(table, id) {
   for (const [column, label, type] of fields) {
     const oldValue = data[column] ?? '';
     const answer = prompt(
-      'Edit ' + label + '
-Kosongkan jika ingin mengosongkan nilai:',
+      'Edit ' + label + '\nKosongkan jika ingin mengosongkan nilai:',
       String(oldValue)
     );
 
@@ -1472,8 +1471,7 @@ async function deleteRecord(table, id) {
   }
 
   const approved = confirm(
-    'Yakin ingin menghapus data ini?
-Data yang sudah dihapus tidak dapat dikembalikan.'
+    'Yakin ingin menghapus data ini?\nData yang sudah dihapus tidak dapat dikembalikan.'
   );
 
   if (!approved) return;
