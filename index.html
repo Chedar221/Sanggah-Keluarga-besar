@@ -507,8 +507,7 @@ const pages = [
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
-  ['dokumen','▧','Arsip'],
-  ['chat','💬','Chat Keluarga']
+  ['dokumen','▧','Arsip']
 ];
 
 function renderNav() {
@@ -688,6 +687,15 @@ function renderView() {
         <h2>Menu Utama</h2>
         <p class="muted">Pilih menu untuk mengelola administrasi keluarga.</p>
         <span class="pill">Akses: ${esc(roleName(profile.role))}</span>
+      </div>
+      <div class="card chat-dashboard-card">
+        <div class="row">
+          <div>
+            <h2>💬 Chat Keluarga</h2>
+            <p class="muted">Berkomunikasi pribadi atau bersama keluarga dalam satu tempat.</p>
+          </div>
+          <button onclick="go('chat')">Buka Chat</button>
+        </div>
       </div>
     `;
 
