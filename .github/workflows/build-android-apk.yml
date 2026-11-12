@@ -34,7 +34,7 @@ jobs:
           npm init -y
           npm install @capacitor/core@7 @capacitor/android@7
           npm install --save-dev @capacitor/cli@7 @capacitor/assets sharp
-          node -e "require('sharp')('../logo-sanggah.webp').resize(1024,1024,{fit:'contain',background:'#173d32'}).png().toFile('assets/icon-only.png')"
+          node -e "require('sharp')('../logo-sanggah.svg').resize(1024,1024,{fit:'contain',background:'#173d32'}).png().toFile('assets/icon.png')"
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "id.sanggahgedepanrengen.app",
