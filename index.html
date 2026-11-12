@@ -875,7 +875,7 @@ async function loadPublicAnnouncements() {
     .limit(10);
 
   if (error) {
-    list.textContent = 'Pengumuman belum dapat ditampilkan. Silakan hubungi pengurus.';
+    list.textContent = 'Gagal memuat pengumuman: ' + error.message;
     return;
   }
 
@@ -910,7 +910,7 @@ async function loadPublicMembers() {
     .limit(300);
 
   if (error) {
-    list.textContent = 'Daftar anggota belum dapat ditampilkan. Silakan hubungi pengurus.';
+    list.textContent = 'Gagal memuat anggota: ' + error.message;
     return;
   }
 
@@ -956,7 +956,7 @@ async function loadPublicFinance() {
       .range(publicOffset,publicOffset + 499);
 
     if (error) {
-      status.textContent = 'Laporan belum dapat dimuat. Periksa pengaturan akses Supabase.';
+      status.textContent = 'Gagal memuat laporan keuangan: ' + error.message;
       return;
     }
 
