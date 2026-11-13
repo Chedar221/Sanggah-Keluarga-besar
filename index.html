@@ -34,6 +34,20 @@
 <link rel="icon" type="image/svg+xml" href="logo-sanggah.svg?v=3">
 <meta name="apple-mobile-web-app-title" content="Sanggah Keluarga">
 <style>
+
+/* NOTIFIKASI KELUARGA */
+.app-header-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.notification-bell{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.notification-count{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:20px;background:#c43e36;color:#fff;font-size:10px;font-weight:800}
+.notification-card{border:1px solid var(--line);border-radius:13px;padding:13px;margin:10px 0;background:#fff}
+.notification-card.unread{border-left:4px solid var(--gold);background:#fffdf7}
+.notification-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.notification-category{font-size:10px;font-weight:800;letter-spacing:.06em;color:#8a6822;text-transform:uppercase}
+.notification-card p{margin:7px 0 10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.5}
+.notification-card h3{font-size:14px;margin:0}
+.notification-form{display:grid;gap:4px}
+.notification-form textarea{min-height:90px}
+
 :root {
   --green:#173d32;
   --green2:#285b46;
@@ -496,7 +510,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
         <b id="userName">Pengguna</b>
         <div class="muted" id="userRole">Anggota keluarga</div>
       </div>
-      <button class="secondary" onclick="signOut()">Keluar</button>
+      <div class="app-header-actions"><button class="secondary notification-bell" id="notificationBell" onclick="go('notifikasi')" type="button">♧ NOTIFIKASI <span id="notificationBadge" class="notification-count hidden">0</span></button><button class="secondary" onclick="signOut()">Keluar</button></div>
     </div>
   </div>
 
@@ -756,6 +770,7 @@ async function signOut() {
 
   session = null;
   profile = null;
+  if (familyNotificationChannel && sb) { sb.removeChannel(familyNotificationChannel); familyNotificationChannel = null; }
 
   $('app').classList.add('hidden');
   showPublic();
@@ -793,6 +808,8 @@ async function loadProfile() {
   pendingChatEntry = false;
   renderNav();
   renderView();
+  await refreshNotificationBadge();
+  subscribeFamilyNotifications();
 }
 
 /* =====================================
@@ -833,7 +850,7 @@ function canDelete(table) {
    MENU APLIKASI
 ===================================== */
 
-const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'],
+const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'],
   ['dashboard','⌂','Beranda'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
@@ -1001,6 +1018,10 @@ anggota: {
 function renderView() {
   const v = $('view');
 
+  if (active === 'notifikasi') {
+    renderNotificationCenter(); return;
+  }
+
   if (active === 'pesan') {
     if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pengelolaan pesan hanya untuk pengurus.</div>'; return; }
     renderPublicChatManager(); return;
@@ -1110,6 +1131,139 @@ function renderView() {
   loadRows(cfg.table);
 }
 
+
+/* =====================================
+   NOTIFIKASI KELUARGA
+===================================== */
+let familyNotificationChannel = null;
+let familyNotificationLoading = false;
+
+function notificationCategoryLabel(category) {
+  return ({umum:'Umum',pengumuman:'Pengumuman',upacara:'Upacara',ngayah:'Ngayah',iuran:'Iuran',pesan:'Pesan'})[category] || 'Umum';
+}
+
+async function createFamilyNotification(title, body, category='umum') {
+  if (!session || !canManageGeneral()) return {error:{message:'Akses membuat notifikasi ditolak.'}};
+  const cleanTitle=String(title||'').trim().slice(0,120);
+  const cleanBody=String(body||'').trim().slice(0,2000);
+  if(cleanTitle.length<3 || !cleanBody) return {error:{message:'Judul dan isi notifikasi harus diisi.'}};
+  const {data,error}=await sb.from('family_notifications').insert({
+    title:cleanTitle,body:cleanBody,category,created_by:session.user.id
+  }).select('id').single();
+  if(error){console.error('Notifikasi gagal dibuat:',error);return {error};}
+  await refreshNotificationBadge();
+  return {data};
+}
+
+async function refreshNotificationBadge() {
+  const badge=$('notificationBadge');
+  if(!session || !sb) { if(badge)badge.classList.add('hidden'); return; }
+  const [all,read]=await Promise.all([
+    sb.from('family_notifications').select('id',{count:'exact',head:true}),
+    sb.from('family_notification_reads').select('notification_id',{count:'exact',head:true}).eq('user_id',session.user.id)
+  ]);
+  if(all.error || read.error) { if(badge)badge.classList.add('hidden'); return; }
+  const unread=Math.max(0,(all.count||0)-(read.count||0));
+  if(badge){badge.textContent=unread>99?'99+':String(unread);badge.classList.toggle('hidden',unread===0);}
+}
+
+function subscribeFamilyNotifications() {
+  if(!sb || !session || familyNotificationChannel) return;
+  familyNotificationChannel=sb.channel('family-notifications-'+session.user.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'family_notifications'},async()=>{
+      await refreshNotificationBadge();
+      if(active==='notifikasi') await loadNotificationCenter();
+    }).subscribe();
+}
+
+async function renderNotificationCenter() {
+  const v=$('view');
+  const canSend=canManageGeneral();
+  v.innerHTML=`
+    ${canSend?`<div class="card">
+      <h2>＋ BUAT NOTIFIKASI KELUARGA</h2>
+      <p class="muted">Kirim pemberitahuan kepada seluruh anggota yang sudah memiliki akun dan login.</p>
+      <form class="notification-form" onsubmit="sendFamilyNotification(event)">
+        <label>Jenis notifikasi</label>
+        <select id="familyNotificationCategory">
+          <option value="umum">Informasi umum</option>
+          <option value="pengumuman">Pengumuman</option>
+          <option value="upacara">Jadwal upacara</option>
+          <option value="ngayah">Ngayah</option>
+          <option value="iuran">Iuran</option>
+          <option value="pesan">Pesan keluarga</option>
+        </select>
+        <label>Judul</label>
+        <input id="familyNotificationTitle" maxlength="120" required placeholder="Contoh: Pengingat rapat keluarga">
+        <label>Isi pemberitahuan</label>
+        <textarea id="familyNotificationBody" maxlength="2000" required placeholder="Tulis informasi yang ingin disampaikan..."></textarea>
+        <button type="submit">Kirim Notifikasi</button>
+      </form>
+    </div>`:''}
+    <div class="card">
+      <div class="row"><div><h2>♧ NOTIFIKASI KELUARGA</h2><p class="muted">Informasi terbaru untuk akun anggota keluarga.</p></div><button class="secondary" type="button" onclick="loadNotificationCenter()">Muat ulang</button></div>
+      <div id="familyNotificationRows" class="muted">Memuat notifikasi...</div>
+    </div>`;
+  await loadNotificationCenter();
+  await refreshNotificationBadge();
+}
+
+async function loadNotificationCenter() {
+  const box=$('familyNotificationRows');
+  if(!box || !session || familyNotificationLoading)return;
+  familyNotificationLoading=true;
+  box.textContent='Memuat notifikasi...';
+  const [items,reads]=await Promise.all([
+    sb.from('family_notifications').select('id,title,body,category,created_at,created_by').order('created_at',{ascending:false}).limit(100),
+    sb.from('family_notification_reads').select('notification_id').eq('user_id',session.user.id)
+  ]);
+  familyNotificationLoading=false;
+  if(items.error || reads.error){box.textContent='Notifikasi gagal dimuat: '+(items.error?.message||reads.error?.message||'Periksa koneksi.');return;}
+  const readIds=new Set((reads.data||[]).map(x=>x.notification_id));
+  if(!items.data?.length){box.textContent='Belum ada notifikasi.';return;}
+  box.innerHTML=items.data.map(n=>{
+    const isRead=readIds.has(n.id);
+    const stamp=new Date(n.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const readAction=isRead?'<span class="pill">Sudah dibaca</span>':'<button type="button" class="secondary" onclick="markFamilyNotificationRead(\''+n.id+'\')">Tandai dibaca</button>';
+    const removeAction=canManageGeneral()?'<button type="button" class="danger" onclick="deleteFamilyNotification(\''+n.id+'\')">Hapus</button>':'';
+    return '<article class="notification-card '+(isRead?'':'unread')+'"><div class="notification-meta"><span class="notification-category">'+esc(notificationCategoryLabel(n.category))+'</span><span class="muted">'+esc(stamp)+'</span></div><h3>'+esc(n.title)+'</h3><p>'+esc(n.body)+'</p><div class="actions">'+readAction+removeAction+'</div></article>';
+  }).join('');
+}
+
+async function sendFamilyNotification(event) {
+  event.preventDefault();
+  if(!canManageGeneral()){toast('Hanya pengurus yang berwenang dapat mengirim notifikasi.');return;}
+  const title=$('familyNotificationTitle').value.trim();
+  const body=$('familyNotificationBody').value.trim();
+  const category=$('familyNotificationCategory').value;
+  const result=await createFamilyNotification(title,body,category);
+  if(result.error){toast('Notifikasi gagal dikirim: '+result.error.message);return;}
+  toast('Notifikasi berhasil dikirim kepada anggota yang memiliki akun.');
+  event.target.reset();
+  await loadNotificationCenter();
+}
+
+async function markFamilyNotificationRead(id) {
+  if(!session)return;
+  const {error}=await sb.from('family_notification_reads').upsert(
+    {notification_id:id,user_id:session.user.id,read_at:new Date().toISOString()},
+    {onConflict:'notification_id,user_id',ignoreDuplicates:true}
+  );
+  if(error){toast('Status notifikasi gagal diperbarui: '+error.message);return;}
+  await loadNotificationCenter();
+  await refreshNotificationBadge();
+}
+
+async function deleteFamilyNotification(id) {
+  if(!canManageGeneral())return;
+  if(!confirm('Hapus notifikasi ini untuk semua anggota?'))return;
+  const {error}=await sb.from('family_notifications').delete().eq('id',id);
+  if(error){toast('Notifikasi gagal dihapus: '+error.message);return;}
+  toast('Notifikasi dihapus.');
+  await loadNotificationCenter();
+  await refreshNotificationBadge();
+}
+
 async function renderPublicChatManager() {
   const v=$('view');
   v.innerHTML=`
@@ -1181,7 +1335,16 @@ async function saveGeneric(event, table) {
   event.target.reset();
   loadRows(table);
   if (table === 'members') loadStats();
-  if (table === 'announcements') loadPublicAnnouncements();
+  if (table === 'announcements') {
+    loadPublicAnnouncements();
+    await createFamilyNotification('Pengumuman baru: '+(obj.title||'Informasi keluarga'), obj.body||'Pengurus telah menerbitkan pengumuman baru.', 'pengumuman');
+  }
+  if (table === 'events') {
+    await createFamilyNotification('Jadwal upacara: '+(obj.title||'Kegiatan keluarga'), [obj.event_date ? 'Tanggal: '+obj.event_date : '', obj.location ? 'Lokasi: '+obj.location : '', obj.notes||''].filter(Boolean).join(' · ') || 'Jadwal kegiatan keluarga telah diperbarui.', 'upacara');
+  }
+  if (table === 'ngayah') {
+    await createFamilyNotification('Informasi ngayah: '+(obj.task||'Kegiatan ngayah'), [obj.event_date ? 'Tanggal: '+obj.event_date : '', obj.notes||''].filter(Boolean).join(' · ') || 'Informasi ngayah keluarga telah diperbarui.', 'ngayah');
+  }
 }
 
 /* =====================================
