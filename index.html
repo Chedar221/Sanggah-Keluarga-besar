@@ -2049,7 +2049,7 @@ async function loadPublicChatMessages() {
     const actions=mine
       ? '<span class="public-chat-actions"><button class="public-chat-edit" onclick="editPublicChatMessage(\''+m.id+'\')">Edit</button><button class="public-chat-delete" onclick="deleteMyPublicChatMessage(\''+m.id+'\')">Hapus</button></span>'
       : (canModerate?'<button class="public-chat-delete" onclick="deletePublicChatMessage(\''+m.id+'\')">Hapus</button>':'');
-    return '<article class="public-chat-bubble" onpointerdown="startPublicChatLongPress(event,this)" onpointerup="cancelPublicChatLongPress(event)" onpointerleave="cancelPublicChatLongPress(event)" onpointercancel="cancelPublicChatLongPress(event)" onpointermove="movePublicChatLongPress(event)" oncontextmenu="showPublicChatActions(event,this)"><strong>'+esc(m.sender_name)+actions+'</strong><p>'+esc(m.body)+'</p><time>'+esc(stamp)+(m.edited_at?' · diedit':'')+'</time></article>';
+    return '<article class="public-chat-bubble" onpointerdown="startPublicChatLongPress(event,this)" onpointerup="cancelPublicChatLongPress(event)" onpointerleave="cancelPublicChatLongPress(event)" onpointercancel="cancelPublicChatLongPress(event)" onpointermove="movePublicChatLongPress(event)" onclick="showPublicChatActions(event,this)" oncontextmenu="showPublicChatActions(event,this)"><strong>'+esc(m.sender_name)+actions+'</strong><p>'+esc(m.body)+'</p><time>'+esc(stamp)+(m.edited_at?' · diedit':'')+'</time></article>';
   }).join('');
   if(nearBottom) box.scrollTop=box.scrollHeight;
 }
@@ -2059,7 +2059,9 @@ function showPublicChatActions(event,bubble) {
   if(event) event.preventDefault();
   if(!bubble) return;
   document.querySelectorAll('.public-chat-bubble.is-actions-visible').forEach(el=>{if(el!==bubble)el.classList.remove('is-actions-visible');});
-  bubble.classList.toggle('is-actions-visible');
+  // Tambahkan kelas secara idempoten: Android dapat memicu pointer timer
+  // dan contextmenu untuk satu tekanan lama; toggle bisa menutup menu kembali.
+  bubble.classList.add('is-actions-visible');
 }
 function startPublicChatLongPress(event,bubble) {
   if(event.pointerType==='mouse' && event.button!==0) return;
