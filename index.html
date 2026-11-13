@@ -166,6 +166,33 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
 #publicPage>.card{margin-bottom:10px}
 header{padding:17px 18px 19px}
 header .welcome{margin-top:14px;font-size:21px}
+/* CHAT PUBLIK BERANDA */
+.public-chat-modal{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(5,22,17,.68);backdrop-filter:blur(5px)}
+.public-chat-modal.open{display:flex}
+.public-chat-card{width:min(100%,560px);height:min(760px,calc(100dvh - 28px));display:flex;flex-direction:column;overflow:hidden;background:#fbfcfa;border:1px solid #dfe8df;border-radius:20px;box-shadow:0 24px 80px #0004}
+.public-chat-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 18px 14px;background:#123d2d;color:#fff}
+.public-chat-head h2{margin:3px 0 2px;font-size:18px;letter-spacing:.04em}
+.public-chat-head p{margin:0;color:#d5e5da;font-size:12px}
+.public-chat-kicker{font-size:9px;letter-spacing:.14em;color:#e2c477;font-weight:800}
+.public-chat-close{flex:0 0 34px;width:34px;height:34px;padding:0;border:1px solid #ffffff35;border-radius:50%;background:#ffffff12;color:#fff;font-size:24px;line-height:1}
+.public-chat-notice{padding:9px 14px;background:#f3f6ef;color:#65736a;font-size:11px;border-bottom:1px solid #e5ebe3}
+.public-chat-messages{flex:1;min-height:140px;overflow-y:auto;padding:14px;background:#f8faf7;display:flex;flex-direction:column;gap:9px}
+.public-chat-empty{text-align:center;margin:auto;color:#87938a;font-size:13px;padding:20px}
+.public-chat-bubble{max-width:86%;align-self:flex-start;padding:9px 12px;background:#fff;border:1px solid #e5ebe5;border-radius:4px 14px 14px 14px;box-shadow:0 2px 6px #163d2b08;overflow-wrap:anywhere}
+.public-chat-bubble strong{display:block;color:#24613f;font-size:11px;margin-bottom:3px}
+.public-chat-bubble p{margin:0;color:#27372e;font-size:13px;line-height:1.45;white-space:pre-wrap}
+.public-chat-bubble time{display:block;text-align:right;margin-top:5px;color:#9aa49c;font-size:9px}
+.public-chat-delete{float:right;border:0;background:transparent;color:#a45b50;padding:0 0 0 8px;font-size:10px}
+.public-chat-compose{padding:12px 14px 10px;background:#fff;border-top:1px solid #e5ebe5}
+.public-chat-compose input,.public-chat-compose textarea{width:100%;margin:0 0 8px;border:1px solid #dce5dc;border-radius:10px;background:#fbfcfa;padding:10px 12px;font-size:13px;outline:none}
+.public-chat-compose input:focus,.public-chat-compose textarea:focus{border-color:#4e8a65;box-shadow:0 0 0 3px #4e8a6515}
+.public-chat-compose-row{display:flex;align-items:flex-end;gap:8px}
+.public-chat-compose textarea{resize:none;min-height:44px;max-height:110px;margin:0}
+.public-chat-compose-row button{height:44px;flex:0 0 auto;padding:0 17px;border-radius:10px;background:#1b6a3d;color:#fff;font-size:12px}
+.public-chat-compose-row button:disabled{opacity:.6}
+.public-chat-foot{display:flex;justify-content:space-between;gap:8px;padding-top:7px;color:#9aa49c;font-size:9px}
+@media(max-width:600px){.public-chat-modal{padding:0;align-items:flex-end}.public-chat-card{width:100%;height:min(760px,92dvh);border-radius:20px 20px 0 0}.public-chat-head{padding:16px}.public-chat-messages{padding:12px}.public-chat-compose{padding-bottom:max(12px,env(safe-area-inset-bottom))}}
+
 /* CHAT KELUARGA */
 .chat-layout{display:grid;grid-template-columns: minmax(180px, .8fr) minmax(0,1.6fr);gap:12px}
 .chat-rooms{max-height:460px;overflow:auto}
@@ -495,6 +522,22 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
 
 </main>
 
+<div id="publicChatModal" class="public-chat-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="publicChatTitle" onclick="if(event.target===this)closePublicChat()">
+  <section class="public-chat-card">
+    <header class="public-chat-head">
+      <div><div class="public-chat-kicker">SANGGAH GEDE PAN RENGEN</div><h2 id="publicChatTitle">PESAN KELUARGA</h2><p>Ruang komunikasi bersama seluruh keluarga</p></div>
+      <button type="button" class="public-chat-close" aria-label="Tutup chat" onclick="closePublicChat()">×</button>
+    </header>
+    <div class="public-chat-notice">Gunakan bahasa yang sopan. Nama ditampilkan sesuai yang Anda tulis.</div>
+    <div id="publicChatMessages" class="public-chat-messages" aria-live="polite"><div class="public-chat-empty">Memuat pesan keluarga...</div></div>
+    <form class="public-chat-compose" onsubmit="sendPublicChatMessage(event)">
+      <input id="publicChatName" maxlength="50" autocomplete="name" placeholder="Nama Anda" required>
+      <div class="public-chat-compose-row"><textarea id="publicChatInput" rows="2" maxlength="1000" placeholder="Tulis pesan untuk keluarga..." required></textarea><button id="publicChatSend" type="submit">Kirim</button></div>
+      <div class="public-chat-foot"><span>Maksimal 1.000 karakter</span><span id="publicChatStatus">Pesan tampil untuk semua pengunjung</span></div>
+    </form>
+  </section>
+</div>
+
 <footer class="site-footer">
   <div class="footer-ornament">✦ ❖ ✦</div>
   <strong>SANGGAH GEDE PAN RENGEN</strong>
@@ -594,15 +637,19 @@ function showLogin() {
   if (heading) heading.textContent = pendingChatEntry ? 'Masuk untuk Chat Keluarga' : 'Login Pengurus';
 }
 function openPublicChat() {
-  pendingChatEntry = true;
-  if (session && profile) {
-    $('publicPage').classList.add('hidden');
-    $('login').classList.add('hidden');
-    $('app').classList.remove('hidden');
-    go('chat');
-    return;
-  }
-  showLogin();
+  const modal = $('publicChatModal');
+  if (!modal || !sb) { toast('Chat belum siap. Coba muat ulang halaman.'); return; }
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  loadPublicChatMessages();
+  subscribePublicChat();
+  setTimeout(()=>$('publicChatName')?.focus(),120);
+}
+function closePublicChat() {
+  const modal=$('publicChatModal');
+  if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}
+  document.body.style.overflow='';
 }
 
 function showRegister() {
@@ -1966,6 +2013,62 @@ async function sendChatMessage(event) {
   await loadChatMessages();
 }
 
+let publicChatChannel = null;
+let publicChatLoading = false;
+function publicChatToken() {
+  let token=localStorage.getItem('publicChatToken');
+  if(!token){
+    token=window.crypto?.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});
+    localStorage.setItem('publicChatToken',token);
+  }
+  return token;
+}
+function subscribePublicChat() {
+  if(!sb || publicChatChannel) return;
+  publicChatChannel=sb.channel('public-family-chat')
+    .on('postgres_changes',{event:'*',schema:'public',table:'public_chat_messages'},()=>loadPublicChatMessages())
+    .subscribe();
+}
+async function loadPublicChatMessages() {
+  const box=$('publicChatMessages');
+  if(!box || !sb || publicChatLoading) return;
+  publicChatLoading=true;
+  const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<90;
+  const {data,error}=await sb.from('public_chat_messages').select('id,sender_name,body,created_at').order('created_at',{ascending:true}).limit(100);
+  publicChatLoading=false;
+  if(error){box.innerHTML='<div class="public-chat-empty">Pesan belum dapat dimuat. Coba muat ulang.</div>';return;}
+  if(!data?.length){box.innerHTML='<div class="public-chat-empty">Belum ada pesan. Jadilah yang pertama menyapa keluarga 🙏</div>';return;}
+  const canModerate=!!(session && profile && ['ketua','wakil','sekretaris','koordinator'].includes(profile.role));
+  box.innerHTML=data.map(m=>{
+    const stamp=new Date(m.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    return '<article class="public-chat-bubble"><strong>'+esc(m.sender_name)+(canModerate?'<button class="public-chat-delete" onclick="deletePublicChatMessage(\''+m.id+'\')">Hapus</button>':'')+'</strong><p>'+esc(m.body)+'</p><time>'+esc(stamp)+'</time></article>';
+  }).join('');
+  if(nearBottom) box.scrollTop=box.scrollHeight;
+}
+async function sendPublicChatMessage(event) {
+  event.preventDefault();
+  const nameEl=$('publicChatName'), bodyEl=$('publicChatInput'), send=$('publicChatSend');
+  const name=nameEl.value.trim(), body=bodyEl.value.trim();
+  if(name.length<2 || name.length>50){toast('Nama harus 2 sampai 50 karakter.');nameEl.focus();return;}
+  if(!body || body.length>1000){toast('Pesan harus diisi dan maksimal 1.000 karakter.');return;}
+  send.disabled=true;
+  const {error}=await sb.rpc('send_public_chat_message',{p_sender_name:name,p_body:body,p_client_token:publicChatToken()});
+  send.disabled=false;
+  if(error){toast(error.message.includes('Tunggu')||error.message.includes('Batas')?error.message:'Pesan gagal dikirim. Coba lagi.');return;}
+  localStorage.setItem('publicChatName',name);
+  bodyEl.value='';
+  $('publicChatStatus').textContent='Pesan terkirim';
+  await loadPublicChatMessages();
+  bodyEl.focus();
+}
+async function deletePublicChatMessage(id) {
+  if(!session || !profile || !['ketua','wakil','sekretaris','koordinator'].includes(profile.role)) return;
+  if(!confirm('Hapus pesan ini dari ruang chat keluarga?')) return;
+  const {error}=await sb.from('public_chat_messages').delete().eq('id',id);
+  if(error){toast('Pesan gagal dihapus. Periksa hak akses pengurus.');return;}
+  toast('Pesan berhasil dihapus.');
+  await loadPublicChatMessages();
+}
 function openFamilyWhatsApp() {
   const inviteUrl='https://chat.whatsapp.com/I4MgxoNib24JbVqWmMvIzh?s=cl&p=a&mlu=4&ilr=4&iam=2';
   if (!inviteUrl) {
