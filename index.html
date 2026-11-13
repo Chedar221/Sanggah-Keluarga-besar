@@ -221,7 +221,7 @@ header .sub{text-align:center;font-size:13px;letter-spacing:.25px;color:#f4f0df}
 main{max-width:1200px;padding:20px}
 .card{border:1px solid #e0e8dc;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #153c2410;background:#fff}
 .card h2{font-size:16px;font-weight:800;letter-spacing:.2px;color:#174c2d}
-.gold-heading-icon{display:inline-block;filter:grayscale(1) sepia(1) saturate(6) hue-rotate(5deg);transform:translateY(1px);margin-right:3px}
+.gold-heading-icon{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;margin-right:6px;vertical-align:-4px;color:#c9a227;flex:none}.gold-heading-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 button{border-radius:12px;background:linear-gradient(135deg,#075b2b,#0b7438);box-shadow:0 2px 6px #0a54231a}
 button.secondary{background:#edf4e9;color:#15542d;box-shadow:none;border:1px solid #dce8d9}
 button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
@@ -382,20 +382,20 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </div>
 
   <div class="card" id="pipilRotationPublic">
-    <h2><span class="gold-heading-icon">🔄</span> GILIRAN PIPIL</h2>
+    <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6"/><path d="M18.4 15A7 7 0 0 1 6 18l-2-6"/></svg></span> GILIRAN PIPIL</h2>
     <div id="pipilPublicContent" class="muted">Memuat giliran pipil...</div>
   </div>
 
   <div class="card" id="publicAnnouncementsCard">
     <div class="row">
-      <h2><span class="gold-heading-icon">📢</span> PENGUMUMAN TERBARU</h2>
+      <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a2 2 0 0 0 2 2h2l10 4V5L7 9H5a2 2 0 0 0-2 2Z"/><path d="m7 15 2 5h4l-2-4"/><path d="M20 9a4 4 0 0 1 0 6"/></svg></span> PENGUMUMAN TERBARU</h2>
       <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
     </div>
     <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
   </div>
 
   <div class="card" id="publicFinanceCard">
-    <h2><span class="gold-heading-icon">💰</span> RINGKASAN KEUANGAN</h2>
+    <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="15" cy="14" r="2"/><path d="M7 3h10"/></svg></span> RINGKASAN KEUANGAN</h2>
     <div class="grid">
       <div><div class="muted">Pemasukan</div><div class="stat" id="publicIncome">Rp 0</div></div>
       <div><div class="muted">Pengeluaran</div><div class="stat" id="publicExpense">Rp 0</div></div>
@@ -405,7 +405,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </div>
 
   <details class="card compact-details" id="publicMembersCard">
-    <summary><span class="gold-heading-icon">👨‍👩‍👧‍👦</span> DAFTAR ANGGOTA KELUARGA</summary>
+    <summary><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2"/><path d="M16 5a3 3 0 0 1 0 6"/><path d="M18 14a5 5 0 0 1 3 4v2"/></svg></span> DAFTAR ANGGOTA KELUARGA</summary>
     <div class="row details-tools">
       <span class="muted">Data anggota keluarga</span>
       <button class="secondary" onclick="loadPublicMembers()">Muat ulang</button>
@@ -414,7 +414,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </details>
 
   <details class="card compact-details" id="publicTransactionsCard">
-    <summary><span class="gold-heading-icon">💵</span> RIWAYAT KAS</summary>
+    <summary><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M7 9h.01M17 15h.01"/></svg></span> RIWAYAT KAS</summary>
     <div id="publicTransactions" class="muted">Data transaksi akan ditampilkan di sini.</div>
     <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">Muat transaksi berikutnya</button>
   </details>
