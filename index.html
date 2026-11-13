@@ -182,7 +182,7 @@ header .welcome{margin-top:14px;font-size:21px}
 .public-chat-bubble strong{display:block;color:#24613f;font-size:11px;margin-bottom:3px}
 .public-chat-bubble p{margin:0;color:#27372e;font-size:13px;line-height:1.45;white-space:pre-wrap}
 .public-chat-bubble time{display:block;text-align:right;margin-top:5px;color:#9aa49c;font-size:9px}
-.public-chat-delete{float:right;border:0;background:transparent;color:#a45b50;padding:0 0 0 8px;font-size:10px}
+.public-chat-actions{float:right;display:flex;gap:9px}.public-chat-edit,.public-chat-delete{border:0;background:transparent;padding:0;font-size:10px}.public-chat-edit{color:#397451}.public-chat-delete{color:#a45b50}
 .public-chat-compose{padding:12px 14px 10px;background:#fff;border-top:1px solid #e5ebe5}
 .public-chat-compose input,.public-chat-compose textarea{width:100%;margin:0 0 8px;border:1px solid #dce5dc;border-radius:10px;background:#fbfcfa;padding:10px 12px;font-size:13px;outline:none}
 .public-chat-compose input:focus,.public-chat-compose textarea:focus{border-color:#4e8a65;box-shadow:0 0 0 3px #4e8a6515}
@@ -2036,14 +2036,20 @@ async function loadPublicChatMessages() {
   if(!box || !sb || publicChatLoading) return;
   publicChatLoading=true;
   const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<90;
-  const {data,error}=await sb.from('public_chat_messages').select('id,sender_name,body,created_at').order('created_at',{ascending:true}).limit(100);
+  const {data:ownedIds}=await sb.rpc('get_my_public_chat_message_ids',{p_client_token:publicChatToken()});
+  const ownIds=new Set(ownedIds||[]);
+  const {data,error}=await sb.from('public_chat_messages').select('id,sender_name,body,created_at,edited_at').order('created_at',{ascending:true}).limit(100);
   publicChatLoading=false;
   if(error){box.innerHTML='<div class="public-chat-empty">Pesan belum dapat dimuat. Coba muat ulang.</div>';return;}
   if(!data?.length){box.innerHTML='<div class="public-chat-empty">Belum ada pesan. Jadilah yang pertama menyapa keluarga 🙏</div>';return;}
   const canModerate=!!(session && profile && ['ketua','wakil','sekretaris','koordinator'].includes(profile.role));
   box.innerHTML=data.map(m=>{
     const stamp=new Date(m.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return '<article class="public-chat-bubble"><strong>'+esc(m.sender_name)+(canModerate?'<button class="public-chat-delete" onclick="deletePublicChatMessage(\''+m.id+'\')">Hapus</button>':'')+'</strong><p>'+esc(m.body)+'</p><time>'+esc(stamp)+'</time></article>';
+    const mine=ownIds.has(m.id);
+    const actions=mine
+      ? '<span class="public-chat-actions"><button class="public-chat-edit" onclick="editPublicChatMessage(\''+m.id+'\')">Edit</button><button class="public-chat-delete" onclick="deleteMyPublicChatMessage(\''+m.id+'\')">Hapus</button></span>'
+      : (canModerate?'<button class="public-chat-delete" onclick="deletePublicChatMessage(\''+m.id+'\')">Hapus</button>':'');
+    return '<article class="public-chat-bubble"><strong>'+esc(m.sender_name)+actions+'</strong><p>'+esc(m.body)+'</p><time>'+esc(stamp)+(m.edited_at?' · diedit':'')+'</time></article>';
   }).join('');
   if(nearBottom) box.scrollTop=box.scrollHeight;
 }
@@ -2062,6 +2068,25 @@ async function sendPublicChatMessage(event) {
   $('publicChatStatus').textContent='Pesan terkirim';
   await loadPublicChatMessages();
   bodyEl.focus();
+}
+async function editPublicChatMessage(id) {
+  const message=await sb.from('public_chat_messages').select('body').eq('id',id).maybeSingle();
+  if(message.error || !message.data){toast('Pesan tidak ditemukan.');return;}
+  const updated=prompt('Edit pesan Anda:',message.data.body);
+  if(updated===null)return;
+  const body=updated.trim();
+  if(!body || body.length>1000){toast('Pesan harus diisi dan maksimal 1.000 karakter.');return;}
+  const {data,error}=await sb.rpc('edit_public_chat_message',{p_message_id:id,p_body:body,p_client_token:publicChatToken()});
+  if(error || !data){toast('Pesan tidak dapat diedit. Pastikan pesan ini milik perangkat Anda.');return;}
+  toast('Pesan berhasil diperbarui.');
+  await loadPublicChatMessages();
+}
+async function deleteMyPublicChatMessage(id) {
+  if(!confirm('Hapus pesan yang Anda kirim ini?'))return;
+  const {data,error}=await sb.rpc('delete_my_public_chat_message',{p_message_id:id,p_client_token:publicChatToken()});
+  if(error || !data){toast('Pesan tidak dapat dihapus. Pastikan pesan ini milik perangkat Anda.');return;}
+  toast('Pesan berhasil dihapus.');
+  await loadPublicChatMessages();
 }
 async function deletePublicChatMessage(id) {
   if(!session || !profile || !['ketua','wakil','sekretaris','koordinator'].includes(profile.role)) return;
