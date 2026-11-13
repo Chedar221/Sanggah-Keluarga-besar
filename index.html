@@ -642,6 +642,8 @@ function openPublicChat() {
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
+  const savedName=localStorage.getItem('publicChatName');
+  if(savedName && $('publicChatName') && !$('publicChatName').value) $('publicChatName').value=savedName;
   loadPublicChatMessages();
   subscribePublicChat();
   setTimeout(()=>$('publicChatName')?.focus(),120);
