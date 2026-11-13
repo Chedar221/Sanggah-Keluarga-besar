@@ -173,6 +173,15 @@ header .welcome{margin-top:14px;font-size:21px}
 .pipil-modal-note{font-size:11px;color:#718078;margin:10px 2px 0}
 @media(max-width:420px){.pipil-modal{padding:10px}.pipil-modal-card{padding:13px;border-radius:18px}}
 
+/* SUSUNAN PENGURUS */
+.committee-card{background:linear-gradient(135deg,#eaf1f8,#dce8f2);border:1px solid #c6d6e6;color:#24415d}
+.committee-card h2{color:#24415d}
+.committee-list{display:grid;gap:8px;margin-top:10px}
+.committee-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;background:#ffffffb8;border:1px solid #d2dfeb}
+.committee-row span{font-size:11px;font-weight:800;letter-spacing:.35px;color:#52708b}
+.committee-row strong{font-size:13px;text-align:right;color:#203b55}
+@media(max-width:420px){.committee-row{align-items:flex-start;flex-direction:column;gap:3px}.committee-row strong{text-align:left}}
+
 </style>
 </head>
 <body>
@@ -200,6 +209,15 @@ header .welcome{margin-top:14px;font-size:21px}
       <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WA</button>
       <button class="chat-entry-button" onclick="showLogin()">🔑 MASUK</button>
       <button class="chat-entry-button" onclick="showRegister()">📝 DAFTAR</button>
+    </div>
+  </div>
+
+  <div class="card committee-card" id="publicCommitteeCard">
+    <h2>👥 SUSUNAN PENGURUS</h2>
+    <div class="committee-list">
+      <div class="committee-row"><span>KETUA</span><strong>NENGAH DARSANA</strong></div>
+      <div class="committee-row"><span>BENDAHARA</span><strong>WAYAN SUDIARTA</strong></div>
+      <div class="committee-row"><span>SEKRETARIS</span><strong>WAYAN NUSADA</strong></div>
     </div>
   </div>
 
