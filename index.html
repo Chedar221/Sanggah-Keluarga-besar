@@ -158,6 +158,21 @@ header .welcome{margin-top:14px;font-size:21px}
 .chat-compose button{flex:0 0 auto}
 @media(max-width:650px){.chat-layout{grid-template-columns:1fr}.chat-rooms{max-height:180px}.chat-panel{min-height:360px}.chat-messages{height:280px}}
 
+
+/* POP-UP GAMBAR PIPIL */
+.pipil-number-button{border:0;border-radius:22px;padding:7px 11px;background:#f4e8c8;color:#604b17;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 7px #604b1715}
+.pipil-number-button.current{background:#c99a16;color:#fff}
+.pipil-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:18px;background:#071b16b8;backdrop-filter:blur(5px)}
+.pipil-modal.open{display:flex}
+.pipil-modal-card{width:min(100%,480px);max-height:88vh;overflow:auto;background:#fff;border-radius:22px;padding:16px;box-shadow:0 18px 60px #0005;animation:pipilPop .22s ease-out}
+@keyframes pipilPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.pipil-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pipil-modal-close{width:36px;height:36px;border-radius:50%;padding:0;background:#edf2ed;color:#173d32;font-size:20px}
+.pipil-modal-frame{width:100%;height:min(62vh,520px);border:0;border-radius:14px;background:#f4f5f1}
+.pipil-modal-empty{min-height:220px;display:grid;place-items:center;text-align:center;padding:24px;background:#f7f4ec;border-radius:14px;color:#718078}
+.pipil-modal-note{font-size:11px;color:#718078;margin:10px 2px 0}
+@media(max-width:420px){.pipil-modal{padding:10px}.pipil-modal-card{padding:13px;border-radius:18px}}
+
 </style>
 </head>
 <body>
@@ -294,6 +309,17 @@ header .welcome{margin-top:14px;font-size:21px}
 </footer>
 
 <div id="toast"></div>
+
+<div id="pipilImageModal" class="pipil-modal" role="dialog" aria-modal="true" aria-labelledby="pipilModalTitle" onclick="if(event.target===this)closePipilImage()">
+  <div class="pipil-modal-card">
+    <div class="pipil-modal-head">
+      <div><div class="muted">DOKUMENTASI GILIRAN</div><h2 id="pipilModalTitle" style="margin:3px 0 0">PIPIL</h2></div>
+      <button class="pipil-modal-close" type="button" aria-label="Tutup" onclick="closePipilImage()">×</button>
+    </div>
+    <div id="pipilModalBody"></div>
+  </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -978,6 +1004,34 @@ const PIPIL_PEOPLE = [
   { name: 'PUTU DODY PUTRAWAN', base: 6 }
 ];
 
+
+/* POP-UP GAMBAR PIPIL */
+const PIPIL_IMAGE_LINKS = {
+  5: 'https://drive.google.com/file/d/1cWACvlaJcfgAdImGDGBJwJSlGJvPmRoF/preview',
+  6: 'https://drive.google.com/file/d/1nbtqGkNynbYxzWXjbvcw0GDkWlCPBZri/preview'
+};
+function openPipilImage(number) {
+  const modal = $('pipilImageModal');
+  const body = $('pipilModalBody');
+  const title = $('pipilModalTitle');
+  if (!modal || !body || !title) return;
+  title.textContent = 'PIPIL ' + number;
+  const url = PIPIL_IMAGE_LINKS[number];
+  if (url) {
+    body.innerHTML = '<iframe class="pipil-modal-frame" src="' + url + '" title="Gambar Pipil ' + number + '" allow="autoplay" loading="lazy"></iframe><p class="pipil-modal-note">Jika gambar tidak tampil, pastikan akses Google Drive diatur ke “Siapa saja yang memiliki link”.</p>';
+  } else {
+    body.innerHTML = '<div class="pipil-modal-empty"><div><div style="font-size:42px;margin-bottom:8px">🖼️</div><b>Gambar Pipil ' + number + ' belum terhubung</b><p class="muted">Nomor Pipil bisa dibuka. Gambar akan ditampilkan setelah file untuk nomor ini dipasang.</p></div></div>';
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePipilImage() {
+  const modal = $('pipilImageModal');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closePipilImage(); });
+
 function isPipilOwner() {
   return !!session && session.user.id === PIPIL_OWNER_ID;
 }
@@ -999,7 +1053,7 @@ async function renderPipilRotation(targetId) {
   const round = Math.max(1,Number(data.round_no || 1));
   const people = PIPIL_PEOPLE.map(p => ({name:p.name,number:((p.base + round - 2) % 6) + 1})).sort((a,b)=>a.number-b.number);
   let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
-  html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid '+(p.number===1?'#c89b4b':'var(--line)')+';border-radius:10px;background:'+(p.number===1?'#fff8e8':'#fff')+'"><span style="font-size:13px;font-weight:'+(p.number===1?'750':'600')+'">'+esc(p.name)+'</span><span class="pill" style="'+(p.number===1?'background:#f5e5b9;color:#654900':'')+'">PIPIL : '+p.number+(p.number===1?' · GILIRAN SEKARANG':'')+'</span></div>').join('');
+  html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid '+(p.number===1?'#c89b4b':'var(--line)')+';border-radius:10px;background:'+(p.number===1?'#fff8e8':'#fff')+'"><span style="font-size:13px;font-weight:'+(p.number===1?'750':'600')+'">'+esc(p.name)+'</span><button type="button" class="pipil-number-button '+(p.number===1?'current':'')+'" onclick="openPipilImage('+p.number+')" aria-label="Lihat gambar Pipil '+p.number+'">PIPIL : '+p.number+(p.number===1?' · GILIRAN SEKARANG':'')+'　⌕</button></div>').join('');
   html += '</div>';
   if (isPipilOwner()) {
     html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
