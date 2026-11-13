@@ -947,6 +947,7 @@ anggota: {
     {key: 'full_name', label: 'Nama lengkap', required: true},
     {key: 'family_name', label: 'Nama keluarga'},
     {key: 'relation', label: 'Hubungan keluarga'},
+    {key: 'phone', label: 'Nomor HP / WhatsApp', type: 'tel'},
     {key: 'member_type', label: 'Kategori anggota', type: 'select', required: true, options: [['pengarep','Anggota Pengarep'],['keluarga','Anggota Keluarga']]}
   ]
 },
@@ -1367,7 +1368,7 @@ function displayValue(row, table) {
     detail = `${row.type || ''} · ${rupiah(row.amount)}`;
   } else if (table === 'members') {
     const category = row.member_type === 'pengarep' ? 'Anggota Pengarep' : row.member_type === 'keluarga' ? 'Anggota Keluarga' : 'Belum dikategorikan';
-    detail = [category, row.family_name, row.relation].filter(Boolean).join(' · ');
+    detail = [category, row.family_name, row.relation, row.phone ? 'HP/WA: '+row.phone : 'Nomor HP belum diisi'].filter(Boolean).join(' · ');
   } else if (table === 'events' || table === 'ngayah') {
     detail = row.event_date || '';
   } else if (table === 'inventory') {
@@ -2369,6 +2370,7 @@ const editableFields = {
     ['full_name', 'Nama lengkap', 'text'],
     ['family_name', 'Nama keluarga', 'text'],
     ['relation', 'Hubungan keluarga', 'text'],
+    ['phone', 'Nomor HP / WhatsApp', 'tel'],
     ['member_type', 'Kategori (pengarep/keluarga)', 'text']
   ],
 
@@ -2459,7 +2461,7 @@ async function editRecord(table, id) {
 
     .select(
       table === 'members'
-        ? 'id,full_name,family_name,relation,member_type,created_at'
+        ? 'id,full_name,family_name,relation,phone,member_type,created_at'
         : '*'
     )
     .eq('id', id)
