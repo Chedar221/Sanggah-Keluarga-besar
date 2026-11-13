@@ -1,0 +1,2132 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173d32">
+<title>SANGGAH GEDE PAN RENGEN</title>
+<link rel="manifest" href="manifest.webmanifest?v=3">
+<link rel="icon" type="image/svg+xml" href="logo-sanggah.svg?v=3">
+<meta name="apple-mobile-web-app-title" content="Sanggah Keluarga">
+<style>
+:root {
+  --green:#173d32;
+  --green2:#285b46;
+  --gold:#c89b4b;
+  --cream:#f7f4ec;
+  --ink:#20332c;
+  --muted:#718078;
+  --line:#e5e8e2;
+  --red:#a83d35;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+header {
+  background:linear-gradient(145deg,var(--green),var(--green2));
+  color:white;
+  padding:22px 18px 25px;
+  border-radius:0 0 24px 24px;
+}
+.brand {display:flex;align-items:center;gap:12px}
+.emblem {
+  width:52px;height:52px;flex:0 0 52px;
+  border:0;border-radius:50%;
+  overflow:hidden;display:grid;place-items:center;
+  background:transparent;
+}
+.emblem img {width:100%;height:100%;object-fit:contain;display:block;}
+h1 {font-size:18px;margin:0}
+header p {margin:5px 0;color:#e6dec9;font-size:12px}
+.welcome {margin-top:22px;font-size:24px;font-weight:700}
+.sub {font-size:13px;color:#e6dec9}
+main {max-width:950px;margin:auto;padding:16px}
+.card {
+  background:white;border:1px solid var(--line);
+  border-radius:16px;padding:16px;margin-bottom:13px;
+  box-shadow:0 3px 12px #183b2a08;
+}
+h2 {font-size:16px;margin:0 0 12px}
+.muted {color:var(--muted);font-size:12px}
+.row {display:flex;gap:10px;align-items:center;justify-content:space-between}
+.grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile {
+  background:white;border:1px solid var(--line);
+  border-radius:15px;padding:15px;text-align:left;
+  min-height:95px;cursor:pointer;color:var(--ink);
+}
+.tile b {display:block;margin-top:9px;font-size:13px}
+.tile span {font-size:22px;color:var(--gold)}
+button {
+  border:0;border-radius:11px;padding:11px 14px;
+  background:var(--green);color:white;font-weight:650;
+  cursor:pointer;font-size:13px;
+}
+button.secondary {background:#edf2ed;color:var(--green)}
+button.danger {background:#fff0ee;color:var(--red)}
+button:disabled {opacity:.5;cursor:not-allowed}
+input,select,textarea {
+  width:100%;padding:12px;border:1px solid #dce2da;
+  border-radius:10px;background:white;font:inherit;
+  margin:5px 0 12px;color:var(--ink);
+}
+label {font-size:12px;font-weight:650}
+.actions {display:flex;gap:8px;flex-wrap:wrap}
+.hidden {display:none!important}
+.pill {
+  display:inline-block;background:#eaf2ec;color:#285b46;
+  padding:5px 9px;border-radius:20px;font-size:11px;
+}
+.listitem {padding:12px 0;border-bottom:1px solid var(--line)}
+.listitem:last-child {border:0}
+.stat {font-size:24px;font-weight:750;overflow-wrap:anywhere}
+.nav {display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
+.nav button {white-space:nowrap;background:#e9eee8;color:var(--green)}
+.nav button.active {background:var(--green);color:white}
+footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
+#login {max-width:440px;margin:25px auto}
+
+/* Tampilan ringkas: daftar panjang tetap berada di dalam panel */
+#publicTransactions {max-height:320px;overflow-y:auto;padding-right:4px}
+#view #rows {max-height:360px;overflow-y:auto;padding-right:4px}
+.record-item {display:block;width:100%;padding:9px 10px;margin:0 0 7px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.record-actions {display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.record-actions button {padding:7px 10px;font-size:11px}
+#view #rows.member-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#view #rows.member-list .record-item {margin:0;min-width:0}
+#view .stat {font-size:clamp(17px,4vw,24px);line-height:1.25}
+@media(max-width:380px) {
+  #view #rows.member-list {grid-template-columns:1fr}
+}
+#toast {
+  position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%);background:#203d32;color:white;
+  padding:12px 16px;border-radius:12px;font-size:13px;
+  display:none;max-width:90%;z-index:10;
+}
+.public-link {color:var(--green);font-weight:650}
+@media(min-width:650px) {
+  .grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+  .welcome {font-size:30px}
+}
+/* Menu pengurus kembali ke posisi normal seperti tampilan awal.
+   Pada layar kecil menu tetap bisa digeser mendatar bila tidak muat. */
+@media(max-width:649px) {
+  #app .nav {flex-wrap:nowrap}
+  #app .nav button {flex:0 0 auto;padding:10px 12px;font-size:12px}
+}
+/* Daftar publik menampilkan sekitar enam nama; sisanya digulir di panel ini. */
+#publicMembers {
+  max-height:372px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-right:5px;
+}
+
+.welcome-card{padding:18px}
+.chat-entry-button{background:#c99a16;color:#ffffff;font-weight:800;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:5px;text-align:center}
+.homepage-action-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
+.homepage-action-buttons .chat-entry-button{width:100%;min-width:0;white-space:nowrap;padding:10px 4px;font-size:clamp(10px,2.7vw,14px)}
+@media(max-width:380px){.homepage-action-buttons{gap:4px}.homepage-action-buttons .chat-entry-button{font-size:10px;padding:9px 2px}}
+.compact-details{padding:14px 16px}
+.compact-details summary{cursor:pointer;font-weight:700;font-size:14px;list-style:none}
+.compact-details summary::-webkit-details-marker{display:none}
+.compact-details summary:after{content:"＋";float:right;color:var(--green);font-weight:800}
+.compact-details[open] summary:after{content:"−"}
+.details-tools{margin:12px 0 6px}
+#publicPage>.card{margin-bottom:10px}
+header{padding:17px 18px 19px}
+header .welcome{margin-top:14px;font-size:21px}
+/* CHAT KELUARGA */
+.chat-layout{display:grid;grid-template-columns: minmax(180px, .8fr) minmax(0,1.6fr);gap:12px}
+.chat-rooms{max-height:460px;overflow:auto}
+.chat-room{display:block;width:100%;text-align:left;background:#f5f7f3;color:var(--ink);border:1px solid var(--line);margin:0 0 7px}
+.chat-room.active{background:#e6efe8;border-color:var(--green)}
+.chat-room small{display:block;color:var(--muted);font-weight:400;margin-top:4px}
+.chat-panel{display:flex;flex-direction:column;min-height:420px}
+.chat-messages{height:340px;overflow:auto;background:#f7f8f5;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
+.chat-bubble{max-width:85%;width:fit-content;padding:9px 12px;border-radius:13px;background:white;border:1px solid var(--line);margin:7px 0;overflow-wrap:anywhere}
+.chat-bubble.mine{margin-left:auto;background:#e5f1e7;border-color:#d5e6d8}
+.chat-bubble .muted{font-size:10px;margin-top:4px}
+.chat-compose{display:flex;gap:8px;align-items:flex-end}
+.chat-compose textarea{margin:0;min-height:44px;max-height:110px;resize:vertical}
+.chat-compose button{flex:0 0 auto}
+@media(max-width:650px){.chat-layout{grid-template-columns:1fr}.chat-rooms{max-height:180px}.chat-panel{min-height:360px}.chat-messages{height:280px}}
+
+
+/* POP-UP GAMBAR PIPIL */
+.pipil-number-button{border:0;border-radius:22px;padding:7px 11px;background:#f4e8c8;color:#604b17;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 7px #604b1715}
+.pipil-number-button.current{background:#c99a16;color:#fff}
+.pipil-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:18px;background:#071b16b8;backdrop-filter:blur(5px)}
+.pipil-modal.open{display:flex}
+.pipil-modal-card{width:min(100%,480px);max-height:88vh;overflow:auto;background:#fff;border-radius:22px;padding:16px;box-shadow:0 18px 60px #0005;animation:pipilPop .22s ease-out}
+@keyframes pipilPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.pipil-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pipil-modal-close{width:36px;height:36px;border-radius:50%;padding:0;background:#edf2ed;color:#173d32;font-size:20px}
+.pipil-modal-frame{width:100%;height:min(62vh,520px);border:0;border-radius:14px;background:#f4f5f1}
+.pipil-modal-empty{min-height:220px;display:grid;place-items:center;text-align:center;padding:24px;background:#f7f4ec;border-radius:14px;color:#718078}
+.pipil-modal-note{font-size:11px;color:#718078;margin:10px 2px 0}
+@media(max-width:420px){.pipil-modal{padding:10px}.pipil-modal-card{padding:13px;border-radius:18px}}
+
+/* SUSUNAN PENGURUS */
+.committee-card{background:linear-gradient(135deg,#eaf1f8,#dce8f2);border:1px solid #c6d6e6;color:#24415d}
+.committee-card h2{color:#24415d}
+.committee-list{display:grid;gap:8px;margin-top:10px}
+.committee-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;background:#ffffffb8;border:1px solid #d2dfeb}
+.committee-row span{font-size:11px;font-weight:800;letter-spacing:.35px;color:#52708b}
+.committee-row strong{font-size:13px;text-align:right;color:#203b55}
+@media(max-width:420px){.committee-row{align-items:flex-start;flex-direction:column;gap:3px}.committee-row strong{text-align:left}}
+
+
+/* REDESAIN HALAMAN DEPAN — DESKTOP & APLIKASI HP */
+:root{--green:#075b2b;--green2:#0b7438;--gold:#d0a51b;--cream:#f5f7ef;--ink:#172d22;--muted:#68796e;--line:#dfe8dc;--red:#c84242}
+body{background:linear-gradient(180deg,#eaf2e8 0,#f7f8f2 340px,var(--cream) 100%);color:var(--ink)}
+header{position:relative;isolation:isolate;overflow:hidden;padding:28px 22px 32px;border-radius:0 0 30px 30px;background:radial-gradient(ellipse at 12% 8%,#ffffff20 0 10%,transparent 34%),radial-gradient(ellipse at 90% 15%,#e4c45b24 0 12%,transparent 35%),linear-gradient(125deg,#063e24 0%,#08713a 54%,#123f2c 100%);box-shadow:0 9px 24px #0c42251c}
+header:after{content:"";position:absolute;z-index:-1;inset:auto 0 0;height:5px;background:linear-gradient(90deg,transparent,#e1bd43,#fff0a6,#e1bd43,transparent)}
+header .brand{max-width:1180px;margin:0 auto;justify-content:center;text-align:left}
+header .emblem{width:66px;height:66px;flex-basis:66px;filter:drop-shadow(0 3px 5px #0004)}
+header h1{font-family:Georgia,serif;font-size:clamp(21px,3vw,34px);letter-spacing:.6px;color:#ffe28a;text-shadow:0 2px 5px #0006}
+header p{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#f2ead2}
+header .welcome{text-align:center;margin:17px auto 4px;font-family:Georgia,serif;font-style:italic;font-size:clamp(24px,4vw,36px);color:#ffdc63;text-shadow:0 2px 5px #0005}
+header .sub{text-align:center;font-size:13px;letter-spacing:.25px;color:#f4f0df}
+main{max-width:1200px;padding:20px}
+.card{border:1px solid #e0e8dc;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #153c2410;background:#fff}
+.card h2{font-size:16px;font-weight:800;letter-spacing:.2px;color:#174c2d}
+button{border-radius:12px;background:linear-gradient(135deg,#075b2b,#0b7438);box-shadow:0 2px 6px #0a54231a}
+button.secondary{background:#edf4e9;color:#15542d;box-shadow:none;border:1px solid #dce8d9}
+button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
+.welcome-card{position:relative;overflow:hidden;padding:24px 22px;background:linear-gradient(115deg,#fffdf4,#f0f7e9 62%,#e5f0df);border:1px solid #d8e6cf}
+.welcome-card:after{content:"❀";position:absolute;right:24px;top:5px;font-size:88px;color:#c9a52c19;pointer-events:none}
+.welcome-card .welcome-kicker{font-size:11px;font-weight:900;letter-spacing:2px;color:#9b7912;margin-bottom:5px}
+.welcome-card h2{font-family:Georgia,serif;font-size:clamp(21px,3vw,28px);color:#124b2b;margin-bottom:5px}
+.welcome-card p{font-size:13px;margin:0 0 16px}
+.homepage-action-buttons{max-width:560px}
+.homepage-action-buttons .chat-entry-button{background:#c49b17;color:#fff;border:1px solid #b18a0c;box-shadow:0 3px 8px #82630e22}
+.committee-card{background:linear-gradient(120deg,#edf5fc,#dcebf7);border:1px solid #c8dced;color:#214463}
+.committee-card h2{color:#174e86}
+.committee-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.committee-row{min-height:68px;justify-content:center;align-items:center;flex-direction:column;gap:5px;background:#ffffffd9;border:1px solid #d1e0ed;border-radius:13px;text-align:center}
+.committee-row span{font-size:10px;color:#46729a;letter-spacing:.8px}
+.committee-row strong{text-align:center;font-size:13px;color:#1b3854}
+#publicPage{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;align-items:start}
+#publicPage>.card,#publicPage>details{margin-bottom:14px;min-width:0}
+#publicPage>.welcome-card,#publicPage>#publicCommitteeCard,#publicPage>#publicTransactionsCard{grid-column:1/-1}
+#publicPage>#pipilRotationPublic{grid-column:1}
+#publicPage>#publicAnnouncementsCard{grid-column:2}
+#publicPage>#publicFinanceCard{grid-column:2}
+#publicPage>#publicMembersCard{grid-column:1}
+#pipilRotationPublic{background:linear-gradient(145deg,#f5faef,#eaf4e1);border-color:#d4e4c9}
+#pipilRotationPublic h2{color:#12612e}
+#pipilPublicContent>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#pipilPublicContent>div:last-child>div{background:#fff!important;border:1px solid #d8e6cf!important;border-radius:14px!important;padding:11px!important;box-shadow:0 2px 7px #173d2510}
+.pipil-number-button{background:#e8f4e5;color:#15572b;border:1px solid #cfe4c9;border-radius:10px;box-shadow:none;font-size:12px}
+.pipil-number-button:hover{background:#d9edcf}
+#publicAnnouncementsCard{background:linear-gradient(145deg,#fffdf1,#fff7d9);border-color:#f0e0a6}
+#publicAnnouncementsCard h2{color:#72560a}
+#publicAnnouncementsCard .secondary{background:#d4a91b;color:#fff;border:0}
+#publicFinanceCard .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#publicFinanceCard .grid>div{padding:12px;border-radius:14px;background:#f1f7ed;border:1px solid #dfebd8}
+#publicFinanceCard .grid>div:last-child{grid-column:1/-1;background:linear-gradient(110deg,#e8f5e4,#d9eed4);border-color:#c8e2c1}
+#publicFinanceCard .grid>div:last-child .stat{font-size:clamp(25px,4vw,34px);color:#087137}
+#publicFinanceCard .stat{font-size:clamp(17px,2.4vw,23px);color:#245b36}
+#publicMembersCard summary,#publicTransactionsCard summary{color:#174c2d;font-size:14px}
+#publicMembers .record-item{border:0;border-bottom:1px solid #e8eee5;border-radius:0;padding:9px 5px}
+#publicMembers .record-item:last-child{border-bottom:0}
+#publicTransactionsCard{background:#fff}
+.site-footer{margin-top:18px;padding:28px 16px 24px;text-align:center;background:linear-gradient(120deg,#063d23,#08703a,#063d23);color:#f8edc7;border-top:4px solid #d5ad2e;display:flex;flex-direction:column;align-items:center;gap:7px}
+.site-footer .footer-ornament{font-size:22px;color:#e8c44b;letter-spacing:8px}
+.site-footer strong{font-family:Georgia,serif;font-size:clamp(17px,3vw,23px);color:#ffdc63;letter-spacing:.6px}
+.site-footer em{font-family:Georgia,serif;font-size:15px;color:#fff8e5}
+.site-footer span{font-size:11px;color:#e4e8d8}
+#app>.card:first-child{border-left:4px solid #d0a51b}
+#app .nav{gap:7px;padding:6px 0 14px;scrollbar-width:thin}
+#app .nav button{border:1px solid #dce7d9;border-radius:12px;background:#edf4e9;color:#15542d}
+#app .nav button.active{background:#075b2b;color:#fff;border-color:#075b2b;box-shadow:0 3px 8px #075b2b24}
+#view .card{border-radius:18px}
+#toast{z-index:1100}
+@media(max-width:700px){
+ header{padding:20px 14px 24px;border-radius:0 0 22px 22px}
+ header .brand{justify-content:flex-start;gap:10px}
+ header .emblem{width:54px;height:54px;flex-basis:54px}
+ header h1{font-size:19px}
+ header p{font-size:10px;letter-spacing:.6px}
+ header .welcome{font-size:25px;margin-top:15px}
+ main{padding:12px}
+ #publicPage{display:block}
+ #publicPage>.card,#publicPage>details{margin-bottom:11px}
+ .card{padding:15px;border-radius:17px}
+ .welcome-card{padding:18px 16px}
+ .committee-list{grid-template-columns:1fr;gap:7px}
+ .committee-row{min-height:0;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:11px}
+ .committee-row span{text-align:center}
+ .committee-row strong{text-align:center}
+ #pipilPublicContent>div:last-child{grid-template-columns:1fr!important}
+ #publicFinanceCard .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .homepage-action-buttons{gap:5px}
+ .homepage-action-buttons .chat-entry-button{font-size:clamp(9px,2.7vw,12px);padding:10px 3px}
+ .site-footer{padding:24px 12px}
+}
+@media(max-width:380px){
+ .homepage-action-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .homepage-action-buttons .chat-entry-button{font-size:11px}
+ #publicFinanceCard .grid{grid-template-columns:1fr}
+ #publicFinanceCard .grid>div:last-child{grid-column:auto}
+}
+
+
+/* Pastikan judul utama tetap satu baris pada layar HP */
+header .brand{flex-wrap:nowrap;min-width:0;gap:12px}
+header .brand>div:last-child{min-width:0;flex:1}
+header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);letter-spacing:clamp(0px,.12vw,.6px);line-height:1.15}
+@media(max-width:700px){header .brand{gap:8px}header .emblem{flex:0 0 46px;width:46px;height:46px}header h1{font-size:clamp(12px,3.35vw,19px);letter-spacing:0;white-space:nowrap}}
+@media(max-width:360px){header .brand{gap:6px}header .emblem{flex-basis:40px;width:40px;height:40px}header h1{font-size:11.5px}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="emblem"><img src="logo-sanggah.svg" alt="Logo Sanggah Keluarga Besar"></div>
+    <div>
+      <h1>SANGGAH GEDE PAN RENGEN</h1>
+      <p>Sistem Informasi & Manajemen Keluarga</p>
+    </div>
+  </div>
+  <div class="welcome">OM SWASTIASTU</div>
+  <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi.</div>
+</header>
+
+<main>
+
+<section id="publicPage">
+  <div class="card welcome-card">
+    <div class="welcome-kicker">OM SWASTIASTU</div>
+    <h2>Selamat Datang di Keluarga Besar</h2>
+    <p class="muted">SANGGAH GEDE PAN RENGEN · Satu Keluarga, Satu Tujuan</p>
+    <div class="actions homepage-action-buttons">
+      <button class="chat-entry-button" onclick="openPublicChat()">💬 CHAT</button>
+      <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WA</button>
+      <button class="chat-entry-button" onclick="showLogin()">🔑 MASUK</button>
+      <button class="chat-entry-button" onclick="showRegister()">📝 DAFTAR</button>
+    </div>
+  </div>
+
+  <div class="card committee-card" id="publicCommitteeCard">
+    <h2>👥 SUSUNAN PENGURUS</h2>
+    <div class="committee-list">
+      <div class="committee-row"><span>KETUA</span><strong>NENGAH DARSANA</strong></div>
+      <div class="committee-row"><span>BENDAHARA</span><strong>WAYAN SUDIARTA</strong></div>
+      <div class="committee-row"><span>SEKRETARIS</span><strong>WAYAN NUSADA</strong></div>
+    </div>
+  </div>
+
+  <div class="card" id="pipilRotationPublic">
+    <h2>🔄 GILIRAN PIPIL</h2>
+    <div id="pipilPublicContent" class="muted">Memuat giliran pipil...</div>
+  </div>
+
+  <div class="card" id="publicAnnouncementsCard">
+    <div class="row">
+      <h2>Pengumuman Terbaru</h2>
+      <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
+    </div>
+    <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
+  </div>
+
+  <div class="card" id="publicFinanceCard">
+    <h2>Ringkasan Keuangan</h2>
+    <div class="grid">
+      <div><div class="muted">Pemasukan</div><div class="stat" id="publicIncome">Rp 0</div></div>
+      <div><div class="muted">Pengeluaran</div><div class="stat" id="publicExpense">Rp 0</div></div>
+      <div><div class="muted">Saldo Kas</div><div class="stat" id="publicBalance">Rp 0</div></div>
+    </div>
+    <p class="muted" id="publicStatus">Memuat laporan keuangan...</p>
+  </div>
+
+  <details class="card compact-details" id="publicMembersCard">
+    <summary>Daftar Anggota Keluarga</summary>
+    <div class="row details-tools">
+      <span class="muted">Data anggota keluarga</span>
+      <button class="secondary" onclick="loadPublicMembers()">Muat ulang</button>
+    </div>
+    <div id="publicMembers" class="muted">Memuat daftar anggota...</div>
+  </details>
+
+  <details class="card compact-details" id="publicTransactionsCard">
+    <summary>Riwayat Kas</summary>
+    <div id="publicTransactions" class="muted">Data transaksi akan ditampilkan di sini.</div>
+    <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">Muat transaksi berikutnya</button>
+  </details>
+</section>
+
+<section id="register" class="card hidden">
+  <h2>Daftar Akun Chat Keluarga</h2>
+  <p class="muted">Pendaftaran harus disetujui pengurus sebelum akun dapat menggunakan chat.</p>
+  <form onsubmit="registerChatAccount(event)">
+    <label>Nama lengkap</label><input id="regName" required maxlength="120" placeholder="Nama sesuai daftar keluarga">
+    <label>Pilih nama pada daftar anggota</label><select id="regMember" required><option value="">Memuat daftar anggota...</option></select>
+    <label>Email aktif</label><input id="regEmail" type="email" required autocomplete="email" placeholder="nama@email.com">
+    <label>Password (minimal 8 karakter)</label><input id="regPassword" type="password" required minlength="8" autocomplete="new-password">
+    <div class="actions"><button type="submit">Kirim Pendaftaran</button><button type="button" class="secondary" onclick="showPublic()">Kembali</button></div>
+  </form>
+</section>
+
+<section id="login" class="card hidden">
+  <h2>Login Pengurus</h2>
+  <p class="muted">Masuk menggunakan akun yang telah dibuat oleh administrator.</p>
+
+  <label>Email</label>
+  <input id="email" type="email" placeholder="nama@email.com" autocomplete="username">
+
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+
+  <div class="actions">
+    <button onclick="signIn()">Masuk</button>
+    <button class="secondary" onclick="showPublic()">Kembali</button>
+  </div>
+</section>
+
+<section id="app" class="hidden">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="muted">Selamat datang</div>
+        <b id="userName">Pengguna</b>
+        <div class="muted" id="userRole">Anggota keluarga</div>
+      </div>
+      <button class="secondary" onclick="signOut()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="nav" id="nav"></div>
+  <div id="view"></div>
+</section>
+
+<section id="setup" class="card hidden">
+  <h2>Pengaturan Koneksi</h2>
+  <p class="muted">
+    Gunakan Project URL dan publishable key Supabase.
+    Jangan pernah memasukkan service_role key di halaman website.
+  </p>
+  <label>Project URL</label>
+  <input id="sburl" placeholder="https://project.supabase.co">
+  <label>Publishable / anon key</label>
+  <textarea id="sbkey" rows="3" placeholder="Tempel publishable key"></textarea>
+  <div class="actions">
+    <button onclick="saveConfig()">Simpan koneksi</button>
+    <button class="secondary" onclick="showPublic()">Kembali</button>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-ornament">✦ ❖ ✦</div>
+  <strong>SANGGAH GEDE PAN RENGEN</strong>
+  <em>“Satu Keluarga, Satu Tujuan”</em>
+  <span>Om Santih, Santih, Santih Om · © 2026</span>
+</footer>
+
+<div id="toast"></div>
+
+<div id="pipilImageModal" class="pipil-modal" role="dialog" aria-modal="true" aria-labelledby="pipilModalTitle" onclick="if(event.target===this)closePipilImage()">
+  <div class="pipil-modal-card">
+    <div class="pipil-modal-head">
+      <div><div class="muted">DOKUMENTASI GILIRAN</div><h2 id="pipilModalTitle" style="margin:3px 0 0">PIPIL</h2></div>
+      <button class="pipil-modal-close" type="button" aria-label="Tutup" onclick="closePipilImage()">×</button>
+    </div>
+    <div id="pipilModalBody"></div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+/* =====================================
+   KONFIGURASI DAN KONEKSI SUPABASE
+===================================== */
+
+// Konfigurasi publik Supabase untuk website Sanggah.
+const SUPABASE_URL = 'https://ttiocfrvtqjqhbktohhp.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_gLUMLFkitaDgSAF5eGRPZg_salcqJS1';
+
+let sb = null;
+let session = null;
+let profile = null;
+let active = 'dashboard';
+let pendingChatEntry = false;
+let activeMemberType = 'all';
+
+let publicOffset = 0;
+const PAGE_SIZE = 50;
+
+const $ = id => document.getElementById(id);
+
+function toast(message) {
+  const el = $('toast');
+  el.textContent = message;
+  el.style.display = 'block';
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    el.style.display = 'none';
+  }, 3000);
+}
+
+function rupiah(value) {
+  return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[c]);
+}
+
+function roleName(role) {
+  return ({
+    ketua:'Ketua',
+    wakil:'Wakil Ketua',
+    sekretaris:'Sekretaris',
+    bendahara:'Bendahara',
+    koordinator:'Koordinator',
+    anggota:'Anggota Keluarga'
+  })[role] || role;
+}
+
+function showPublic() {
+  $('publicPage').classList.remove('hidden');
+  $('login').classList.add('hidden');
+  $('register').classList.add('hidden');
+  $('app').classList.add('hidden');
+  $('setup').classList.add('hidden');
+}
+
+function showLogin() {
+  $('publicPage').classList.add('hidden');
+  $('register').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('setup').classList.add('hidden');
+  const heading = $('login').querySelector('h2');
+  if (heading) heading.textContent = pendingChatEntry ? 'Masuk untuk Chat Keluarga' : 'Login Pengurus';
+}
+function openPublicChat() {
+  pendingChatEntry = true;
+  if (session && profile) {
+    $('publicPage').classList.add('hidden');
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    go('chat');
+    return;
+  }
+  showLogin();
+}
+
+function showRegister() {
+  $('publicPage').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('register').classList.remove('hidden');
+  $('setup').classList.add('hidden');
+  loadRegistrationMembers();
+}
+
+async function loadRegistrationMembers() {
+  const el=$('regMember'); if(!el || !sb) return;
+  const {data,error}=await sb.from('members').select('id,full_name').order('full_name');
+  if(error){el.innerHTML='<option value="">Daftar anggota gagal dimuat</option>';return;}
+  el.innerHTML='<option value="">Pilih nama Anda</option>'+(data||[]).map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name)+'</option>').join('');
+}
+
+async function registerChatAccount(event) {
+  event.preventDefault();
+  const fullName=$('regName').value.trim(), memberId=$('regMember').value;
+  const email=$('regEmail').value.trim(), password=$('regPassword').value;
+  if(!fullName || !memberId || !email || password.length<8){toast('Lengkapi data dengan benar.');return;}
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:fullName,member_id:memberId}}});
+  if(error){toast('Pendaftaran gagal: '+error.message);return;}
+  $('register').classList.add('hidden'); showPublic();
+  toast(data.session?'Pendaftaran terkirim. Tunggu persetujuan pengurus.':'Pendaftaran terkirim. Cek email bila diminta, lalu tunggu persetujuan pengurus.');
+}
+
+function showSetup() {
+  $('publicPage').classList.add('hidden');
+  $('register').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+}
+
+function saveConfig() {
+  const url = $('sburl').value.trim();
+  const key = $('sbkey').value.trim();
+
+  if (!url.startsWith('https://') || !key) {
+    toast('Project URL atau key belum benar.');
+    return;
+  }
+
+  localStorage.setItem('sburl', url);
+  localStorage.setItem('sbkey', key);
+
+  connectSupabase();
+}
+
+function connectSupabase() {
+  // Gunakan konfigurasi proyek keluarga sebagai default agar pengunjung
+  // tidak perlu mengatur koneksi secara manual di setiap perangkat.
+  const url = SUPABASE_URL;
+  const key = SUPABASE_PUBLISHABLE_KEY;
+
+  if (!url || !key || !window.supabase) {
+    showPublic();
+    return false;
+  }
+
+  sb = window.supabase.createClient(url, key);
+  $('setup').classList.add('hidden');
+  return true;
+}
+
+/* =====================================
+   LOGIN DAN SESSION
+===================================== */
+
+async function signIn() {
+  if (!sb) {
+    showSetup();
+    return;
+  }
+
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if (!email || !password) {
+    toast('Isi email dan password.');
+    return;
+  }
+
+  const { data, error } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    toast(error.message);
+    return;
+  }
+
+  session = data.session;
+  await loadProfile();
+}
+
+async function signOut() {
+  if (sb) await sb.auth.signOut();
+
+  session = null;
+  profile = null;
+
+  $('app').classList.add('hidden');
+  showPublic();
+  toast('Anda sudah keluar.');
+}
+
+async function loadProfile() {
+  if (!session || !sb) return;
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('full_name,role,member_id')
+    .eq('id', session.user.id)
+    .single();
+
+  if (error || !data) {
+    toast('Akun belum disetujui pengurus atau profil belum aktif. Silakan tunggu persetujuan.');
+    $('app').classList.add('hidden');
+    showLogin();
+    return;
+  }
+
+  profile = data;
+
+  $('publicPage').classList.add('hidden');
+  $('login').classList.add('hidden');
+  $('register').classList.add('hidden');
+  $('setup').classList.add('hidden');
+  $('app').classList.remove('hidden');
+
+  $('userName').textContent = data.full_name || session.user.email;
+  $('userRole').textContent = roleName(data.role);
+
+  active = pendingChatEntry ? 'chat' : 'dashboard';
+  pendingChatEntry = false;
+  renderNav();
+  renderView();
+}
+
+/* =====================================
+   HAK AKSES
+===================================== */
+
+function isRole(roles) {
+  return !!profile && roles.includes(profile.role);
+}
+
+function canFinance() {
+  return isRole(['ketua','wakil','bendahara']);
+}
+
+function canManageGeneral() {
+  return isRole(['ketua','wakil','sekretaris','koordinator']);
+}
+
+function canManageInventory() {
+  return isRole(['ketua','wakil','koordinator']);
+}
+
+function canManageDocuments() {
+  return isRole(['ketua','wakil','sekretaris']);
+}
+
+function canDelete(table) {
+  if (table === 'transactions' || table === 'dues') {
+    return canFinance();
+  }
+  if (table === 'inventory') return canManageInventory();
+  if (table === 'documents') return canManageDocuments();
+  if (table === 'members') return canManageGeneral();
+  return canManageGeneral();
+}
+
+/* =====================================
+   MENU APLIKASI
+===================================== */
+
+const pages = [  ['pengumuman','▤','Pengumuman'],
+  ['dashboard','⌂','Beranda'],
+  ['anggota','♙','Anggota'],
+  ['keuangan','Rp','Keuangan'],
+  ['iuran','♡','Iuran'],
+  ['punia','✧','Dana Punia'],
+  ['upacara','◷','Upacara'],
+  ['ngayah','✣','Ngayah'],
+  ['inventaris','▣','Inventaris'],
+  ['dokumen','▧','Arsip'],
+  ['pendaftaran','✓','Pendaftaran']
+];
+
+function renderNav() {
+  $('nav').innerHTML = pages.map(p => `
+    <button
+      class="${active === p[0] ? 'active' : ''}"
+      onclick="go('${p[0]}')">
+      ${p[1]} ${p[2]}
+    </button>
+  `).join('');
+}
+
+function go(page) {
+  active = page;
+  renderNav();
+  renderView();
+}
+
+/* =====================================
+   DASHBOARD
+===================================== */
+
+async function loadStats() {
+  const memberResult = await sb
+    .from('members')
+    .select('id', { count: 'exact', head: true });
+
+  $('countMembers').textContent =
+    memberResult.error ? '—' : (memberResult.count ?? 0);
+
+  if (canFinance()) {
+    let allRows = [];
+    let offset = 0;
+    const pageSize = 500;
+    let failed = false;
+
+    while (true) {
+      const { data, error } = await sb
+        .from('transactions')
+        .select('type,amount')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + pageSize - 1);
+
+      if (error) {
+        failed = true;
+        break;
+      }
+
+      const rows = data || [];
+      allRows = allRows.concat(rows);
+
+      if (rows.length < pageSize) break;
+
+      offset += pageSize;
+    }
+
+    if (!failed) {
+      let balance = 0;
+
+      allRows.forEach(x => {
+        balance += x.type === 'pemasukan'
+          ? Number(x.amount || 0)
+          : -Number(x.amount || 0);
+      });
+
+      $('balance').textContent = rupiah(balance);
+    } else {
+      $('balance').textContent = '—';
+    }
+  } else {
+    $('balance').textContent = 'Terbatas';
+  }
+}
+
+/* =====================================
+   DEFINISI FORM DATA
+===================================== */
+
+const configs = {
+  
+anggota: {
+  title: 'Data Anggota',
+  table: 'members',
+  fields: [
+    {key: 'full_name', label: 'Nama lengkap', required: true},
+    {key: 'family_name', label: 'Nama keluarga'},
+    {key: 'relation', label: 'Hubungan keluarga'},
+    {key: 'member_type', label: 'Kategori anggota', type: 'select', required: true, options: [['pengarep','Anggota Pengarep'],['keluarga','Anggota Keluarga']]}
+  ]
+},
+
+  iuran: {
+    title:'Pembayaran Iuran',
+    table:'dues',
+    fields:[
+      {key:'description',label:'Keterangan iuran',required:true},
+      {key:'amount',label:'Jumlah (Rp)',type:'number',required:true},
+      {key:'type',label:'Jenis',type:'select',options:[
+        ['pemasukan','Pemasukan'],
+        ['pengeluaran','Pengeluaran']
+      ]}
+    ]
+  },
+  upacara: {
+    title:'Jadwal Upacara',
+    table:'events',
+    fields:[
+      {key:'title',label:'Nama kegiatan',required:true},
+      {key:'event_date',label:'Tanggal',type:'date'},
+      {key:'location',label:'Lokasi'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  ngayah: {
+    title:'Jadwal Ngayah',
+    table:'ngayah',
+    fields:[
+      {key:'task',label:'Tugas ngayah',required:true},
+      {key:'event_date',label:'Tanggal',type:'date'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  inventaris: {
+    title:'Inventaris',
+    table:'inventory',
+    fields:[
+      {key:'item_name',label:'Nama barang',required:true},
+      {key:'quantity',label:'Jumlah',type:'number'},
+      {key:'condition',label:'Kondisi'},
+      {key:'notes',label:'Catatan'}
+    ]
+  },
+  pengumuman: {
+    title:'Pengumuman',
+    table:'announcements',
+    fields:[
+      {key:'title',label:'Judul',required:true},
+      {key:'body',label:'Isi pengumuman',type:'textarea'}
+    ]
+  },
+  dokumen: {
+    title:'Arsip Dokumen',
+    table:'documents',
+    fields:[
+      {key:'title',label:'Nama dokumen',required:true},
+      {key:'file_url',label:'Link dokumen'},
+      {key:'notes',label:'Catatan'}
+    ]
+  }
+};
+
+/* =====================================
+   TAMPILAN MENU
+===================================== */
+
+function renderView() {
+  const v = $('view');
+
+  if (active === 'pendaftaran') {
+    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pendaftaran hanya untuk pengurus.</div>'; return; }
+    renderRegistrationRequests(); return;
+  }
+
+  if (active === 'chat') {
+    renderChat();
+    return;
+  }
+
+  if (active === 'dashboard') {
+    v.innerHTML = `
+      <div class="card" id="pipilRotationDashboard">
+        <h2>🔄 GILIRAN PIPIL</h2>
+        <div id="pipilDashboardContent" class="muted">Memuat giliran pipil...</div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="muted">Anggota keluarga</div>
+          <div class="stat" id="countMembers">—</div>
+        </div>
+        <div class="card">
+          <div class="muted">Saldo kas</div>
+          <div class="stat" id="balance">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Menu Utama</h2>
+        <p class="muted">Pilih menu untuk mengelola administrasi keluarga.</p>
+        <span class="pill">Akses: ${esc(roleName(profile.role))}</span>
+      </div>
+      <div class="card chat-dashboard-card">
+        <div class="row">
+          <div>
+            <h2>💬 Chat Keluarga</h2>
+            <p class="muted">Berkomunikasi pribadi atau bersama keluarga dalam satu tempat.</p>
+          </div>
+          <button onclick="go('chat')">Buka Chat</button>
+        </div>
+      </div>
+    `;
+
+    loadStats();
+    renderPipilRotation('pipilDashboardContent');
+    return;
+  }
+
+  if (active === 'keuangan') {
+    if (!canFinance()) {
+      v.innerHTML = '<div class="card">Akses keuangan terbatas.</div>';
+      return;
+    }
+    renderFinance();
+    return;
+  }
+
+  if (active === 'punia') {
+    if (!canFinance()) {
+      v.innerHTML = '<div class="card">Akses Dana Punia terbatas.</div>';
+      return;
+    }
+    renderPunia();
+    return;
+  }
+
+  const cfg = configs[active];
+
+  if (!cfg) return;
+
+  const canWrite =
+  active === 'anggota' ? canManageGeneral() :
+  active === 'iuran' ? canFinance() :
+  active === 'inventaris' ? canManageInventory() :
+  active === 'dokumen' ? canManageDocuments() :
+  canManageGeneral();
+
+  if (active === 'anggota') activeMemberType = 'all';
+
+  v.innerHTML = `
+    <div class="card">
+      <div class="row">
+        <h2>${esc(cfg.title)}</h2>
+        <button class="secondary" onclick="loadRows('${cfg.table}')">Muat ulang</button>
+      </div>
+      ${active === 'anggota' ? `
+        <div class="actions" style="margin:8px 0 12px">
+          <button type="button" class="${activeMemberType === 'all' ? '' : 'secondary'}" onclick="filterMembers('all')">Semua</button>
+          <button type="button" class="${activeMemberType === 'pengarep' ? '' : 'secondary'}" onclick="filterMembers('pengarep')">Anggota Pengarep</button>
+          <button type="button" class="${activeMemberType === 'keluarga' ? '' : 'secondary'}" onclick="filterMembers('keluarga')">Anggota Keluarga</button>
+          <button type="button" class="${activeMemberType === 'uncategorized' ? '' : 'secondary'}" onclick="filterMembers('uncategorized')">Belum Dikategorikan</button>
+        </div>` : ''}
+      <div id="rows" class="muted">Memuat data...</div>
+    </div>
+
+    ${canWrite ? `
+      <div class="card">
+        <h2>Tambah Data</h2>
+        <form id="dataForm" onsubmit="saveGeneric(event,'${cfg.table}')">
+          ${cfg.fields.map((f,i) => `
+            <label>${esc(f.label)}</label>
+            ${
+              f.type === 'textarea'
+              ? `<textarea id="field${i}" rows="3" ${f.required?'required':''}></textarea>`
+              : f.type === 'select'
+              ? `<select id="field${i}">${f.options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`
+              : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''}>`
+            }
+          `).join('')}
+          <button type="submit">Simpan Data</button>
+        </form>
+      </div>
+    ` : ''}
+  `;
+
+  loadRows(cfg.table);
+}
+
+/* =====================================
+   SIMPAN DATA UMUM
+===================================== */
+
+async function saveGeneric(event, table) {
+  event.preventDefault();
+
+  const cfg = Object.values(configs).find(x => x.table === table);
+  if (!cfg) return;
+
+  const obj = {};
+
+  cfg.fields.forEach((f,i) => {
+    const input = $('field'+i);
+    if (!input) return;
+
+    let value = input.value.trim();
+
+    if (f.type === 'number') {
+      value = Number(value || 0);
+    }
+
+    obj[f.key] = value === '' ? null : value;
+  });
+
+  if (table === 'members') {
+    obj.created_by = session.user.id;
+  }
+
+  const {error} = await sb.from(table).insert(obj);
+
+  if (error) {
+    toast('Gagal menyimpan: ' + error.message);
+    return;
+  }
+
+  toast('Data berhasil disimpan.');
+  event.target.reset();
+  loadRows(table);
+  if (table === 'members') loadStats();
+}
+
+/* =====================================
+   MUAT DATA
+===================================== */
+
+
+function displayValue(row, table) {
+  const title =
+    row.full_name ||
+    row.description ||
+    row.title ||
+    row.task ||
+    row.item_name ||
+    'Data';
+
+  let detail = '';
+
+  if (table === 'transactions' || table === 'dues') {
+    detail = `${row.type || ''} · ${rupiah(row.amount)}`;
+  } else if (table === 'members') {
+    const category = row.member_type === 'pengarep' ? 'Anggota Pengarep' : row.member_type === 'keluarga' ? 'Anggota Keluarga' : 'Belum dikategorikan';
+    detail = [category, row.family_name, row.relation].filter(Boolean).join(' · ');
+  } else if (table === 'events' || table === 'ngayah') {
+    detail = row.event_date || '';
+  } else if (table === 'inventory') {
+    detail = `Jumlah: ${row.quantity ?? 0} · ${row.condition || ''}`;
+  } else if (table === 'announcements') {
+    detail = row.body || '';
+  } else if (table === 'documents') {
+    detail = row.file_url || row.notes || '';
+  }
+
+  return `
+    <div class="listitem">
+      <b>${esc(title)}</b>
+      <div class="muted">${esc(detail)}</div>
+    </div>
+  `;
+}
+
+
+function filterMembers(type) {
+  activeMemberType = type;
+  const buttons = $('view')?.querySelectorAll('.actions button');
+  if (buttons) buttons.forEach(button => button.classList.add('secondary'));
+  const labels = {all:'Semua',pengarep:'Anggota Pengarep',keluarga:'Anggota Keluarga',uncategorized:'Belum Dikategorikan'};
+  if (buttons) buttons.forEach(button => { if (button.textContent.trim() === labels[type]) button.classList.remove('secondary'); });
+  loadRows('members');
+}
+
+async function loadRows(table) {
+  const el = $('rows');
+  if (!el) return;
+
+  el.textContent = 'Memuat data...';
+
+  const {data,error} = await sb
+    .from(table)
+    .select('*')
+    .order('created_at',{ascending:false})
+    .limit(100);
+
+  if (error) {
+    el.textContent = 'Gagal memuat data: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    el.textContent = 'Belum ada data.';
+    return;
+  }
+
+  el.innerHTML = data.map(row => displayValue(row,table)).join('');
+}
+
+/* =====================================
+   PENGUMUMAN PUBLIK
+===================================== */
+
+
+/* GILIRAN PIPIL: enam nama, hanya akun Agus boleh mengubah. */
+const PIPIL_OWNER_ID = 'e36b43db-a4c6-4571-83bd-a5d70dea73a0';
+const PIPIL_PEOPLE = [
+  { name: 'WAYAN SUDIASA', base: 1 },
+  { name: 'WAYAN SUDIARTA', base: 2 },
+  { name: 'NENGAH SUDIANA', base: 3 },
+  { name: 'NENGAH DIARTA', base: 4 },
+  { name: 'WAYAN NUSADA', base: 5 },
+  { name: 'PUTU DODY PUTRAWAN', base: 6 }
+];
+
+
+/* POP-UP GAMBAR PIPIL */
+const PIPIL_IMAGE_LINKS = {
+  1: 'https://drive.google.com/file/d/1iSpr26dOyyDLgJMr90IXQUC1DDInZlih/preview',
+  2: 'https://drive.google.com/file/d/1JzWVkXcOPmQkBjV7m0stwaqOCVpp2mDd/preview',
+  3: 'https://drive.google.com/file/d/1mPVBaJKJVmqz6gLBulEQUC3FG_8XR4m6/preview',
+  4: 'https://drive.google.com/file/d/18REqyUVHNiRnBmK8s27b07jHlryh-6AA/preview',
+  5: 'https://drive.google.com/file/d/1cWACvlaJcfgAdImGDGBJwJSlGJvPmRoF/preview',
+  6: 'https://drive.google.com/file/d/1nbtqGkNynbYxzWXjbvcw0GDkWlCPBZri/preview'
+};
+function openPipilImage(number) {
+  const modal = $('pipilImageModal');
+  const body = $('pipilModalBody');
+  const title = $('pipilModalTitle');
+  if (!modal || !body || !title) return;
+  title.textContent = 'PIPIL ' + number;
+  const url = PIPIL_IMAGE_LINKS[number];
+  if (url) {
+    body.innerHTML = '<iframe class="pipil-modal-frame" src="' + url + '" title="Gambar Pipil ' + number + '" allow="autoplay" loading="lazy"></iframe><p class="pipil-modal-note">Jika gambar tidak tampil, pastikan akses Google Drive diatur ke “Siapa saja yang memiliki link”.</p>';
+  } else {
+    body.innerHTML = '<div class="pipil-modal-empty"><div><div style="font-size:42px;margin-bottom:8px">🖼️</div><b>Gambar Pipil ' + number + ' belum terhubung</b><p class="muted">Nomor Pipil bisa dibuka. Gambar akan ditampilkan setelah file untuk nomor ini dipasang.</p></div></div>';
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePipilImage() {
+  const modal = $('pipilImageModal');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closePipilImage(); });
+
+function isPipilOwner() {
+  return !!session && session.user.id === PIPIL_OWNER_ID;
+}
+
+function formatPipilDate(value) {
+  if (!value) return 'Belum ditentukan';
+  return new Date(value + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
+
+async function renderPipilRotation(targetId) {
+  const target = $(targetId);
+  if (!target || !sb) return;
+  target.textContent = 'Memuat giliran pipil...';
+  const {data,error} = await sb.from('pipil_rotation').select('round_no,rotation_date').eq('id',1).maybeSingle();
+  if (error || !data) {
+    target.textContent = 'Data giliran pipil belum tersedia. Hubungi pengurus.';
+    return;
+  }
+  const round = Math.max(1,Number(data.round_no || 1));
+  const people = PIPIL_PEOPLE.map(p => ({name:p.name,number:((p.base + round - 2) % 6) + 1})).sort((a,b)=>a.number-b.number);
+  let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
+  html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff"><span style="font-size:13px;font-weight:600">'+esc(p.name)+'</span><button type="button" class="pipil-number-button" onclick="openPipilImage('+p.number+')" aria-label="Lihat gambar Pipil '+p.number+'">PIPIL : '+p.number+'　⌕</button></div>').join('');
+  html += '</div>';
+  if (isPipilOwner()) {
+    html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
+  }
+  target.innerHTML = html;
+}
+
+async function savePipilDate() {
+  if (!isPipilOwner()) { toast('Hanya Agus yang dapat mengubah pengaturan pipil.'); return; }
+  const date = $('pipilDate')?.value;
+  if (!date) { toast('Pilih tanggal terlebih dahulu.'); return; }
+  const {error} = await sb.from('pipil_rotation').update({rotation_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
+  if (error) { toast('Tanggal gagal disimpan: '+error.message); return; }
+  toast('Tanggal giliran pipil berhasil diperbarui.');
+  await refreshPipilCards();
+}
+
+async function advancePipilRound() {
+  if (!isPipilOwner()) { toast('Hanya Agus yang dapat melanjutkan putaran pipil.'); return; }
+  if (!confirm('Selesaikan putaran ini dan naikkan nomor pipil keenam orang satu angka?')) return;
+  const {data,error:readError} = await sb.from('pipil_rotation').select('round_no').eq('id',1).single();
+  if (readError || !data) { toast('Data putaran gagal dibaca.'); return; }
+  const {error} = await sb.from('pipil_rotation').update({round_no:Number(data.round_no || 1)+1,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
+  if (error) { toast('Putaran gagal diperbarui: '+error.message); return; }
+  toast('Putaran pipil berhasil dilanjutkan.');
+  await refreshPipilCards();
+}
+
+async function refreshPipilCards() {
+  await Promise.all([renderPipilRotation('pipilPublicContent'),renderPipilRotation('pipilDashboardContent')]);
+}
+
+async function loadPublicAnnouncements() {
+  const list = $('publicAnnouncements');
+  if (!list || !sb) return;
+
+  list.textContent = 'Memuat pengumuman...';
+
+  const { data, error } = await sb
+    .from('announcements')
+    .select('title,body,created_at')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    list.textContent = 'Gagal memuat pengumuman: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    list.textContent = 'Belum ada pengumuman.';
+    return;
+  }
+
+  list.innerHTML = data.map(item => `
+    <div class="listitem">
+      <b>${esc(item.title || 'Pengumuman')}</b>
+      <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
+      <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
+    </div>
+  `).join('');
+}
+
+/* =====================================
+   DAFTAR ANGGOTA PUBLIK
+===================================== */
+
+async function loadPublicMembers() {
+  const list = $('publicMembers');
+  if (!list || !sb) return;
+
+  list.textContent = 'Memuat daftar anggota...';
+
+  const { data, error } = await sb
+    .from('members')
+    .select('full_name,family_name,relation')
+    .order('full_name', { ascending: true })
+    .limit(300);
+
+  if (error) {
+    list.textContent = 'Gagal memuat anggota: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    list.textContent = 'Belum ada data anggota.';
+    return;
+  }
+
+  list.innerHTML = data.map((member, index) => {
+    const detail = [member.family_name, member.relation].filter(Boolean).join(' · ');
+    return `
+      <div class="record-item">
+        <div class="row">
+          <b>${index + 1}. ${esc(member.full_name || 'Tanpa nama')}</b>
+        </div>
+        ${detail ? `<div class="muted">${esc(detail)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/* =====================================
+   LAPORAN KEUANGAN PUBLIK
+===================================== */
+
+async function loadPublicFinance() {
+  const status = $('publicStatus');
+  if (!status) return;
+
+  status.textContent = 'Memuat laporan...';
+  publicOffset = 0;
+
+  let income = 0;
+  let expense = 0;
+  let allRows = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const {data,error} = await sb
+      .from('public_transactions')
+      .select('id,type,description,amount,transaction_date,created_at')
+      .order('transaction_date',{ascending:false})
+      .range(publicOffset,publicOffset + 499);
+
+    if (error) {
+      status.textContent = 'Gagal memuat laporan keuangan: ' + error.message;
+      return;
+    }
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    rows.forEach(row => {
+      if (row.type === 'pengeluaran') {
+        expense += Number(row.amount || 0);
+      } else {        income += Number(row.amount || 0);
+      }
+    });
+
+    publicOffset += rows.length;
+hasMore = rows.length === 500;
+  }
+
+  $('publicIncome').textContent = rupiah(income);
+  $('publicExpense').textContent = rupiah(expense);
+  $('publicBalance').textContent = rupiah(income-expense);
+
+  const list = $('publicTransactions');
+
+  if (!allRows.length) {
+    list.textContent = 'Belum ada transaksi.';
+  } else {
+    list.innerHTML = allRows.slice(0,50).map(row => `
+      <div class="listitem">
+        <b>${esc(row.description)}</b>
+        <div class="muted">
+          ${esc(row.transaction_date || '')} ·
+          ${row.type === 'pengeluaran' ? 'Pengeluaran' : 'Pemasukan'}
+        </div>
+        <b>${rupiah(row.amount)}</b>
+      </div>
+    `).join('');
+  }
+
+  $('morePublic').style.display = allRows.length > 50 ? 'block' : 'none';
+publicOffset = Math.min(PAGE_SIZE, allRows.length);
+  status.textContent = 'Laporan berhasil diperbarui.';
+}
+
+
+async function loadMorePublic() {
+  const button = $('morePublic');
+  const list = $('publicTransactions');
+
+  if (!button || !list) return;
+
+  button.disabled = true;
+  button.textContent = 'Memuat...';
+
+  const start = publicOffset;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await sb
+    .from('public_transactions')
+    .select('id,type,description,amount,transaction_date,created_at')
+    .order('transaction_date', { ascending: false })
+    .range(start, end);
+
+  if (error) {
+    toast('Gagal memuat transaksi berikutnya.');
+    button.disabled = false;
+    button.textContent = 'Muat Transaksi Berikutnya';
+    return;
+  }
+
+  const rows = data || [];
+
+  if (!rows.length) {
+    button.style.display = 'none';
+    return;
+  }
+
+  list.insertAdjacentHTML(
+    'beforeend',
+    rows.map(row => `
+      <div class="listitem">
+        <b>${esc(row.description)}</b>
+        <div class="muted">
+          ${esc(row.transaction_date || '')} ·
+          ${row.type === 'pengeluaran' ? 'Pengeluaran' : 'Pemasukan'}
+        </div>
+        <b>${rupiah(row.amount)}</b>
+      </div>
+    `).join('')
+  );
+
+  publicOffset += rows.length;
+
+  button.style.display = rows.length < PAGE_SIZE ? 'none' : 'block';
+  button.disabled = false;
+  button.textContent = 'Muat Transaksi Berikutnya';
+}
+
+
+/* =====================================
+   DANA PUNIA
+===================================== */
+
+function renderPunia() {
+  $('view').innerHTML = `
+    <div class="card">
+      <h2>Dana Punia</h2>
+      <p class="muted">Catat penerimaan dan penggunaan Dana Punia. Semua transaksi Dana Punia otomatis masuk ke Ringkasan Kas.</p>
+      <form onsubmit="addPunia(event)">
+        <label>Jenis transaksi</label>
+        <select id="puniaType">
+          <option value="pemasukan">Pemasukan Dana Punia</option>
+          <option value="pengeluaran">Pengeluaran Dana Punia</option>
+        </select>
+        <label>Tanggal</label>
+        <input type="date" id="puniaDate" required>
+        <label>Keterangan</label>
+        <input id="puniaDescription" placeholder="Contoh: Punia dari keluarga..." required>
+        <label>Jumlah (Rp)</label>
+        <input id="puniaAmount" type="number" min="1" required>
+        <button type="submit">Simpan Dana Punia</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Riwayat Dana Punia</h2>
+      <div id="puniaRows" class="muted">Memuat data...</div>
+    </div>
+  `;
+  $('puniaDate').value = new Date().toISOString().slice(0,10);
+  loadPuniaRows();
+}
+
+async function addPunia(event) {
+  event.preventDefault();
+  const detail = $('puniaDescription').value.trim();
+  const amount = Number($('puniaAmount').value);
+  if (!detail || amount <= 0) {
+    toast('Periksa keterangan dan jumlah Dana Punia.');
+    return;
+  }
+  const obj = {
+    type: $('puniaType').value,
+    transaction_date: $('puniaDate').value,
+    description: 'Dana Punia: ' + detail,
+    amount,
+    created_by: session.user.id
+  };
+  const {error} = await sb.from('transactions').insert(obj);
+  if (error) {
+    toast('Gagal menyimpan Dana Punia: ' + error.message);
+    return;
+  }
+  toast('Dana Punia berhasil disimpan dan saldo kas diperbarui.');
+  event.target.reset();
+  $('puniaDate').value = new Date().toISOString().slice(0,10);
+  loadPuniaRows();
+  loadFinanceSummary();
+  loadStats();
+}
+
+async function loadPuniaRows() {
+  const target = $('puniaRows');
+  if (!target) return;
+  const {data,error} = await sb.from('transactions')
+    .select('id,type,description,amount,transaction_date')
+    .ilike('description','Dana Punia:%')
+    .order('transaction_date',{ascending:false});
+  if (error) {
+    target.innerHTML = '<div class="muted">Gagal memuat riwayat Dana Punia: ' + esc(error.message) + '</div>';
+    return;
+  }
+  if (!data || !data.length) {
+    target.innerHTML = '<div class="muted">Belum ada transaksi Dana Punia.</div>';
+    return;
+  }
+  target.innerHTML = data.map(row => `
+    <div class="listitem">
+      <b>${esc(row.description.replace(/^Dana Punia:\\s*/,''))}</b>
+      <div class="muted">${row.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} · ${esc(row.transaction_date || '')}</div>
+      <strong>${rupiah(row.amount)}</strong>
+    </div>
+  `).join('');
+}
+
+/* =====================================
+   FORM TRANSAKSI
+===================================== */
+
+function renderFinance() {
+  $('view').innerHTML = `
+    <div class="card">
+      <h2>Ringkasan Kas</h2>
+      <div class="grid">
+        <div>
+          <div class="muted">Pemasukan</div>
+          <div class="stat" id="totalIn">Rp 0</div>
+        </div>
+        <div>
+          <div class="muted">Pengeluaran</div>
+          <div class="stat" id="totalOut">Rp 0</div>
+        </div>
+        <div>
+          <div class="muted">Saldo</div>
+          <div class="stat" id="totalBalance">Rp 0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tambah Transaksi</h2>
+      <form onsubmit="addTransaction(event)">
+        <label>Jenis transaksi</label>
+        <select id="txType">
+          <option value="pemasukan">Pemasukan</option>
+          <option value="pengeluaran">Pengeluaran</option>
+        </select>
+        <label>Tanggal</label>
+        <input type="date" id="txDate" required>
+        <label>Keterangan</label>
+        <input id="txDescription" required>
+        <label>Jumlah (Rp)</label>
+        <input id="txAmount" type="number" min="1" required>
+        <button type="submit">Simpan Transaksi</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Riwayat Transaksi</h2>
+      <div id="rows">Memuat data...</div>
+    </div>
+  `;
+
+  $('txDate').value = new Date().toISOString().slice(0,10);
+  loadRows('transactions');
+  loadFinanceSummary();
+}
+
+async function addTransaction(event) {
+  event.preventDefault();
+
+  const obj = {
+    type:$('txType').value,
+    transaction_date:$('txDate').value,
+    description:$('txDescription').value.trim(),
+    amount:Number($('txAmount').value),
+    created_by:session.user.id
+  };
+
+  if (!obj.description || obj.amount <= 0) {
+    toast('Periksa keterangan dan jumlah transaksi.');
+    return;
+  }
+
+  const {error} = await sb.from('transactions').insert(obj);
+
+  if (error) {
+    toast('Gagal: ' + error.message);
+    return;
+  }
+
+  toast('Transaksi berhasil disimpan.');
+  event.target.reset();
+  $('txDate').value = new Date().toISOString().slice(0,10);
+
+  loadRows('transactions');
+  loadFinanceSummary();
+  loadStats();
+}
+
+async function loadFinanceSummary() {
+  let allRows = [];
+  let offset = 0;
+  const pageSize = 500;
+
+  while (true) {
+    const { data, error } = await sb
+      .from('transactions')
+      .select('type,amount')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      toast('Ringkasan keuangan gagal dimuat.');
+      return;
+    }
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    if (rows.length < pageSize) break;
+
+    offset += pageSize;
+  }
+
+  let income = 0;
+  let expense = 0;
+
+  allRows.forEach(row => {
+    if (row.type === 'pengeluaran') {
+      expense += Number(row.amount || 0);
+    } else {
+      income += Number(row.amount || 0);
+    }
+  });
+
+  if ($('totalIn')) $('totalIn').textContent = rupiah(income);
+  if ($('totalOut')) $('totalOut').textContent = rupiah(expense);
+  if ($('totalBalance')) $('totalBalance').textContent = rupiah(income-expense);
+}
+
+
+/* =====================================
+   CHAT KELUARGA - PESAN PRIBADI & GRUP
+===================================== */
+let activeChatRoom = null;
+let chatRealtimeChannel = null;
+let chatRoomsCache = [];
+
+
+async function renderRegistrationRequests() {
+  $('view').innerHTML='<div class="card"><h2>Pendaftaran Chat Keluarga</h2><p class="muted">Cocokkan nama pendaftar dengan data anggota sebelum menyetujui.</p><div id="registrationRequests">Memuat...</div></div>';
+  const target=$('registrationRequests');
+  const {data,error}=await sb.from('chat_registration_requests').select('id,full_name,email,member_id,created_at').eq('status','pending').order('created_at');
+  if(error){target.textContent='Gagal memuat pendaftaran: '+error.message;return;}
+  if(!data || !data.length){target.textContent='Belum ada pendaftaran menunggu persetujuan.';return;}
+  const ids=data.map(x=>x.member_id);
+  const {data:members}=await sb.from('members').select('id,full_name').in('id',ids);
+  const names={};(members||[]).forEach(m=>names[m.id]=m.full_name);
+  target.innerHTML=data.map(r=>'<div class="listitem"><b>'+esc(r.full_name)+'</b><div class="muted">'+esc(r.email)+'</div><div class="muted">Data anggota: '+esc(names[r.member_id]||'Tidak ditemukan')+'</div><div class="actions" style="margin-top:8px"><button onclick="decideChatRegistration(\''+r.id+'\',true)">Setujui</button><button class="danger" onclick="decideChatRegistration(\''+r.id+'\',false)">Tolak</button></div></div>').join('');
+}
+async function decideChatRegistration(id,approve) {
+  if(!confirm(approve?'Setujui pendaftaran ini?':'Tolak pendaftaran ini?')) return;
+  const {error}=await sb.rpc('decide_chat_registration',{p_request_id:id,p_approve:approve});
+  if(error){toast('Gagal memproses: '+error.message);return;}
+  toast(approve?'Akun anggota disetujui.':'Pendaftaran ditolak.');
+  renderRegistrationRequests();
+}
+
+function renderChat() {
+  $('view').innerHTML = `
+    <div class="card">
+      <div class="row">
+        <div><h2>Chat Keluarga</h2><div class="muted">Percakapan pribadi dan grup keluarga.</div></div>
+        <button class="secondary" onclick="loadChatRooms()">Muat ulang</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button onclick="startNewChat()">＋ Chat pribadi</button>
+        <button class="secondary" onclick="createFamilyGroup()">＋ Buat grup</button>
+        <button class="secondary" onclick="openFamilyWhatsApp()">Gabung Grup WhatsApp</button>
+      </div>
+      <p class="muted" id="chatNotice">Chat hanya tersedia untuk anggota yang sudah memiliki akun login.</p>
+    </div>
+    <div class="chat-layout">
+      <div class="card">
+        <h2>Percakapan</h2>
+        <div class="chat-rooms" id="chatRooms">Memuat percakapan...</div>
+      </div>
+      <div class="card chat-panel">
+        <div class="row"><h2 id="chatRoomTitle">Pilih percakapan</h2><span class="pill">Realtime</span></div>
+        <div class="chat-messages" id="chatMessages"><div class="muted">Pilih percakapan untuk mulai mengirim pesan.</div></div>
+        <form class="chat-compose" onsubmit="sendChatMessage(event)">
+          <textarea id="chatInput" rows="2" maxlength="3000" placeholder="Tulis pesan..." disabled></textarea>
+          <button id="chatSend" type="submit" disabled>Kirim</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="muted">Catatan: chat tidak memberi anggota hak mengubah data anggota, keuangan, iuran, upacara, ngayah, inventaris, pengumuman, atau arsip.</div>
+    </div>
+  `;
+  loadChatRooms();
+}
+
+async function loadChatRooms() {
+  const target = $('chatRooms');
+  if (!target || !session) return;
+  target.textContent = 'Memuat percakapan...';
+  const {data: memberships,error} = await sb.from('chat_room_members')
+    .select('room_id').eq('user_id',session.user.id);
+  if (error) {
+    target.textContent = 'Chat belum aktif di database. Hubungi pengurus untuk mengaktifkan fitur.';
+    return;
+  }
+  const ids = (memberships || []).map(x=>x.room_id);
+  if (!ids.length) {
+    target.textContent = 'Belum ada percakapan. Buat chat pribadi atau grup.';
+    return;
+  }
+  const {data: rooms,error: roomError} = await sb.from('chat_rooms')
+    .select('id,name,room_type,created_at').in('id',ids).order('created_at',{ascending:false});
+  if (roomError) { target.textContent='Gagal memuat percakapan: '+roomError.message; return; }
+  chatRoomsCache = rooms || [];
+  target.innerHTML = chatRoomsCache.map(room=>`
+    <button class="chat-room ${activeChatRoom===room.id?'active':''}" onclick="openChatRoom('${room.id}')">
+      <b>${esc(room.name || (room.room_type==='direct'?'Chat pribadi':'Grup keluarga'))}</b>
+      <small>${room.room_type==='direct'?'Pribadi':'Grup'} · Buka percakapan</small>
+    </button>
+  `).join('');
+  if (activeChatRoom && chatRoomsCache.some(r=>r.id===activeChatRoom)) {
+    await loadChatMessages();
+  } else if (!activeChatRoom && chatRoomsCache.length) {
+    await openChatRoom(chatRoomsCache[0].id);
+  }
+}
+
+async function startNewChat() {
+  const {data: people,error} = await sb.rpc('chat_directory');
+  if (error) { toast('Daftar anggota chat gagal dimuat: '+error.message); return; }
+  const others=(people||[]).filter(p=>p.id!==session.user.id);
+  if (!others.length) {
+    toast('Belum ada akun anggota lain. Setiap anggota perlu akun login sendiri.');
+    return;
+  }
+  const options = others.map((p,i)=> (i+1)+'. '+p.full_name).join('\n');
+  const answer = prompt('Pilih nomor anggota untuk chat pribadi:\n'+options);
+  if (answer===null) return;
+  const person=others[Number(answer)-1];
+  if (!person) { toast('Pilihan tidak valid.'); return; }
+  const {data: roomId,error: createError}=await sb.rpc('get_or_create_direct_chat',{p_other_user_id:person.id});
+  if (createError || !roomId) {
+    toast('Chat pribadi gagal dibuat: '+(createError?.message||'Percakapan tidak ditemukan.'));
+    return;
+  }
+  await loadChatRooms();
+  await openChatRoom(roomId);
+}
+
+async function createFamilyGroup() {
+  const name=prompt('Nama grup keluarga:','Grup Keluarga');
+  if (!name || !name.trim()) return;
+  const {data: people,error}=await sb.rpc('chat_directory');
+  if (error) { toast('Daftar anggota gagal dimuat: '+error.message); return; }
+  let chosen=[];
+  if (people && people.length) {
+    const list=people.map((p,i)=>(i+1)+'. '+p.full_name).join('\n');
+    const answer=prompt('Masukkan nomor anggota dipisahkan koma. Kosongkan untuk grup pribadi dulu.\n'+list,'');
+    if (answer===null) return;
+    chosen=answer.trim()?answer.split(',').map(x=>people[Number(x.trim())-1]).filter(Boolean):[];
+  }
+  const {data: room,error:createError}=await sb.from('chat_rooms')
+    .insert({name:name.trim(),room_type:'group',created_by:session.user.id}).select('id').single();
+  if (createError) { toast('Gagal membuat grup: '+createError.message); return; }
+  const rows=[session.user.id,...chosen.map(p=>p.id)].map(user_id=>({room_id:room.id,user_id}));
+  const {error: memberError}=await sb.from('chat_room_members').insert(rows);
+  if (memberError) { toast('Grup dibuat, tetapi anggota gagal ditambahkan: '+memberError.message); return; }
+  await loadChatRooms();
+  await openChatRoom(room.id);
+}
+
+async function openChatRoom(roomId) {
+  activeChatRoom=roomId;
+  const room=chatRoomsCache.find(r=>r.id===roomId);
+  if ($('chatRoomTitle')) $('chatRoomTitle').textContent=room?.name || 'Percakapan';
+  if ($('chatInput')) $('chatInput').disabled=false;
+  if ($('chatSend')) $('chatSend').disabled=false;
+  await loadChatRoomsListOnly();
+  await loadChatMessages();
+  if (chatRealtimeChannel) sb.removeChannel(chatRealtimeChannel);
+  chatRealtimeChannel=sb.channel('chat-room-'+roomId)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:'room_id=eq.'+roomId},payload=>{
+      if (payload.new) loadChatMessages();
+    }).subscribe();
+}
+
+async function loadChatRoomsListOnly() {
+  const target=$('chatRooms'); if (!target) return;
+  target.innerHTML=chatRoomsCache.map(room=>`
+    <button class="chat-room ${activeChatRoom===room.id?'active':''}" onclick="openChatRoom('${room.id}')">
+      <b>${esc(room.name || 'Percakapan')}</b><small>${room.room_type==='direct'?'Pribadi':'Grup'} · Buka percakapan</small>
+    </button>`).join('');
+}
+
+async function loadChatMessages() {
+  if (!activeChatRoom || !$('chatMessages')) return;
+  const {data,error}=await sb.from('chat_messages')
+    .select('id,room_id,sender_id,body,created_at')
+    .eq('room_id',activeChatRoom).order('created_at',{ascending:true}).limit(200);
+  if (error) { $('chatMessages').textContent='Gagal memuat pesan: '+error.message; return; }
+  const senderIds=[...new Set((data||[]).map(m=>m.sender_id))];
+  let names={};
+  if (senderIds.length) {
+    const {data: senders}=await sb.rpc('chat_directory');
+    (senders||[]).forEach(p=>names[p.id]=p.full_name);
+  }
+  $('chatMessages').innerHTML=(data||[]).length?(data||[]).map(m=>`
+    <div class="chat-bubble ${m.sender_id===session.user.id?'mine':''}">
+      <b>${esc(m.sender_id===session.user.id?'Anda':(names[m.sender_id]||'Anggota'))}</b>
+      <div>${esc(m.body)}</div>
+      <div class="muted">${new Date(m.created_at).toLocaleString('id-ID')}</div>
+    </div>`).join(''):'<div class="muted">Belum ada pesan. Mulai percakapan sekarang.</div>';
+  $('chatMessages').scrollTop=$('chatMessages').scrollHeight;
+}
+
+async function sendChatMessage(event) {
+  event.preventDefault();
+  if (!activeChatRoom) { toast('Pilih percakapan terlebih dahulu.'); return; }
+  const input=$('chatInput');
+  const body=input.value.trim();
+  if (!body) return;
+  const {error}=await sb.from('chat_messages').insert({
+    room_id:activeChatRoom,sender_id:session.user.id,body
+  });
+  if (error) { toast('Pesan gagal dikirim: '+error.message); return; }
+  input.value='';
+  await loadChatMessages();
+}
+
+function openFamilyWhatsApp() {
+  const inviteUrl='https://chat.whatsapp.com/I4MgxoNib24JbVqWmMvIzh?s=cl&p=a&mlu=4&ilr=4&iam=2';
+  if (!inviteUrl) {
+    toast('Tautan undangan WhatsApp keluarga belum diberikan. Chat aplikasi tetap bisa digunakan.');
+    return;
+  }
+  window.open(inviteUrl,'_blank','noopener');}
+
+
+/* =====================================
+   MULAI APLIKASI
+===================================== */
+
+async function initializeApp() {
+  if (!connectSupabase()) {
+    showPublic();
+    return;
+  }
+
+  // Tampilkan pengumuman dan laporan publik walaupun belum login.
+  await loadPublicAnnouncements();
+  await renderPipilRotation('pipilPublicContent');
+  await loadPublicMembers();
+  await loadPublicFinance();
+
+  const {data,error} = await sb.auth.getSession();
+
+  if (!error && data.session) {
+    session = data.session;
+    await loadProfile();
+  } else {
+    showPublic();
+  }
+
+  // Listener baru dipasang setelah client Supabase tersedia.
+  sb.auth.onAuthStateChange(async (event,newSession) => {
+    if (event === 'SIGNED_OUT') {
+      session = null;
+      profile = null;
+      showPublic();
+    }
+
+    if (event === 'SIGNED_IN' && newSession) {
+      session = newSession;
+      await loadProfile();
+    }
+  });
+}
+
+// ==========================================
+// BAGIAN 3 - EDIT, HAPUS, DAN KEAMANAN DATA
+// ==========================================
+
+
+const editableFields = {
+  members: [
+    ['full_name', 'Nama lengkap', 'text'],
+    ['family_name', 'Nama keluarga', 'text'],
+    ['relation', 'Hubungan keluarga', 'text'],
+    ['member_type', 'Kategori (pengarep/keluarga)', 'text']
+  ],
+
+  transactions: [
+    ['type', 'Jenis (pemasukan/pengeluaran)', 'text'],
+    ['description', 'Keterangan', 'text'],
+    ['amount', 'Jumlah uang', 'number'],
+    ['transaction_date', 'Tanggal (YYYY-MM-DD)', 'date']
+  ],
+
+  dues: [
+    ['description', 'Keterangan', 'text'],
+    ['amount', 'Jumlah uang', 'number'],
+    ['member_id', 'ID anggota (kosongkan jika tidak ada)', 'text'],
+    ['type', 'Jenis (pemasukan/pengeluaran)', 'text']
+  ],
+
+  events: [
+    ['title', 'Nama kegiatan', 'text'],
+    ['event_date', 'Tanggal kegiatan', 'date'],
+    ['location', 'Lokasi', 'text'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  ngayah: [
+    ['task', 'Tugas ngayah', 'text'],
+    ['event_date', 'Tanggal kegiatan', 'date'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  inventory: [
+    ['item_name', 'Nama barang', 'text'],
+    ['quantity', 'Jumlah', 'number'],
+    ['condition', 'Kondisi barang', 'text'],
+    ['notes', 'Catatan', 'text']
+  ],
+
+  announcements: [
+    ['title', 'Judul pengumuman', 'text'],
+    ['body', 'Isi pengumuman', 'text']
+  ],
+
+  documents: [
+    ['title', 'Nama dokumen', 'text'],
+    ['file_url', 'Link dokumen', 'text'],
+    ['notes', 'Catatan', 'text']
+  ]
+};
+
+
+function allowedToEdit(table) {
+  const role = profile?.role;
+
+  const permissions = {
+    members: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    transactions: ['ketua', 'wakil', 'bendahara'],
+    dues: ['ketua', 'wakil', 'bendahara'],
+    events: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    ngayah: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    inventory: ['ketua', 'wakil', 'koordinator'],
+    announcements: ['ketua', 'wakil', 'sekretaris', 'koordinator'],
+    documents: ['ketua', 'wakil', 'sekretaris']
+  };
+
+  return permissions[table]?.includes(role) || false;
+}
+
+function allowedToDelete(table) {
+  if (table === 'members') return false;
+  return allowedToEdit(table);
+}
+
+async function editRecord(table, id) {
+  if (!allowedToEdit(table)) {
+    alert('Jabatan Anda tidak memiliki izin mengedit data ini.');
+    return;
+  }
+
+  const fields = editableFields[table];
+
+  if (!fields) {
+    alert('Tabel ini tidak dapat diedit.');
+    return;
+  }
+
+  const { data, error } = await sb
+    .from(table)
+
+    .select(
+      table === 'members'
+        ? 'id,full_name,family_name,relation,member_type,created_at'
+        : '*'
+    )
+    .eq('id', id)
+    .single();
+
+
+  if (error || !data) {
+    alert('Gagal mengambil data: ' + (error?.message || 'Data tidak ditemukan.'));
+    return;
+  }
+
+  const changes = {};
+
+  for (const [column, label, type] of fields) {
+    const oldValue = data[column] ?? '';
+    const answer = prompt(
+      'Edit ' + label + '\nKosongkan jika ingin mengosongkan nilai:',
+      String(oldValue)
+    );
+
+    if (answer === null) return;
+
+    if (type === 'number' && answer.trim() !== '') {
+      const numberValue = Number(answer);
+
+      if (!Number.isFinite(numberValue) || numberValue < 0) {
+        alert(label + ' harus berupa angka yang valid dan tidak negatif.');
+        return;
+      }
+
+      changes[column] = numberValue;
+    } else {
+      changes[column] = answer.trim() === '' ? null : answer.trim();
+    }
+  }
+
+  if (table === 'transactions' || table === 'dues') {
+    if (!['pemasukan', 'pengeluaran'].includes(changes.type)) {
+      alert('Jenis harus diisi pemasukan atau pengeluaran.');
+      return;
+    }
+  }
+
+  const { error: updateError } = await sb
+    .from(table)
+    .update(changes)
+    .eq('id', id);
+
+  if (updateError) {
+    alert('Gagal menyimpan perubahan: ' + updateError.message);
+    return;
+  }
+
+  alert('Data berhasil diperbarui.');
+  await loadRows(table);
+}
+
+async function deleteRecord(table, id) {
+  if (!allowedToDelete(table)) {
+    alert('Jabatan Anda tidak memiliki izin menghapus data ini.');
+    return;
+  }
+
+  const approved = confirm(
+    'Yakin ingin menghapus data ini?\nData yang sudah dihapus tidak dapat dikembalikan.'
+  );
+
+  if (!approved) return;
+
+  const { error } = await sb
+    .from(table)
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert('Gagal menghapus data: ' + error.message);
+    return;
+  }
+
+  alert('Data berhasil dihapus.');
+  await loadRows(table);
+}
+
+// Memuat data dan tombol tindakan sesuai hak akses.
+
+async function loadRows(table) {
+  const el = $('rows');
+  if (!el) return;
+
+  el.textContent = 'Memuat data...';
+
+  el.classList.toggle('member-list', table === 'members');
+
+  const columns = table === 'members'
+    ? 'id,full_name,family_name,relation,member_type,created_at'
+    : '*';
+
+  let query = sb
+    .from(table)
+    .select(columns)
+    .order('created_at', { ascending: false });
+
+  if (table === 'members') {
+    if (activeMemberType === 'pengarep' || activeMemberType === 'keluarga') query = query.eq('member_type', activeMemberType);
+    if (activeMemberType === 'uncategorized') query = query.is('member_type', null);
+  }
+
+  const { data, error } = await query.limit(300);
+
+  if (error) {
+    el.textContent = 'Gagal memuat data: ' + error.message;
+    return;
+  }
+
+  if (!data || !data.length) {
+    el.textContent = 'Belum ada data.';
+    return;
+  }
+
+  el.innerHTML = data.map(row => {
+    const content = displayValue(row, table);
+
+    let actions = '';
+
+    if (allowedToEdit(table)) {
+      actions += `
+        <button type="button"
+          onclick="editRecord('${table}','${esc(String(row.id))}')">
+          ✏️ Edit
+        </button>
+      `;
+    }
+
+    if (allowedToDelete(table)) {
+      actions += `
+        <button type="button"
+          onclick="deleteRecord('${table}','${esc(String(row.id))}')">
+          🗑️ Hapus
+        </button>
+      `;
+    }
+
+    return `
+      <div class="record-item">
+        ${content}
+        <div class="record-actions">
+          ${actions}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+// ==========================================
+// AKHIR BAGIAN 3
+// ==========================================
+
+initializeApp();
+</script>
+
+</body>
+</html>
