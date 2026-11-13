@@ -188,6 +188,11 @@ header .welcome{margin-top:14px;font-size:21px}
     </div>
   </div>
 
+  <div class="card" id="pipilRotationPublic">
+    <h2>🔄 GILIRAN PIPIL</h2>
+    <div id="pipilPublicContent" class="muted">Memuat giliran pipil...</div>
+  </div>
+
   <div class="card" id="publicAnnouncementsCard">
     <div class="row">
       <h2>Pengumuman Terbaru</h2>
@@ -736,6 +741,10 @@ function renderView() {
 
   if (active === 'dashboard') {
     v.innerHTML = `
+      <div class="card" id="pipilRotationDashboard">
+        <h2>🔄 GILIRAN PIPIL</h2>
+        <div id="pipilDashboardContent" class="muted">Memuat giliran pipil...</div>
+      </div>
       <div class="grid">
         <div class="card">
           <div class="muted">Anggota keluarga</div>
@@ -763,6 +772,7 @@ function renderView() {
     `;
 
     loadStats();
+    renderPipilRotation('pipilDashboardContent');
     return;
   }
 
@@ -955,6 +965,72 @@ async function loadRows(table) {
 /* =====================================
    PENGUMUMAN PUBLIK
 ===================================== */
+
+
+/* GILIRAN PIPIL: enam nama, hanya akun Agus boleh mengubah. */
+const PIPIL_OWNER_ID = 'e36b43db-a4c6-4571-83bd-a5d70dea73a0';
+const PIPIL_PEOPLE = [
+  { name: 'WAYAN SUDIASA', base: 1 },
+  { name: 'WAYAN SUDIARTA', base: 2 },
+  { name: 'NENGAH SUDIANA', base: 3 },
+  { name: 'NENGAH DIARTA', base: 4 },
+  { name: 'WAYAN NUSADA', base: 5 },
+  { name: 'PUTU DODY PUTRAWAN', base: 6 }
+];
+
+function isPipilOwner() {
+  return !!session && session.user.id === PIPIL_OWNER_ID;
+}
+
+function formatPipilDate(value) {
+  if (!value) return 'Belum ditentukan';
+  return new Date(value + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
+
+async function renderPipilRotation(targetId) {
+  const target = $(targetId);
+  if (!target || !sb) return;
+  target.textContent = 'Memuat giliran pipil...';
+  const {data,error} = await sb.from('pipil_rotation').select('round_no,rotation_date').eq('id',1).maybeSingle();
+  if (error || !data) {
+    target.textContent = 'Data giliran pipil belum tersedia. Hubungi pengurus.';
+    return;
+  }
+  const round = Math.max(1,Number(data.round_no || 1));
+  const people = PIPIL_PEOPLE.map(p => ({name:p.name,number:((p.base + round - 2) % 6) + 1})).sort((a,b)=>a.number-b.number);
+  let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
+  html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid '+(p.number===1?'#c89b4b':'var(--line)')+';border-radius:10px;background:'+(p.number===1?'#fff8e8':'#fff')+'"><span style="font-size:13px;font-weight:'+(p.number===1?'750':'600')+'">'+esc(p.name)+'</span><span class="pill" style="'+(p.number===1?'background:#f5e5b9;color:#654900':'')+'">PIPIL : '+p.number+(p.number===1?' · GILIRAN SEKARANG':'')+'</span></div>').join('');
+  html += '</div>';
+  if (isPipilOwner()) {
+    html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
+  }
+  target.innerHTML = html;
+}
+
+async function savePipilDate() {
+  if (!isPipilOwner()) { toast('Hanya Agus yang dapat mengubah pengaturan pipil.'); return; }
+  const date = $('pipilDate')?.value;
+  if (!date) { toast('Pilih tanggal terlebih dahulu.'); return; }
+  const {error} = await sb.from('pipil_rotation').update({rotation_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
+  if (error) { toast('Tanggal gagal disimpan: '+error.message); return; }
+  toast('Tanggal giliran pipil berhasil diperbarui.');
+  await refreshPipilCards();
+}
+
+async function advancePipilRound() {
+  if (!isPipilOwner()) { toast('Hanya Agus yang dapat melanjutkan putaran pipil.'); return; }
+  if (!confirm('Selesaikan putaran ini dan naikkan nomor pipil keenam orang satu angka?')) return;
+  const {data,error:readError} = await sb.from('pipil_rotation').select('round_no').eq('id',1).single();
+  if (readError || !data) { toast('Data putaran gagal dibaca.'); return; }
+  const {error} = await sb.from('pipil_rotation').update({round_no:Number(data.round_no || 1)+1,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
+  if (error) { toast('Putaran gagal diperbarui: '+error.message); return; }
+  toast('Putaran pipil berhasil dilanjutkan.');
+  await refreshPipilCards();
+}
+
+async function refreshPipilCards() {
+  await Promise.all([renderPipilRotation('pipilPublicContent'),renderPipilRotation('pipilDashboardContent')]);
+}
 
 async function loadPublicAnnouncements() {
   const list = $('publicAnnouncements');
@@ -1578,6 +1654,7 @@ async function initializeApp() {
 
   // Tampilkan pengumuman dan laporan publik walaupun belum login.
   await loadPublicAnnouncements();
+  await renderPipilRotation('pipilPublicContent');
   await loadPublicMembers();
   await loadPublicFinance();
 
