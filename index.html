@@ -221,6 +221,7 @@ header .sub{text-align:center;font-size:13px;letter-spacing:.25px;color:#f4f0df}
 main{max-width:1200px;padding:20px}
 .card{border:1px solid #e0e8dc;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #153c2410;background:#fff}
 .card h2{font-size:16px;font-weight:800;letter-spacing:.2px;color:#174c2d}
+.gold-heading-icon{display:inline-block;filter:grayscale(1) sepia(1) saturate(6) hue-rotate(5deg);transform:translateY(1px);margin-right:3px}
 button{border-radius:12px;background:linear-gradient(135deg,#075b2b,#0b7438);box-shadow:0 2px 6px #0a54231a}
 button.secondary{background:#edf4e9;color:#15542d;box-shadow:none;border:1px solid #dce8d9}
 button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
@@ -381,20 +382,20 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </div>
 
   <div class="card" id="pipilRotationPublic">
-    <h2>🔄 GILIRAN PIPIL</h2>
+    <h2><span class="gold-heading-icon">🔄</span> GILIRAN PIPIL</h2>
     <div id="pipilPublicContent" class="muted">Memuat giliran pipil...</div>
   </div>
 
   <div class="card" id="publicAnnouncementsCard">
     <div class="row">
-      <h2>📢 PENGUMUMAN TERBARU</h2>
+      <h2><span class="gold-heading-icon">📢</span> PENGUMUMAN TERBARU</h2>
       <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
     </div>
     <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
   </div>
 
   <div class="card" id="publicFinanceCard">
-    <h2>💰 RINGKASAN KEUANGAN</h2>
+    <h2><span class="gold-heading-icon">💰</span> RINGKASAN KEUANGAN</h2>
     <div class="grid">
       <div><div class="muted">Pemasukan</div><div class="stat" id="publicIncome">Rp 0</div></div>
       <div><div class="muted">Pengeluaran</div><div class="stat" id="publicExpense">Rp 0</div></div>
@@ -404,7 +405,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </div>
 
   <details class="card compact-details" id="publicMembersCard">
-    <summary>👨‍👩‍👧‍👦 DAFTAR ANGGOTA KELUARGA</summary>
+    <summary><span class="gold-heading-icon">👨‍👩‍👧‍👦</span> DAFTAR ANGGOTA KELUARGA</summary>
     <div class="row details-tools">
       <span class="muted">Data anggota keluarga</span>
       <button class="secondary" onclick="loadPublicMembers()">Muat ulang</button>
@@ -413,7 +414,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   </details>
 
   <details class="card compact-details" id="publicTransactionsCard">
-    <summary>💵 RIWAYAT KAS</summary>
+    <summary><span class="gold-heading-icon">💵</span> RIWAYAT KAS</summary>
     <div id="publicTransactions" class="muted">Data transaksi akan ditampilkan di sini.</div>
     <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">Muat transaksi berikutnya</button>
   </details>
