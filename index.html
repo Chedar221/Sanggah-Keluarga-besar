@@ -843,7 +843,6 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['banner','▧','Banner Bera
   ['ngayah','✣','Ngayah'],
   ['inventaris','▣','Inventaris'],
   ['dokumen','▧','Arsip'],
-  ['pendaftaran','✓','Pendaftaran']
 ];
 
 function renderNav() {
@@ -1002,16 +1001,6 @@ anggota: {
 function renderView() {
   const v = $('view');
 
-  if (active === 'pendaftaran') {
-    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pendaftaran hanya untuk pengurus.</div>'; return; }
-    renderRegistrationRequests(); return;
-  }
-
-  if (active === 'chat') {
-    renderChat();
-    return;
-  }
-
   if (active === 'banner') {
     if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pengaturan banner hanya untuk pengurus.</div>'; return; }
     renderBannerManager(); return;
@@ -1037,15 +1026,6 @@ function renderView() {
         <h2>Menu Utama</h2>
         <p class="muted">Pilih menu untuk mengelola administrasi keluarga.</p>
         <span class="pill">Akses: ${esc(roleName(profile.role))}</span>
-      </div>
-      <div class="card chat-dashboard-card">
-        <div class="row">
-          <div>
-            <h2>💬 Chat Keluarga</h2>
-            <p class="muted">Berkomunikasi pribadi atau bersama keluarga dalam satu tempat.</p>
-          </div>
-          <button onclick="go('chat')">Buka Chat</button>
-        </div>
       </div>
     `;
 
