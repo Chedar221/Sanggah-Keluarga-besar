@@ -728,6 +728,7 @@ function connectSupabase() {
   }
 
   sb = window.supabase.createClient(url, key);
+  registerFamilyServiceWorker();
   $('setup').classList.add('hidden');
   loadHomepageBanners();
   return true;
@@ -850,7 +851,7 @@ function canDelete(table) {
    MENU APLIKASI
 ===================================== */
 
-const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'],
+const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'], ['aktivasi-push','♧','Aktivasi Notifikasi'],
   ['dashboard','⌂','Beranda'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
@@ -863,7 +864,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
 ];
 
 function renderNav() {
-  $('nav').innerHTML = pages.filter(p => (p[0] !== 'banner' && p[0] !== 'pesan') || canManageGeneral()).map(p => `
+  $('nav').innerHTML = pages.filter(p => (p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()).map(p => `
     <button
       class="${active === p[0] ? 'active' : ''}"
       onclick="go('${p[0]}')">
@@ -947,7 +948,7 @@ anggota: {
     {key: 'full_name', label: 'Nama lengkap', required: true},
     {key: 'family_name', label: 'Nama keluarga'},
     {key: 'relation', label: 'Hubungan keluarga'},
-    {key: 'phone', label: 'Nomor HP / WhatsApp', type: 'tel'},
+    
     {key: 'member_type', label: 'Kategori anggota', type: 'select', required: true, options: [['pengarep','Anggota Pengarep'],['keluarga','Anggota Keluarga']]}
   ]
 },
@@ -1021,6 +1022,11 @@ function renderView() {
 
   if (active === 'notifikasi') {
     renderNotificationCenter(); return;
+  }
+
+  if (active === 'aktivasi-push') {
+    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses khusus pengurus.</div>'; return; }
+    renderFamilyPushManager(); return;
   }
 
   if (active === 'pesan') {
@@ -1153,7 +1159,98 @@ async function createFamilyNotification(title, body, category='umum') {
   }).select('id').single();
   if(error){console.error('Notifikasi gagal dibuat:',error);return {error};}
   await refreshNotificationBadge();
-  return {data};
+  const push = await sb.functions.invoke('family-push',{body:{action:'send',notification_id:data.id}});
+  if(push.error) console.warn('Push HP belum terkirim:',push.error);
+  return {data,pushResult:push.data,pushError:push.error};
+}
+
+
+/* =====================================
+   NOTIFIKASI PUSH KE HP ANGGOTA
+===================================== */
+const FAMILY_VAPID_PUBLIC_KEY = "BD2BQnPhjj0simrRG2Gr1JQYucQ7EN20kiuinNboMSKahVn6jaDofPx4";
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const raw = atob((base64String + padding).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from([...raw].map(char => char.charCodeAt(0)));
+}
+async function registerFamilyServiceWorker() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
+  try { return await navigator.serviceWorker.register('/sw.js?v=1'); }
+  catch (error) { console.warn('Service worker belum dapat didaftarkan:',error); return null; }
+}
+async function familyPushRequest(body) {
+  const {data,error}=await sb.functions.invoke('family-push',{body});
+  if(error) throw new Error(error.message || 'Permintaan notifikasi gagal.');
+  if(data?.error) throw new Error(data.error);
+  return data;
+}
+async function renderFamilyPushManager() {
+  const v=$('view');
+  v.innerHTML='<div class="card"><h2>🔔 AKTIVASI NOTIFIKASI HP ANGGOTA</h2><p class="muted">Simpan nomor WhatsApp anggota, lalu buat tautan aktivasi pribadi. Bagikan lewat WhatsApp. Tautan berlaku 7 hari dan hanya dapat dipakai satu kali untuk satu perangkat.</p><p class="muted">Nomor HP hanya dikelola pengurus dan tidak ditampilkan di daftar anggota publik.</p><div id="familyPushStatus" class="pill">Memeriksa perangkat aktif...</div><button class="secondary" type="button" onclick="loadFamilyPushMembers()">Muat ulang daftar</button></div><div class="card"><div id="familyPushMembers" class="muted">Memuat anggota...</div></div>';
+  try {
+    const status=await familyPushRequest({action:'status'});
+    const badge=$('familyPushStatus');
+    if(badge)badge.textContent=status.activeDevices+' perangkat sudah aktif';
+  } catch(error) {
+    const badge=$('familyPushStatus'); if(badge)badge.textContent='Status perangkat belum tersedia';
+  }
+  await loadFamilyPushMembers();
+}
+async function loadFamilyPushMembers() {
+  const box=$('familyPushMembers'); if(!box)return;
+  box.textContent='Memuat anggota...';
+  try {
+    const result=await familyPushRequest({action:'list_members'});
+    if(!result.members?.length){box.textContent='Belum ada data anggota.';return;}
+    box.innerHTML=result.members.map(m=>
+      '<div class="record-item" style="display:block;margin:10px 0"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+esc(m.full_name)+'</strong><span class="pill">'+(m.active?'Notifikasi aktif':'Belum aktif')+'</span></div><label>Nomor WhatsApp (format 628xxxxxxxxxx)</label><input id="pushPhone-'+esc(m.id)+'" type="tel" value="'+esc(m.phone||'')+'" placeholder="628xxxxxxxxxx" inputmode="tel"><div class="actions" style="margin-top:8px"><button type="button" class="secondary" onclick="saveFamilyPushPhone(\''+esc(m.id)+'\')">Simpan Nomor</button><button type="button" onclick="createFamilyPushLink(\''+esc(m.id)+'\')">Buat Link WhatsApp</button></div></div>'
+    ).join('');
+  } catch(error) {box.textContent='Gagal memuat anggota: '+error.message;}
+}
+async function saveFamilyPushPhone(memberId) {
+  const input=$('pushPhone-'+memberId); if(!input)return;
+  try {
+    await familyPushRequest({action:'save_contact',member_id:memberId,phone:input.value});
+    toast('Nomor HP berhasil disimpan secara privat.');
+  } catch(error) {toast('Nomor HP gagal disimpan: '+error.message);}
+}
+async function createFamilyPushLink(memberId) {
+  const input=$('pushPhone-'+memberId); if(!input)return;
+  try {
+    await familyPushRequest({action:'save_contact',member_id:memberId,phone:input.value});
+    const result=await familyPushRequest({action:'create_link',member_id:memberId});
+    const digits=String(result.phone).replace(/[^0-9]/g,'').replace(/^0/,'62');
+    const message='Om Swastyastu. Silakan aktifkan notifikasi resmi keluarga melalui tautan berikut agar menerima informasi upacara, ngayah, pengumuman, dan pemberitahuan keluarga di HP Anda: '+result.activationUrl+'\n\nTautan berlaku 7 hari dan hanya untuk aktivasi perangkat Anda.';
+    window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(message),'_blank','noopener');
+    toast('Tautan aktivasi dibuat. Lanjutkan kirim melalui WhatsApp.');
+  } catch(error) {toast('Gagal membuat tautan: '+error.message);}
+}
+async function renderFamilyPushActivation(token) {
+  document.body.innerHTML='<main style="max-width:480px;margin:8vh auto;padding:24px;font-family:Arial,sans-serif;color:#173d32"><div style="border:1px solid #d9dfd7;border-radius:18px;padding:24px;box-shadow:0 8px 30px #0001"><h2 style="margin-top:0">🔔 AKTIVASI NOTIFIKASI KELUARGA</h2><p>Aktifkan pemberitahuan keluarga di HP ini agar Anda menerima informasi terbaru.</p><p style="font-size:13px;color:#667">Tekan tombol di bawah dan izinkan notifikasi ketika browser memintanya.</p><button id="activateFamilyPushButton" style="width:100%;padding:14px;border:0;border-radius:10px;background:#173d32;color:white;font-weight:bold;font-size:15px">AKTIFKAN NOTIFIKASI</button><p id="familyPushActivationStatus" style="font-size:13px;line-height:1.5"></p><p style="font-size:12px;color:#777">Jika menggunakan iPhone/iPad, buka tautan ini di Safari, tambahkan website ke Layar Utama, lalu buka dari ikon tersebut.</p></div></main>';
+  const button=$('activateFamilyPushButton'), status=$('familyPushActivationStatus');
+  button.onclick=async()=>{
+    button.disabled=true; status.textContent='Memproses aktivasi...';
+    try {
+      if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) throw new Error('Browser ini belum mendukung notifikasi web. Coba Chrome terbaru di Android atau Safari di iPhone/iPad yang sudah ditambahkan ke Layar Utama.');
+      const permission=await Notification.requestPermission();
+      if(permission!=='granted') throw new Error('Izin notifikasi belum diberikan. Aktifkan izin notifikasi untuk website ini di pengaturan browser.');
+      const registration=await navigator.serviceWorker.register('/sw.js?v=1');
+      await navigator.serviceWorker.ready;
+      let subscription=await registration.pushManager.getSubscription();
+      if(!subscription) subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(FAMILY_VAPID_PUBLIC_KEY)});
+      const response=await fetch(SUPABASE_URL+'/functions/v1/family-push',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+SUPABASE_PUBLISHABLE_KEY},
+        body:JSON.stringify({action:'activate',token,subscription:subscription.toJSON()})
+      });
+      const result=await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error||'Aktivasi gagal.');
+      history.replaceState({},document.title,location.pathname);
+      status.textContent='Berhasil! Notifikasi keluarga sudah aktif di perangkat ini. Terima kasih, '+result.memberName+'.';
+      button.textContent='NOTIFIKASI AKTIF';
+    } catch(error) {status.textContent=error.message;button.disabled=false;}
+  };
 }
 
 async function refreshNotificationBadge() {
@@ -1239,7 +1336,8 @@ async function sendFamilyNotification(event) {
   const category=$('familyNotificationCategory').value;
   const result=await createFamilyNotification(title,body,category);
   if(result.error){toast('Notifikasi gagal dikirim: '+result.error.message);return;}
-  toast('Notifikasi berhasil dikirim kepada anggota yang memiliki akun.');
+  if(result.pushError || result.pushResult?.error) toast('Notifikasi tersimpan. Push HP belum aktif/terkirim; periksa konfigurasi layanan push.');
+  else toast('Notifikasi terkirim ke '+(result.pushResult?.sent||0)+' perangkat HP.');
   event.target.reset();
   await loadNotificationCenter();
 }
@@ -1368,7 +1466,7 @@ function displayValue(row, table) {
     detail = `${row.type || ''} · ${rupiah(row.amount)}`;
   } else if (table === 'members') {
     const category = row.member_type === 'pengarep' ? 'Anggota Pengarep' : row.member_type === 'keluarga' ? 'Anggota Keluarga' : 'Belum dikategorikan';
-    detail = [category, row.family_name, row.relation, row.phone ? 'HP/WA: '+row.phone : 'Nomor HP belum diisi'].filter(Boolean).join(' · ');
+    detail = [category, row.family_name, row.relation, 'Kontak dikelola melalui Aktivasi Notifikasi'].filter(Boolean).join(' · ');
   } else if (table === 'events' || table === 'ngayah') {
     detail = row.event_date || '';
   } else if (table === 'inventory') {
@@ -2325,6 +2423,8 @@ function openFamilyWhatsApp() {
 ===================================== */
 
 async function initializeApp() {
+  const activationToken = new URLSearchParams(location.search).get('aktivasi_notifikasi');
+  if (activationToken) { await renderFamilyPushActivation(activationToken); return; }
   if (!connectSupabase()) {
     showPublic();
     return;
@@ -2370,7 +2470,7 @@ const editableFields = {
     ['full_name', 'Nama lengkap', 'text'],
     ['family_name', 'Nama keluarga', 'text'],
     ['relation', 'Hubungan keluarga', 'text'],
-    ['phone', 'Nomor HP / WhatsApp', 'tel'],
+    
     ['member_type', 'Kategori (pengarep/keluarga)', 'text']
   ],
 
@@ -2461,7 +2561,7 @@ async function editRecord(table, id) {
 
     .select(
       table === 'members'
-        ? 'id,full_name,family_name,relation,phone,member_type,created_at'
+        ? 'id,full_name,family_name,relation,member_type,created_at'
         : '*'
     )
     .eq('id', id)
