@@ -231,6 +231,10 @@ button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
 .welcome-card p{font-size:13px;margin:0 0 16px}
 .homepage-action-buttons{max-width:560px}
 .homepage-action-buttons .chat-entry-button{background:#c49b17;color:#fff;border:1px solid #b18a0c;box-shadow:0 3px 8px #82630e22}
+/* BERANDA: sembunyikan teks sambutan, pertahankan tombol akses cepat */
+#publicPage>.welcome-card{background:transparent;border:0;box-shadow:none;padding:0;overflow:visible}
+#publicPage>.welcome-card:after{display:none}
+#publicPage>.welcome-card>.welcome-kicker,#publicPage>.welcome-card>h2,#publicPage>.welcome-card>p,#publicPage>.welcome-card>.welcome-description{display:none}
 .committee-card{background:linear-gradient(120deg,#edf5fc,#dcebf7);border:1px solid #c8dced;color:#214463}
 .committee-card h2{color:#174e86}
 .committee-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
