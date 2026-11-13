@@ -253,6 +253,9 @@ button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
 #publicAnnouncementsCard{background:linear-gradient(145deg,#fffdf1,#fff7d9);border-color:#f0e0a6}
 #publicAnnouncementsCard h2{color:#72560a}
 #publicAnnouncementsCard .secondary{background:#d4a91b;color:#fff;border:0}
+.announcement-banner{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:13px;margin:9px 0;border:1px solid #eadba9}
+.announcement-admin-image{display:block;width:min(100%,320px);max-height:190px;object-fit:cover;border-radius:12px;margin:8px 0}
+.announcement-upload-note{font-size:11px;color:var(--muted);margin:-5px 0 12px}
 #publicFinanceCard .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 #publicFinanceCard .grid>div{padding:12px;border-radius:14px;background:#f1f7ed;border:1px solid #dfebd8}
 #publicFinanceCard .grid>div:last-child{grid-column:1/-1;background:linear-gradient(110deg,#e8f5e4,#d9eed4);border-color:#c8e2c1}
@@ -1016,6 +1019,11 @@ function renderView() {
               : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''}>`
             }
           `).join('')}
+          ${active === 'pengumuman' ? `
+            <label>Gambar banner / poster (opsional)</label>
+            <input id="announcementImage" type="file" accept="image/jpeg,image/png,image/webp">
+            <p class="announcement-upload-note">Format JPG, PNG, atau WEBP. Maksimal 5 MB. Gambar akan terlihat oleh semua anggota.</p>
+          ` : ''}
           <button type="submit">Simpan Data</button>
         </form>
       </div>
@@ -1052,6 +1060,30 @@ async function saveGeneric(event, table) {
 
   if (table === 'members') {
     obj.created_by = session.user.id;
+  }
+
+  if (table === 'announcements') {
+    const file = $('announcementImage')?.files?.[0];
+    if (file) {
+      const allowedTypes = ['image/jpeg','image/png','image/webp'];
+      if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
+        toast('Pilih gambar JPG, PNG, atau WEBP maksimal 5 MB.');
+        return;
+      }
+      const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');
+      const filePath = Date.now() + '-' + safeName;
+      const {error: uploadError} = await sb.storage
+        .from('announcement-banners')
+        .upload(filePath, file, {cacheControl:'3600', upsert:false});
+      if (uploadError) {
+        toast('Gambar gagal diunggah: ' + uploadError.message);
+        return;
+      }
+      const {data: publicData} = sb.storage
+        .from('announcement-banners')
+        .getPublicUrl(filePath);
+      obj.image_url = publicData?.publicUrl || null;
+    }
   }
 
   const {error} = await sb.from(table).insert(obj);
@@ -1101,6 +1133,7 @@ function displayValue(row, table) {
   return `
     <div class="listitem">
       <b>${esc(title)}</b>
+      ${table === 'announcements' && row.image_url ? `<img class="announcement-admin-image" src="${esc(row.image_url)}" alt="Banner pengumuman" loading="lazy">` : ''}
       <div class="muted">${esc(detail)}</div>
     </div>
   `;
@@ -1251,7 +1284,7 @@ async function loadPublicAnnouncements() {
 
   const { data, error } = await sb
     .from('announcements')
-    .select('title,body,created_at')
+    .select('title,body,image_url,created_at')
     .order('created_at', { ascending: false })
     .limit(10);
 
@@ -1268,6 +1301,7 @@ async function loadPublicAnnouncements() {
   list.innerHTML = data.map(item => `
     <div class="listitem">
       <b>${esc(item.title || 'Pengumuman')}</b>
+      ${item.image_url ? `<a href="${esc(item.image_url)}" target="_blank" rel="noopener"><img class="announcement-banner" src="${esc(item.image_url)}" alt="Banner ${esc(item.title || 'Pengumuman')}" loading="lazy"></a>` : ''}
       <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
       <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
     </div>
