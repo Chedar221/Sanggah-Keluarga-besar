@@ -182,6 +182,101 @@ header .welcome{margin-top:14px;font-size:21px}
 .committee-row strong{font-size:13px;text-align:right;color:#203b55}
 @media(max-width:420px){.committee-row{align-items:flex-start;flex-direction:column;gap:3px}.committee-row strong{text-align:left}}
 
+
+/* REDESAIN HALAMAN DEPAN — DESKTOP & APLIKASI HP */
+:root{--green:#075b2b;--green2:#0b7438;--gold:#d0a51b;--cream:#f5f7ef;--ink:#172d22;--muted:#68796e;--line:#dfe8dc;--red:#c84242}
+body{background:linear-gradient(180deg,#eaf2e8 0,#f7f8f2 340px,var(--cream) 100%);color:var(--ink)}
+header{position:relative;isolation:isolate;overflow:hidden;padding:28px 22px 32px;border-radius:0 0 30px 30px;background:radial-gradient(ellipse at 12% 8%,#ffffff20 0 10%,transparent 34%),radial-gradient(ellipse at 90% 15%,#e4c45b24 0 12%,transparent 35%),linear-gradient(125deg,#063e24 0%,#08713a 54%,#123f2c 100%);box-shadow:0 9px 24px #0c42251c}
+header:after{content:"";position:absolute;z-index:-1;inset:auto 0 0;height:5px;background:linear-gradient(90deg,transparent,#e1bd43,#fff0a6,#e1bd43,transparent)}
+header .brand{max-width:1180px;margin:0 auto;justify-content:center;text-align:left}
+header .emblem{width:66px;height:66px;flex-basis:66px;filter:drop-shadow(0 3px 5px #0004)}
+header h1{font-family:Georgia,serif;font-size:clamp(21px,3vw,34px);letter-spacing:.6px;color:#ffe28a;text-shadow:0 2px 5px #0006}
+header p{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#f2ead2}
+header .welcome{text-align:center;margin:17px auto 4px;font-family:Georgia,serif;font-style:italic;font-size:clamp(24px,4vw,36px);color:#ffdc63;text-shadow:0 2px 5px #0005}
+header .sub{text-align:center;font-size:13px;letter-spacing:.25px;color:#f4f0df}
+main{max-width:1200px;padding:20px}
+.card{border:1px solid #e0e8dc;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #153c2410;background:#fff}
+.card h2{font-size:16px;font-weight:800;letter-spacing:.2px;color:#174c2d}
+button{border-radius:12px;background:linear-gradient(135deg,#075b2b,#0b7438);box-shadow:0 2px 6px #0a54231a}
+button.secondary{background:#edf4e9;color:#15542d;box-shadow:none;border:1px solid #dce8d9}
+button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
+.welcome-card{position:relative;overflow:hidden;padding:24px 22px;background:linear-gradient(115deg,#fffdf4,#f0f7e9 62%,#e5f0df);border:1px solid #d8e6cf}
+.welcome-card:after{content:"❀";position:absolute;right:24px;top:5px;font-size:88px;color:#c9a52c19;pointer-events:none}
+.welcome-card .welcome-kicker{font-size:11px;font-weight:900;letter-spacing:2px;color:#9b7912;margin-bottom:5px}
+.welcome-card h2{font-family:Georgia,serif;font-size:clamp(21px,3vw,28px);color:#124b2b;margin-bottom:5px}
+.welcome-card p{font-size:13px;margin:0 0 16px}
+.homepage-action-buttons{max-width:560px}
+.homepage-action-buttons .chat-entry-button{background:#c49b17;color:#fff;border:1px solid #b18a0c;box-shadow:0 3px 8px #82630e22}
+.committee-card{background:linear-gradient(120deg,#edf5fc,#dcebf7);border:1px solid #c8dced;color:#214463}
+.committee-card h2{color:#174e86}
+.committee-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.committee-row{min-height:68px;justify-content:center;align-items:center;flex-direction:column;gap:5px;background:#ffffffd9;border:1px solid #d1e0ed;border-radius:13px;text-align:center}
+.committee-row span{font-size:10px;color:#46729a;letter-spacing:.8px}
+.committee-row strong{text-align:center;font-size:13px;color:#1b3854}
+#publicPage{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;align-items:start}
+#publicPage>.card,#publicPage>details{margin-bottom:14px;min-width:0}
+#publicPage>.welcome-card,#publicPage>#publicCommitteeCard,#publicPage>#publicTransactionsCard{grid-column:1/-1}
+#publicPage>#pipilRotationPublic{grid-column:1}
+#publicPage>#publicAnnouncementsCard{grid-column:2}
+#publicPage>#publicFinanceCard{grid-column:2}
+#publicPage>#publicMembersCard{grid-column:1}
+#pipilRotationPublic{background:linear-gradient(145deg,#f5faef,#eaf4e1);border-color:#d4e4c9}
+#pipilRotationPublic h2{color:#12612e}
+#pipilPublicContent>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#pipilPublicContent>div:last-child>div{background:#fff!important;border:1px solid #d8e6cf!important;border-radius:14px!important;padding:11px!important;box-shadow:0 2px 7px #173d2510}
+.pipil-number-button{background:#e8f4e5;color:#15572b;border:1px solid #cfe4c9;border-radius:10px;box-shadow:none;font-size:12px}
+.pipil-number-button:hover{background:#d9edcf}
+#publicAnnouncementsCard{background:linear-gradient(145deg,#fffdf1,#fff7d9);border-color:#f0e0a6}
+#publicAnnouncementsCard h2{color:#72560a}
+#publicAnnouncementsCard .secondary{background:#d4a91b;color:#fff;border:0}
+#publicFinanceCard .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#publicFinanceCard .grid>div{padding:12px;border-radius:14px;background:#f1f7ed;border:1px solid #dfebd8}
+#publicFinanceCard .grid>div:last-child{grid-column:1/-1;background:linear-gradient(110deg,#e8f5e4,#d9eed4);border-color:#c8e2c1}
+#publicFinanceCard .grid>div:last-child .stat{font-size:clamp(25px,4vw,34px);color:#087137}
+#publicFinanceCard .stat{font-size:clamp(17px,2.4vw,23px);color:#245b36}
+#publicMembersCard summary,#publicTransactionsCard summary{color:#174c2d;font-size:14px}
+#publicMembers .record-item{border:0;border-bottom:1px solid #e8eee5;border-radius:0;padding:9px 5px}
+#publicMembers .record-item:last-child{border-bottom:0}
+#publicTransactionsCard{background:#fff}
+.site-footer{margin-top:18px;padding:28px 16px 24px;text-align:center;background:linear-gradient(120deg,#063d23,#08703a,#063d23);color:#f8edc7;border-top:4px solid #d5ad2e;display:flex;flex-direction:column;align-items:center;gap:7px}
+.site-footer .footer-ornament{font-size:22px;color:#e8c44b;letter-spacing:8px}
+.site-footer strong{font-family:Georgia,serif;font-size:clamp(17px,3vw,23px);color:#ffdc63;letter-spacing:.6px}
+.site-footer em{font-family:Georgia,serif;font-size:15px;color:#fff8e5}
+.site-footer span{font-size:11px;color:#e4e8d8}
+#app>.card:first-child{border-left:4px solid #d0a51b}
+#app .nav{gap:7px;padding:6px 0 14px;scrollbar-width:thin}
+#app .nav button{border:1px solid #dce7d9;border-radius:12px;background:#edf4e9;color:#15542d}
+#app .nav button.active{background:#075b2b;color:#fff;border-color:#075b2b;box-shadow:0 3px 8px #075b2b24}
+#view .card{border-radius:18px}
+#toast{z-index:1100}
+@media(max-width:700px){
+ header{padding:20px 14px 24px;border-radius:0 0 22px 22px}
+ header .brand{justify-content:flex-start;gap:10px}
+ header .emblem{width:54px;height:54px;flex-basis:54px}
+ header h1{font-size:19px}
+ header p{font-size:10px;letter-spacing:.6px}
+ header .welcome{font-size:25px;margin-top:15px}
+ main{padding:12px}
+ #publicPage{display:block}
+ #publicPage>.card,#publicPage>details{margin-bottom:11px}
+ .card{padding:15px;border-radius:17px}
+ .welcome-card{padding:18px 16px}
+ .committee-list{grid-template-columns:1fr;gap:7px}
+ .committee-row{min-height:0;flex-direction:row;justify-content:space-between;text-align:left;padding:10px 11px}
+ .committee-row strong{text-align:right}
+ #pipilPublicContent>div:last-child{grid-template-columns:1fr!important}
+ #publicFinanceCard .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .homepage-action-buttons{gap:5px}
+ .homepage-action-buttons .chat-entry-button{font-size:clamp(9px,2.7vw,12px);padding:10px 3px}
+ .site-footer{padding:24px 12px}
+}
+@media(max-width:380px){
+ .homepage-action-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .homepage-action-buttons .chat-entry-button{font-size:11px}
+ #publicFinanceCard .grid{grid-template-columns:1fr}
+ #publicFinanceCard .grid>div:last-child{grid-column:auto}
+}
+
 </style>
 </head>
 <body>
@@ -202,8 +297,9 @@ header .welcome{margin-top:14px;font-size:21px}
 
 <section id="publicPage">
   <div class="card welcome-card">
-    <h2>Om Swastiastu</h2>
-    <p class="muted">Selamat datang di website keluarga besar Sanggah Gede Pan Rengen.</p>
+    <div class="welcome-kicker">OM SWASTIASTU</div>
+    <h2>Selamat Datang di Keluarga Besar</h2>
+    <p class="muted">SANGGAH GEDE PAN RENGEN · Satu Keluarga, Satu Tujuan</p>
     <div class="actions homepage-action-buttons">
       <button class="chat-entry-button" onclick="openPublicChat()">💬 CHAT</button>
       <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WA</button>
@@ -234,7 +330,7 @@ header .welcome{margin-top:14px;font-size:21px}
     <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
   </div>
 
-  <div class="card">
+  <div class="card" id="publicFinanceCard">
     <h2>Ringkasan Keuangan</h2>
     <div class="grid">
       <div><div class="muted">Pemasukan</div><div class="stat" id="publicIncome">Rp 0</div></div>
@@ -253,7 +349,7 @@ header .welcome{margin-top:14px;font-size:21px}
     <div id="publicMembers" class="muted">Memuat daftar anggota...</div>
   </details>
 
-  <details class="card compact-details">
+  <details class="card compact-details" id="publicTransactionsCard">
     <summary>Riwayat Kas</summary>
     <div id="publicTransactions" class="muted">Data transaksi akan ditampilkan di sini.</div>
     <button class="secondary" id="morePublic" onclick="loadMorePublic()" style="display:none">Muat transaksi berikutnya</button>
@@ -322,8 +418,11 @@ header .welcome{margin-top:14px;font-size:21px}
 
 </main>
 
-<footer>
-  WEB PRATISENTANA PAN RENGEN · Om Santih, Santih, Santih Om
+<footer class="site-footer">
+  <div class="footer-ornament">✦ ❖ ✦</div>
+  <strong>SANGGAH GEDE PAN RENGEN</strong>
+  <em>“Satu Keluarga, Satu Tujuan”</em>
+  <span>Om Santih, Santih, Santih Om · © 2026</span>
 </footer>
 
 <div id="toast"></div>
