@@ -313,6 +313,27 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
 @media(max-width:700px){header .brand{gap:8px}header .emblem{flex:0 0 46px;width:46px;height:46px}header h1{font-size:clamp(12px,3.35vw,19px);letter-spacing:0;white-space:nowrap}}
 @media(max-width:360px){header .brand{gap:6px}header .emblem{flex-basis:40px;width:40px;height:40px}header h1{font-size:11.5px}}
 
+
+#homepageBannerArea{max-width:1200px;margin:14px auto;padding:0 20px}
+.homepage-banner-shell{position:relative;overflow:hidden;border-radius:18px;background:#e9efe7;border:1px solid #dce7d8;box-shadow:0 5px 18px #153c2412}
+.homepage-banner-image{display:block;width:100%;height:auto;max-height:340px;aspect-ratio:2/1;object-fit:cover}
+.homepage-banner-caption{position:absolute;left:0;right:0;bottom:0;padding:34px 18px 18px;background:linear-gradient(transparent,#071b16b8);color:#fff}
+.homepage-banner-caption strong{display:block;font-family:Georgia,serif;font-size:clamp(17px,3vw,25px)}
+.homepage-banner-caption span{display:block;margin-top:4px;font-size:12px;color:#f7f1dd}
+.homepage-banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;padding:0;border-radius:50%;background:#0a3c2dbb;color:#fff;font-size:20px;box-shadow:none}
+.homepage-banner-arrow.prev{left:12px}.homepage-banner-arrow.next{right:12px}
+.homepage-banner-dots{position:absolute;right:14px;top:12px;display:flex;gap:6px}
+.homepage-banner-dot{width:8px;height:8px;padding:0;border-radius:50%;background:#ffffff88;box-shadow:none}
+.homepage-banner-dot.active{background:#f5d56b;width:20px;border-radius:8px}
+.homepage-banner-empty{padding:10px;text-align:center;color:#718078;font-size:12px}
+.welcome-description{font-size:12px;line-height:1.65;margin:7px 0 14px}
+.welcome-description summary{display:inline-block;cursor:pointer;color:#176033;font-weight:750;list-style:none}
+.welcome-description p{margin:8px 0 0;color:#68796e}
+.banner-admin-preview{width:min(100%,520px);max-height:210px;object-fit:contain;background:#f4f6f1;border:1px solid var(--line);border-radius:12px;margin:8px 0}
+.banner-admin-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.banner-admin-row img{width:112px;height:62px;object-fit:cover;border-radius:8px;background:#eef2eb}
+.banner-admin-row .meta{flex:1;min-width:0}.banner-admin-row .meta b{display:block;overflow-wrap:anywhere}
+@media(max-width:700px){#homepageBannerArea{padding:0 12px;margin:12px auto}.homepage-banner-image{aspect-ratio:2/1;max-height:220px}.homepage-banner-caption{padding:28px 13px 12px}.homepage-banner-arrow{width:31px;height:31px}.banner-admin-row{align-items:flex-start}.banner-admin-row img{width:86px;height:52px}}
 </style>
 </head>
 <body>
@@ -329,6 +350,8 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
   <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi.</div>
 </header>
 
+<div id="homepageBannerArea"><div class="homepage-banner-empty">Memuat banner keluarga...</div></div>
+
 <main>
 
 <section id="publicPage">
@@ -336,9 +359,7 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
     <div class="welcome-kicker">OM SWASTIASTU</div>
     <h2>Selamat Datang di Keluarga Besar</h2>
     <p class="muted">SANGGAH GEDE PAN RENGEN · Satu Keluarga, Satu Tujuan</p>
-    <div class="muted" style="font-size:13px;line-height:1.7;margin:8px 0 0">
-      <strong>Website Keluarga Besar Sanggah Gede Pan Rengen</strong> merupakan pusat informasi keluarga untuk memudahkan anggota mengikuti kegiatan, pengumuman, giliran pipil, serta informasi administrasi keluarga. Dibangun untuk mempererat komunikasi dan menjaga kebersamaan keluarga besar.
-    </div>
+    <details class="welcome-description"><summary>Tentang website keluarga · Baca selengkapnya</summary><p><strong>Website Keluarga Besar Sanggah Gede Pan Rengen</strong> merupakan pusat informasi keluarga untuk memudahkan anggota mengikuti kegiatan, pengumuman, giliran pipil, serta informasi administrasi keluarga. Dibangun untuk mempererat komunikasi dan menjaga kebersamaan keluarga besar.</p></details>
     <div class="actions homepage-action-buttons">
       <button class="chat-entry-button" onclick="openPublicChat()">💬 CHAT</button>
       <button class="chat-entry-button" onclick="openFamilyWhatsApp()">🟢 WA</button>
@@ -495,6 +516,9 @@ let profile = null;
 let active = 'dashboard';
 let pendingChatEntry = false;
 let activeMemberType = 'all';
+let homepageBannerItems = [];
+let homepageBannerIndex = 0;
+let homepageBannerTimer = null;
 
 let publicOffset = 0;
 const PAGE_SIZE = 50;
@@ -625,6 +649,7 @@ function connectSupabase() {
 
   sb = window.supabase.createClient(url, key);
   $('setup').classList.add('hidden');
+  loadHomepageBanners();
   return true;
 }
 
@@ -742,7 +767,7 @@ function canDelete(table) {
    MENU APLIKASI
 ===================================== */
 
-const pages = [  ['pengumuman','▤','Pengumuman'],
+const pages = [  ['pengumuman','▤','Pengumuman'], ['banner','▧','Banner Beranda'],
   ['dashboard','⌂','Beranda'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
@@ -756,7 +781,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'],
 ];
 
 function renderNav() {
-  $('nav').innerHTML = pages.map(p => `
+  $('nav').innerHTML = pages.filter(p => p[0] !== 'banner' || canManageGeneral()).map(p => `
     <button
       class="${active === p[0] ? 'active' : ''}"
       onclick="go('${p[0]}')">
@@ -921,6 +946,11 @@ function renderView() {
     return;
   }
 
+  if (active === 'banner') {
+    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pengaturan banner hanya untuk pengurus.</div>'; return; }
+    renderBannerManager(); return;
+  }
+
   if (active === 'dashboard') {
     v.innerHTML = `
       <div class="card" id="pipilRotationDashboard">
@@ -1019,11 +1049,7 @@ function renderView() {
               : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''}>`
             }
           `).join('')}
-          ${active === 'pengumuman' ? `
-            <label>Gambar banner / poster (opsional)</label>
-            <input id="announcementImage" type="file" accept="image/jpeg,image/png,image/webp">
-            <p class="announcement-upload-note">Format JPG, PNG, atau WEBP. Maksimal 5 MB. Gambar akan terlihat oleh semua anggota.</p>
-          ` : ''}
+
           <button type="submit">Simpan Data</button>
         </form>
       </div>
@@ -1062,29 +1088,6 @@ async function saveGeneric(event, table) {
     obj.created_by = session.user.id;
   }
 
-  if (table === 'announcements') {
-    const file = $('announcementImage')?.files?.[0];
-    if (file) {
-      const allowedTypes = ['image/jpeg','image/png','image/webp'];
-      if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
-        toast('Pilih gambar JPG, PNG, atau WEBP maksimal 5 MB.');
-        return;
-      }
-      const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');
-      const filePath = Date.now() + '-' + safeName;
-      const {error: uploadError} = await sb.storage
-        .from('announcement-banners')
-        .upload(filePath, file, {cacheControl:'3600', upsert:false});
-      if (uploadError) {
-        toast('Gambar gagal diunggah: ' + uploadError.message);
-        return;
-      }
-      const {data: publicData} = sb.storage
-        .from('announcement-banners')
-        .getPublicUrl(filePath);
-      obj.image_url = publicData?.publicUrl || null;
-    }
-  }
 
   const {error} = await sb.from(table).insert(obj);
 
@@ -1173,6 +1176,74 @@ async function loadRows(table) {
   }
 
   el.innerHTML = data.map(row => displayValue(row,table)).join('');
+}
+
+/* BANNER KHUSUS BERANDA */
+
+async function loadHomepageBanners() {
+  const area = $('homepageBannerArea');
+  if (!area || !sb) return;
+  const result = await sb.from('homepage_banners').select('id,title,subtitle,image_url,is_active,sort_order').eq('is_active',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false});
+  if (result.error) { area.innerHTML='<div class="homepage-banner-empty">Banner belum dapat dimuat.</div>'; return; }
+  homepageBannerItems = result.data || [];
+  homepageBannerIndex = 0;
+  renderHomepageBanner();
+  if (homepageBannerTimer) clearInterval(homepageBannerTimer);
+  homepageBannerTimer = homepageBannerItems.length > 1 ? setInterval(function(){changeHomepageBanner(1);},5000) : null;
+}
+function renderHomepageBanner() {
+  const area=$('homepageBannerArea');
+  if(!area)return;
+  if(!homepageBannerItems.length){area.innerHTML='';return;}
+  const item=homepageBannerItems[homepageBannerIndex];
+  let html='<div class="homepage-banner-shell"><img class="homepage-banner-image" src="'+esc(item.image_url)+'" alt="'+esc(item.title||'Banner keluarga')+'" loading="lazy">';
+  if(item.title||item.subtitle) html+='<div class="homepage-banner-caption">'+(item.title?'<strong>'+esc(item.title)+'</strong>':'')+(item.subtitle?'<span>'+esc(item.subtitle)+'</span>':'')+'</div>';
+  if(homepageBannerItems.length>1){
+    html+='<button class="homepage-banner-arrow prev" onclick="changeHomepageBanner(-1)" aria-label="Banner sebelumnya">‹</button><button class="homepage-banner-arrow next" onclick="changeHomepageBanner(1)" aria-label="Banner berikutnya">›</button><div class="homepage-banner-dots">';
+    html+=homepageBannerItems.map(function(x,i){return '<button class="homepage-banner-dot '+(i===homepageBannerIndex?'active':'')+'" onclick="setHomepageBanner('+i+')" aria-label="Banner '+(i+1)+'"></button>';}).join('');
+    html+='</div>';
+  }
+  html+='</div>'; area.innerHTML=html;
+}
+function changeHomepageBanner(direction){if(!homepageBannerItems.length)return;homepageBannerIndex=(homepageBannerIndex+direction+homepageBannerItems.length)%homepageBannerItems.length;renderHomepageBanner();}
+function setHomepageBanner(index){if(index<0||index>=homepageBannerItems.length)return;homepageBannerIndex=index;renderHomepageBanner();}
+
+function renderBannerManager(){
+  $('view').innerHTML='<div class="card"><h2>🖼️ Kelola Banner Beranda</h2><p class="muted">Banner khusus di bawah header halaman depan. Tidak masuk ke menu Pengumuman. Banner aktif bergantian otomatis setiap 5 detik.</p><form onsubmit="saveHomepageBanner(event)"><label>Judul banner (opsional)</label><input id="homeBannerTitle" maxlength="100" placeholder="Contoh: Kebersamaan Keluarga Besar"><label>Keterangan singkat (opsional)</label><input id="homeBannerSubtitle" maxlength="160" placeholder="Contoh: Satu Keluarga, Satu Tujuan"><label>Pilih gambar banner</label><input id="homeBannerFile" type="file" accept="image/jpeg,image/png,image/webp" required><p class="muted">Disarankan 1200 × 600 piksel (rasio 2:1), JPG/PNG/WEBP, maksimal 5 MB.</p><button type="submit">＋ Tambah Banner</button></form></div><div class="card"><div class="row"><h2>Daftar Banner</h2><button class="secondary" onclick="loadBannerManagerRows()">Muat ulang</button></div><div id="homepageBannerRows" class="muted">Memuat daftar banner...</div></div>';
+  loadBannerManagerRows();
+}
+async function saveHomepageBanner(event){
+  event.preventDefault(); if(!canManageGeneral()){toast('Akses ditolak.');return;}
+  const file=$('homeBannerFile')&&$('homeBannerFile').files[0]; if(!file){toast('Pilih gambar banner.');return;}
+  if(['image/jpeg','image/png','image/webp'].indexOf(file.type)<0||file.size>5*1024*1024){toast('Pilih JPG, PNG, atau WEBP maksimal 5 MB.');return;}
+  const safeName=file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');
+  const filePath='homepage/'+Date.now()+'-'+safeName;
+  const uploaded=await sb.storage.from('announcement-banners').upload(filePath,file,{cacheControl:'3600',upsert:false});
+  if(uploaded.error){toast('Gambar gagal diunggah: '+uploaded.error.message);return;}
+  const pub=sb.storage.from('announcement-banners').getPublicUrl(filePath);
+  const prior=await sb.from('homepage_banners').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+  const nextOrder=(prior.data&&prior.data[0]?prior.data[0].sort_order:-1)+1;
+  const saved=await sb.from('homepage_banners').insert({title:$('homeBannerTitle').value.trim(),subtitle:$('homeBannerSubtitle').value.trim(),image_url:pub.data.publicUrl,is_active:true,sort_order:nextOrder});
+  if(saved.error){toast('Gagal menyimpan data banner: '+saved.error.message);return;}
+  toast('Banner berhasil ditambahkan.');event.target.reset();await loadBannerManagerRows();await loadHomepageBanners();
+}
+async function loadBannerManagerRows(){
+  const list=$('homepageBannerRows');if(!list||!sb)return;list.textContent='Memuat daftar banner...';
+  const result=await sb.from('homepage_banners').select('id,title,image_url,is_active,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:false});
+  if(result.error){list.textContent='Gagal memuat banner: '+result.error.message;return;}
+  if(!result.data||!result.data.length){list.textContent='Belum ada banner. Tambahkan gambar melalui formulir di atas.';return;}
+  list.innerHTML=result.data.map(function(item){
+    return '<div class="banner-admin-row"><img src="'+esc(item.image_url)+'" alt="Pratinjau banner"><div class="meta"><b>'+esc(item.title||'Banner tanpa judul')+'</b><div class="muted">'+(item.is_active?'Aktif ditampilkan':'Nonaktif')+'</div></div><div class="actions"><button class="secondary" onclick="toggleHomepageBanner(\''+item.id+'\','+(!item.is_active)+')">'+(item.is_active?'Nonaktifkan':'Aktifkan')+'</button><button class="danger" onclick="deleteHomepageBanner(\''+item.id+'\')">Hapus</button></div></div>';
+  }).join('');
+}
+async function toggleHomepageBanner(id,state){
+  if(!canManageGeneral())return;const result=await sb.from('homepage_banners').update({is_active:state}).eq('id',id);
+  if(result.error){toast('Gagal mengubah status: '+result.error.message);return;}toast(state?'Banner diaktifkan.':'Banner dinonaktifkan.');await loadBannerManagerRows();await loadHomepageBanners();
+}
+async function deleteHomepageBanner(id){
+  if(!canManageGeneral()||!confirm('Hapus banner ini dari daftar?'))return;
+  const result=await sb.from('homepage_banners').delete().eq('id',id);
+  if(result.error){toast('Gagal menghapus banner: '+result.error.message);return;}toast('Banner dihapus.');await loadBannerManagerRows();await loadHomepageBanners();
 }
 
 /* =====================================
@@ -1302,7 +1373,6 @@ async function loadPublicAnnouncements() {
   list.innerHTML = data.map(item => `
     <div class="listitem">
       <b>${esc(item.title || 'Pengumuman')}</b>
-      ${item.image_url ? `<a href="${esc(item.image_url)}" target="_blank" rel="noopener"><img class="announcement-banner" src="${esc(item.image_url)}" alt="Banner ${esc(item.title || 'Pengumuman')}" loading="lazy"></a>` : ''}
       <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
       <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
     </div>
