@@ -499,16 +499,16 @@ header .emblem{
 }
 header .emblem:before{content:none!important;display:none!important}
 header .emblem:after{
-  content:"";position:absolute;inset:-27px;z-index:0;border:0;border-radius:0;
+  content:"";position:absolute;inset:-30px;z-index:0;border:0;border-radius:0;
   background:repeating-conic-gradient(from 0deg,
-    rgba(255,231,164,0) 0deg 14deg,
-    rgba(255,235,183,.58) 14.35deg 14.8deg,
-    rgba(255,231,164,0) 15.2deg 16deg);
-  -webkit-mask:radial-gradient(circle,transparent 0 40%,#000 45% 69%,transparent 76%);
-  mask:radial-gradient(circle,transparent 0 40%,#000 45% 69%,transparent 76%);
-  filter:drop-shadow(0 0 2px rgba(255,218,125,.48));
-  opacity:.78;
-  animation:none!important;
+    rgba(255,231,164,0) 0deg 12deg,
+    rgba(255,235,183,.78) 12.5deg 14deg,
+    rgba(255,231,164,0) 14.5deg 16deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 27%,#000 34% 100%);
+  mask:radial-gradient(circle,transparent 0 27%,#000 34% 100%);
+  filter:drop-shadow(0 0 4px rgba(255,218,125,.62));
+  opacity:.72;
+  animation:ornamentAuroraGlow 2.8s ease-in-out infinite alternate;
   pointer-events:none;
 }
 header .emblem img{position:relative;z-index:1}
