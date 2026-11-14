@@ -556,6 +556,26 @@ header .emblem img{
   header .emblem img{animation:none!important}
 }
 
+
+/* Ikon footer bergerak lembut */
+.site-footer .footer-ornament{display:flex;align-items:center;justify-content:center;gap:20px;letter-spacing:0}
+.site-footer .footer-icon{display:inline-block;line-height:1;transform-origin:center;will-change:transform,filter}
+.site-footer .footer-icon-left,.site-footer .footer-icon-right{font-size:25px;animation:footerIconFloat 2.8s ease-in-out infinite}
+.site-footer .footer-icon-center{font-size:22px;animation:footerStarGlow 2s ease-in-out infinite}
+.site-footer .footer-icon-right{animation-delay:.45s}
+.site-footer .footer-icon-left{animation-delay:0s}
+@keyframes footerIconFloat{
+  0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 2px rgba(255,219,110,.25))}
+  50%{transform:translateY(-6px) scale(1.1);filter:drop-shadow(0 0 9px rgba(255,224,126,.85))}
+}
+@keyframes footerStarGlow{
+  0%,100%{transform:scale(.9) rotate(-8deg);opacity:.68;text-shadow:0 0 3px #f6d66b}
+  50%{transform:scale(1.28) rotate(8deg);opacity:1;text-shadow:0 0 12px #ffe99a,0 0 22px #d9a82d}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-footer .footer-icon{animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -716,7 +736,7 @@ header .emblem img{
 </div>
 
 <footer class="site-footer">
-  <div class="footer-ornament">✦ ❖ ✦</div>
+  <div class="footer-ornament" aria-label="Ornamen bergerak"><span class="footer-icon footer-icon-left">🛕</span><span class="footer-icon footer-icon-center">✦</span><span class="footer-icon footer-icon-right">🪔</span></div>
   <strong>SANGGAH GEDE PAN RENGEN</strong>
   <em>“Satu Keluarga, Satu Tujuan”</em>
   <span>Om Santih, Santih, Santih Om · © 2026</span>
