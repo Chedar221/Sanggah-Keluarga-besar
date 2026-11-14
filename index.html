@@ -421,86 +421,59 @@ header .brand,header .welcome,header .sub{position:relative;z-index:1}
 }
 
 
-/* HEADER RINGKAS — LOGO BERCAHAYA EMAS HALUS */
+/* HEADER RINGKAS — AURA EMAS SPEKTAKULER PADA LOGO */
 header{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  gap:0;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;
   padding:15px 16px 17px;
 }
 header .brand{
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  text-align:center;
+  width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;
 }
 header .emblem{
-  position:relative;
-  isolation:isolate;
-  width:82px;
-  height:82px;
-  flex:0 0 82px;
-  border:1px solid rgba(255,222,143,.9);
-  border-radius:50%;
-  overflow:visible;
-  display:grid;
-  place-items:center;
-  background:radial-gradient(circle,rgba(255,239,195,.2) 0%,rgba(255,211,111,.08) 62%,transparent 76%);
-  box-shadow:0 0 0 3px rgba(255,220,135,.12),0 0 13px 3px rgba(255,211,105,.34),inset 0 0 10px rgba(255,232,165,.2);
-  animation:logoGoldenGlow 3.8s ease-in-out infinite alternate;
+  position:relative;isolation:isolate;width:82px;height:82px;flex:0 0 82px;
+  border:1px solid rgba(255,231,166,.98);border-radius:50%;overflow:visible;
+  display:grid;place-items:center;
+  background:radial-gradient(circle,rgba(255,250,221,.34) 0%,rgba(255,213,111,.18) 48%,rgba(255,183,55,.06) 72%,transparent 78%);
+  box-shadow:0 0 0 2px rgba(255,225,151,.32),0 0 9px 3px rgba(255,224,133,.8),
+    0 0 20px 8px rgba(255,191,63,.65),0 0 38px 14px rgba(255,177,40,.32),
+    inset 0 0 15px rgba(255,239,185,.4);
+  animation:logoGoldenSpectacle 2.7s ease-in-out infinite alternate;
 }
 header .emblem:before{
-  content:"";
-  position:absolute;
-  inset:-5px;
-  z-index:-1;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(255,218,119,.23) 0%,rgba(255,198,72,.09) 48%,transparent 72%);
-  filter:blur(5px);
+  content:"";position:absolute;inset:-17px;z-index:-2;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,228,158,.48) 0%,rgba(255,198,82,.28) 35%,rgba(255,174,40,.12) 58%,transparent 73%);
+  filter:blur(8px);pointer-events:none;
+}
+header .emblem:after{
+  content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;
+  border:1px solid rgba(255,221,139,.78);
+  box-shadow:0 0 9px rgba(255,217,121,.9),inset 0 0 9px rgba(255,222,140,.35);
+  animation:goldenHalo 3.2s ease-in-out infinite;
   pointer-events:none;
 }
 header .emblem img{
-  width:90%;
-  height:90%;
-  object-fit:contain;
-  display:block;
-  filter:drop-shadow(0 1px 2px rgba(255,232,164,.55)) drop-shadow(0 0 5px rgba(255,195,64,.3));
+  width:90%;height:90%;object-fit:contain;display:block;
+  filter:drop-shadow(0 0 3px rgba(255,247,210,.95))
+    drop-shadow(0 0 8px rgba(255,205,91,.9))
+    drop-shadow(0 0 13px rgba(255,174,43,.55));
 }
 header .brand h1{
-  margin:0;
-  font-size:clamp(18px,3.8vw,23px);
-  line-height:1.16;
-  letter-spacing:.035em;
-  text-align:center;
+  margin:0;font-size:clamp(18px,3.8vw,23px);line-height:1.16;
+  letter-spacing:.035em;text-align:center;
 }
 header .brand p{
-  margin:2px 0 0;
-  text-align:center;
-  font-size:11px;
-  line-height:1.25;
-  letter-spacing:.8px;
+  margin:2px 0 0;text-align:center;font-size:11px;line-height:1.25;letter-spacing:.8px;
 }
-header .welcome{
-  margin:8px auto 0;
-  text-align:center;
-  line-height:1.15;
-  font-size:18px;
+header .welcome{margin:8px auto 0;text-align:center;line-height:1.15;font-size:18px}
+header .sub{margin:3px auto 0;text-align:center;max-width:520px;font-size:11px;line-height:1.3}
+@keyframes logoGoldenSpectacle{
+  0%{box-shadow:0 0 0 2px rgba(255,225,151,.25),0 0 8px 2px rgba(255,224,133,.55),0 0 17px 6px rgba(255,191,63,.4),0 0 30px 10px rgba(255,177,40,.2),inset 0 0 12px rgba(255,239,185,.3)}
+  100%{box-shadow:0 0 0 3px rgba(255,235,180,.5),0 0 13px 5px rgba(255,236,163,.95),0 0 27px 11px rgba(255,194,67,.8),0 0 48px 18px rgba(255,170,31,.42),inset 0 0 18px rgba(255,247,207,.58)}
 }
-header .sub{
-  margin:3px auto 0;
-  text-align:center;
-  max-width:520px;
-  font-size:11px;
-  line-height:1.3;
-}
-@keyframes logoGoldenGlow{
-  from{box-shadow:0 0 0 2px rgba(255,220,135,.1),0 0 10px 2px rgba(255,211,105,.25),inset 0 0 8px rgba(255,232,165,.16)}
-  to{box-shadow:0 0 0 3px rgba(255,220,135,.18),0 0 17px 5px rgba(255,211,105,.43),inset 0 0 13px rgba(255,232,165,.27)}
+@keyframes goldenHalo{
+  0%,100%{transform:scale(.96);opacity:.58}
+  50%{transform:scale(1.1);opacity:1}
 }
 @media(max-width:600px){
   header{padding:12px 12px 14px}
