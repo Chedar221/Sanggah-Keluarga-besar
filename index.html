@@ -520,6 +520,42 @@ header .emblem img{position:relative;z-index:1}
 @media(prefers-reduced-motion:reduce){
   header:before,header .emblem:after{animation:none!important}
 }
+
+/* Efek cahaya lembut pada logo — tanpa ornamen Cakra atau putaran */
+header .emblem{
+  position:relative;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  animation:none!important;
+  filter:none!important;
+}
+header .emblem:before,
+header .emblem:after{
+  content:none!important;
+  display:none!important;
+  animation:none!important;
+}
+header .emblem img{
+  position:relative;
+  z-index:1;
+  animation:logoSoftGlow 2.8s ease-in-out infinite;
+}
+@keyframes logoSoftGlow{
+  0%,100%{
+    filter:drop-shadow(0 0 3px rgba(255,224,150,.45))
+           drop-shadow(0 0 7px rgba(255,190,75,.28));
+  }
+  50%{
+    filter:drop-shadow(0 0 6px rgba(255,242,195,.95))
+           drop-shadow(0 0 15px rgba(255,194,70,.78))
+           drop-shadow(0 0 23px rgba(255,168,40,.38));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  header .emblem img{animation:none!important}
+}
+
 </style>
 </head>
 <body>
