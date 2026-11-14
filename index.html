@@ -393,6 +393,20 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
 }
 .homepage-action-buttons .chat-entry-button:hover{background:#12652f!important}
 
+
+/* ORNAMEN LENGKUNG EMAS — DEKORASI HEADER SANGGAH */
+header{isolation:isolate;position:relative;overflow:hidden}
+header:before{
+  content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;
+  opacity:.78;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 420' fill='none'%3E%3Cg stroke='%23e8c96c' stroke-width='2' opacity='.68'%3E%3Cpath d='M-80 330 C180 40 390 20 650 180 S1120 360 1520 55'/%3E%3Cpath d='M-90 365 C170 75 410 55 670 215 S1130 395 1530 90' opacity='.62'/%3E%3Cpath d='M-100 400 C160 110 430 90 690 250 S1140 430 1540 125' opacity='.42'/%3E%3Cpath d='M-70 70 C190 300 390 330 650 205 S1120 20 1510 300' opacity='.48'/%3E%3Cpath d='M-70 35 C190 265 390 295 650 170 S1120 -15 1510 265' opacity='.3'/%3E%3C/g%3E%3Cg fill='%23f3d98b' opacity='.7'%3E%3Ccircle cx='110' cy='95' r='3'/%3E%3Ccircle cx='1320' cy='115' r='3'/%3E%3Ccircle cx='250' cy='340' r='2'/%3E%3Ccircle cx='1190' cy='330' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:100% 100%;background-position:center;background-repeat:no-repeat;
+}
+@media(max-width:600px){
+  header:before{opacity:.5;background-size:auto 100%;background-position:center}
+}
+
 </style>
 </head>
 <body>
