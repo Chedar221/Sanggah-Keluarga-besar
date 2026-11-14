@@ -856,6 +856,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
   ['iuran','♡','Iuran'],
+  ['riwayat-iuran','▤','Riwayat Iuran'],
   ['punia','✧','Dana Punia'],
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
@@ -1017,6 +1018,275 @@ anggota: {
    TAMPILAN MENU
 ===================================== */
 
+
+function memberDueDateLabel(value) {
+  if (!value) return '—';
+  const date = new Date(value + 'T00:00:00');
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function memberDueToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+async function renderMemberDues() {
+  const manager = canFinance();
+  const v = $('view');
+  v.innerHTML =
+    '<div class="card"><div class="row"><div><h2>RIWAYAT IURAN PER ANGGOTA</h2><p class="muted">Pantau kewajiban, pembayaran bertahap, status lunas, dan sisa iuran setiap anggota.</p></div><button type="button" class="secondary" onclick="loadMemberDues()">Muat ulang</button></div>' +
+    (manager
+      ? '<span class="pill">Pengelolaan khusus Ketua, Wakil, dan Bendahara</span><p class="muted">Setiap pembayaran tercatat otomatis satu kali pada transaksi kas. Riwayat pembayaran tidak dapat dihapus; koreksi akan tersimpan di audit.</p>'
+      : '<p class="muted">Halaman ini hanya menampilkan kewajiban dan pembayaran yang terhubung dengan akun anggota Anda.</p>') +
+    '</div>' +
+    (manager
+      ? '<div class="card"><h3>＋ BUAT KEWAJIBAN IURAN</h3><p class="muted">Buat satu catatan untuk satu anggota, periode, atau kegiatan.</p><form id="memberDueForm" onsubmit="createMemberDue(event)"><div class="grid"><div><label>Nama anggota</label><select id="memberDueMember" required><option value="">Memuat anggota...</option></select></div><div><label>Periode / kegiatan</label><input id="memberDuePeriod" maxlength="120" required placeholder="Contoh: Iuran tahunan 2026"></div></div><label>Keterangan iuran</label><input id="memberDueDescription" maxlength="160" required placeholder="Contoh: Iuran keluarga"><div class="grid"><div><label>Jumlah kewajiban (Rp)</label><input id="memberDueAmount" type="number" min="1" step="1" required placeholder="Contoh: 100000"></div><div><label>Batas pembayaran (opsional)</label><input id="memberDueDate" type="date"></div></div><label>Catatan (opsional)</label><textarea id="memberDueNotes" maxlength="2000" rows="2" placeholder="Keterangan tambahan"></textarea><button type="submit">Simpan Kewajiban</button></form></div>'
+      : '') +
+    '<div class="card"><div class="row"><h3>DAFTAR KEWAJIBAN DAN PEMBAYARAN</h3></div>' +
+    (manager ? '<div class="grid"><div><label>Filter anggota</label><select id="memberDueFilter" onchange="loadMemberDues()"><option value="all">Semua anggota</option></select></div><div><label>Filter status</label><select id="memberDueStatusFilter" onchange="loadMemberDues()"><option value="all">Semua status</option><option value="belum_lunas">Belum lunas</option><option value="lunas">Lunas</option></select></div></div>' : '<div><label>Filter status</label><select id="memberDueStatusFilter" onchange="loadMemberDues()"><option value="all">Semua status</option><option value="belum_lunas">Belum lunas</option><option value="lunas">Lunas</option></select></div>') +
+    '<div id="memberDuesStats" class="grid" style="margin:12px 0"></div><div id="memberDuesRows" class="muted">Memuat riwayat iuran...</div></div>' +
+    (manager ? '<div class="card"><h3>JEJAK AUDIT IURAN</h3><p class="muted">Perubahan kewajiban dan pembayaran dicatat otomatis.</p><div id="memberDuesAudit" class="muted">Memuat audit...</div></div>' : '');
+
+  if (manager) {
+    const {data,error} = await sb.from('members').select('id,full_name').order('full_name',{ascending:true}).limit(1000);
+    const memberSelect = $('memberDueMember');
+    const filterSelect = $('memberDueFilter');
+    if (error) {
+      if (memberSelect) memberSelect.innerHTML = '<option value="">Gagal memuat anggota</option>';
+      if (filterSelect) filterSelect.innerHTML = '<option value="all">Semua anggota</option>';
+      toast('Daftar anggota belum dapat dimuat: ' + error.message);
+    } else {
+      const options = (data || []).map(m => '<option value="' + esc(m.id) + '">' + esc(m.full_name) + '</option>').join('');
+      if (memberSelect) memberSelect.innerHTML = '<option value="">Pilih anggota</option>' + options;
+      if (filterSelect) filterSelect.innerHTML = '<option value="all">Semua anggota</option>' + options;
+    }
+  }
+
+  await loadMemberDues();
+}
+
+async function loadMemberDues() {
+  const box = $('memberDuesRows');
+  if (!box || !sb) return;
+  const manager = canFinance();
+
+  if (!manager && !profile?.member_id) {
+    box.innerHTML = '<div class="muted">Akun ini belum terhubung ke data anggota keluarga. Silakan hubungi pengurus untuk menghubungkan akun dengan nama anggota yang benar.</div>';
+    const stats = $('memberDuesStats');
+    if (stats) stats.innerHTML = '';
+    return;
+  }
+
+  box.textContent = 'Memuat riwayat iuran...';
+  let query = sb.from('member_dues_summary')
+    .select('id,member_id,member_name,description,period_label,due_date,amount,paid_total,remaining_amount,status,notes,created_at')
+    .order('created_at',{ascending:false})
+    .limit(500);
+
+  if (manager) {
+    const memberFilter = $('memberDueFilter')?.value;
+    if (memberFilter && memberFilter !== 'all') query = query.eq('member_id',memberFilter);
+  }
+
+  const statusFilter = $('memberDueStatusFilter')?.value;
+  if (statusFilter && statusFilter !== 'all') query = query.eq('status',statusFilter);
+
+  const {data,error} = await query;
+  if (error) {
+    box.textContent = 'Gagal memuat riwayat iuran: ' + error.message;
+    return;
+  }
+
+  const rows = data || [];
+  const stats = $('memberDuesStats');
+  if (stats) {
+    const totalDue = rows.reduce((sum,r)=>sum+Number(r.amount||0),0);
+    const totalPaid = rows.reduce((sum,r)=>sum+Number(r.paid_total||0),0);
+    const totalRemaining = rows.reduce((sum,r)=>sum+Number(r.remaining_amount||0),0);
+    const unpaid = rows.filter(r=>r.status!=='lunas').length;
+    stats.innerHTML =
+      '<div class="card"><div class="muted">Total kewajiban</div><div class="stat">' + rupiah(totalDue) + '</div></div>' +
+      '<div class="card"><div class="muted">Sudah dibayar</div><div class="stat">' + rupiah(totalPaid) + '</div></div>' +
+      '<div class="card"><div class="muted">Sisa kewajiban</div><div class="stat">' + rupiah(totalRemaining) + '</div></div>' +
+      '<div class="card"><div class="muted">Belum lunas</div><div class="stat">' + unpaid + '</div></div>';
+  }
+
+  if (!rows.length) {
+    box.innerHTML = '<div class="muted">Belum ada kewajiban iuran yang tercatat untuk filter ini.</div>';
+    if (manager) await loadMemberDuesAudit();
+    return;
+  }
+
+  const ids = rows.map(r=>r.id);
+  let paymentRows = [];
+  if (ids.length) {
+    const paymentResult = await sb.from('member_dues_payments')
+      .select('id,obligation_id,amount,paid_at,note')
+      .in('obligation_id',ids)
+      .order('paid_at',{ascending:false});
+    if (paymentResult.error) {
+      box.innerHTML = '<div class="muted">Data kewajiban berhasil dimuat, tetapi riwayat pembayaran gagal dibaca: ' + esc(paymentResult.error.message) + '</div>';
+      if (manager) await loadMemberDuesAudit();
+      return;
+    }
+    paymentRows = paymentResult.data || [];
+  }
+
+  const paymentMap = {};
+  paymentRows.forEach(p=>{
+    if (!paymentMap[p.obligation_id]) paymentMap[p.obligation_id] = [];
+    paymentMap[p.obligation_id].push(p);
+  });
+
+  box.innerHTML = rows.map(row=>{
+    const id = String(row.id);
+    const paid = Number(row.paid_total||0);
+    const remaining = Number(row.remaining_amount||0);
+    const statusLabel = row.status === 'lunas' ? 'LUNAS' : (paid > 0 ? 'BELUM LUNAS · CICILAN' : 'BELUM LUNAS');
+    const paymentList = (paymentMap[id] || []).map(p=>
+      '<div class="row" style="padding:6px 0;border-top:1px solid rgba(180,160,100,.18)"><span>' + esc(memberDueDateLabel(p.paid_at)) + (p.note ? ' · ' + esc(p.note) : '') + '</span><strong>' + rupiah(p.amount) + '</strong>' +
+      (manager ? '<button type="button" class="secondary" onclick="editMemberDuePayment(\'' + esc(p.id) + '\')">Koreksi</button>' : '') +
+      '</div>'
+    ).join('');
+
+    const managerActions = manager
+      ? '<div class="actions" style="margin-top:10px"><button type="button" onclick="toggleMemberDuePayment(\'' + esc(id) + '\')">＋ Catat Pembayaran</button><button type="button" class="secondary" onclick="editMemberDue(\'' + esc(id) + '\')">Edit Kewajiban</button></div>' +
+        '<form id="memberDuePaymentForm-' + esc(id) + '" onsubmit="recordMemberDuePayment(event,\'' + esc(id) + '\')" style="display:none;margin-top:10px;padding:12px;border:1px solid rgba(180,160,100,.25);border-radius:12px"><div class="grid"><div><label>Jumlah dibayar (Rp)</label><input id="memberDuePaymentAmount-' + esc(id) + '" type="number" min="1" step="1" required></div><div><label>Tanggal pembayaran</label><input id="memberDuePaymentDate-' + esc(id) + '" type="date" value="' + memberDueToday() + '" required></div></div><label>Catatan pembayaran (opsional)</label><input id="memberDuePaymentNote-' + esc(id) + '" maxlength="500" placeholder="Contoh: Dibayar tunai"><div class="actions"><button type="submit">Simpan Pembayaran</button><button type="button" class="secondary" onclick="toggleMemberDuePayment(\'' + esc(id) + '\')">Batal</button></div></form>'
+      : '';
+
+    return '<div class="record-item" style="display:block;margin:10px 0;padding:14px;border:1px solid rgba(180,160,100,.22);border-radius:14px">' +
+      '<div class="row"><div><b>' + (manager ? esc(row.member_name) + ' · ' : '') + esc(row.description) + '</b><div class="muted">' + esc(row.period_label) + ' · Jatuh tempo: ' + esc(memberDueDateLabel(row.due_date)) + '</div></div><span class="pill">' + statusLabel + '</span></div>' +
+      '<div class="grid" style="margin-top:10px"><div><div class="muted">Kewajiban</div><strong>' + rupiah(row.amount) + '</strong></div><div><div class="muted">Dibayar</div><strong>' + rupiah(paid) + '</strong></div><div><div class="muted">Sisa</div><strong>' + rupiah(remaining) + '</strong></div></div>' +
+      (row.notes ? '<div class="muted" style="margin-top:6px">' + esc(row.notes) + '</div>' : '') +
+      '<div style="margin-top:12px"><b>Riwayat Pembayaran</b>' + (paymentList || '<div class="muted">Belum ada pembayaran.</div>') + '</div>' +
+      managerActions + '</div>';
+  }).join('');
+
+  if (manager) await loadMemberDuesAudit();
+}
+
+async function loadMemberDuesAudit() {
+  const box = $('memberDuesAudit');
+  if (!box || !canFinance()) return;
+  const {data,error} = await sb.from('member_dues_audit')
+    .select('entity_type,entity_id,action,actor_id,occurred_at')
+    .order('occurred_at',{ascending:false})
+    .limit(20);
+  if (error) {
+    box.textContent = 'Audit tidak dapat dimuat: ' + error.message;
+    return;
+  }
+  if (!data?.length) {
+    box.textContent = 'Belum ada perubahan yang tercatat.';
+    return;
+  }
+  box.innerHTML = data.map(item=>{
+    const type = item.entity_type === 'member_dues_payments' ? 'Pembayaran' : 'Kewajiban';
+    const action = item.action === 'INSERT' ? 'Ditambahkan' : item.action === 'UPDATE' ? 'Dikoreksi' : 'Dihapus';
+    const actor = item.actor_id ? String(item.actor_id).slice(0,8) : 'sistem';
+    return '<div class="listitem"><b>' + type + ' · ' + action + '</b><div class="muted">' + esc(memberDueDateLabel(String(item.occurred_at).slice(0,10))) + ' · Akun ' + esc(actor) + ' · ID ' + esc(String(item.entity_id).slice(0,8)) + '</div></div>';
+  }).join('');
+}
+
+async function createMemberDue(event) {
+  event.preventDefault();
+  if (!canFinance()) { toast('Akses mengelola iuran ditolak.'); return; }
+  const memberId = $('memberDueMember')?.value;
+  const description = $('memberDueDescription')?.value.trim();
+  const period = $('memberDuePeriod')?.value.trim();
+  const amount = Number($('memberDueAmount')?.value);
+  if (!memberId || !description || description.length < 2 || !period || !Number.isSafeInteger(amount) || amount <= 0) {
+    toast('Pilih anggota, isi keterangan dan periode, serta masukkan jumlah iuran berupa angka bulat lebih dari nol.');
+    return;
+  }
+  const {error} = await sb.from('member_dues').insert({
+    member_id:memberId,
+    description,
+    period_label:period,
+    due_date:$('memberDueDate')?.value || null,
+    amount,
+    notes:$('memberDueNotes')?.value.trim() || null
+  });
+  if (error) { toast('Kewajiban iuran gagal disimpan: ' + error.message); return; }
+  toast('Kewajiban iuran berhasil ditambahkan.');
+  event.target.reset();
+  await loadMemberDues();
+}
+
+function toggleMemberDuePayment(id) {
+  const form = $('memberDuePaymentForm-' + id);
+  if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function recordMemberDuePayment(event,id) {
+  event.preventDefault();
+  if (!canFinance()) { toast('Akses mencatat pembayaran ditolak.'); return; }
+  const amount = Number($('memberDuePaymentAmount-' + id)?.value);
+  const paidAt = $('memberDuePaymentDate-' + id)?.value;
+  const note = $('memberDuePaymentNote-' + id)?.value.trim() || null;
+  if (!Number.isSafeInteger(amount) || amount <= 0 || !paidAt) {
+    toast('Jumlah pembayaran harus berupa angka bulat lebih dari nol dan tanggal harus diisi.');
+    return;
+  }
+  const {error} = await sb.from('member_dues_payments').insert({
+    obligation_id:id, amount, paid_at:paidAt, note
+  });
+  if (error) { toast('Pembayaran gagal dicatat: ' + error.message); return; }
+  toast('Pembayaran berhasil dicatat dan disinkronkan ke transaksi kas.');
+  await loadMemberDues();
+}
+
+async function editMemberDue(id) {
+  if (!canFinance()) { toast('Akses mengedit kewajiban ditolak.'); return; }
+  const {data,error} = await sb.from('member_dues').select('*').eq('id',id).single();
+  if (error || !data) { toast('Data kewajiban tidak ditemukan: ' + (error?.message || '')); return; }
+  const description = prompt('Keterangan iuran:',data.description);
+  if (description === null) return;
+  const period = prompt('Periode / kegiatan:',data.period_label);
+  if (period === null) return;
+  const amountText = prompt('Jumlah kewajiban (Rp):',String(data.amount));
+  if (amountText === null) return;
+  const amount = Number(amountText);
+  const dueDate = prompt('Batas pembayaran (YYYY-MM-DD, kosongkan jika tidak ada):',data.due_date || '');
+  if (dueDate === null) return;
+  if (description.trim().length < 2 || !period.trim() || !Number.isSafeInteger(amount) || amount <= 0) {
+    toast('Data tidak valid. Keterangan, periode, dan jumlah wajib diisi dengan benar.');
+    return;
+  }
+  const {error:updateError} = await sb.from('member_dues').update({
+    description:description.trim(),
+    period_label:period.trim(),
+    amount,
+    due_date:dueDate.trim() || null
+  }).eq('id',id);
+  if (updateError) { toast('Perubahan kewajiban gagal: ' + updateError.message); return; }
+  toast('Kewajiban berhasil dikoreksi dan perubahan masuk audit.');
+  await loadMemberDues();
+}
+
+async function editMemberDuePayment(id) {
+  if (!canFinance()) { toast('Akses mengoreksi pembayaran ditolak.'); return; }
+  const {data,error} = await sb.from('member_dues_payments').select('*').eq('id',id).single();
+  if (error || !data) { toast('Data pembayaran tidak ditemukan: ' + (error?.message || '')); return; }
+  const amountText = prompt('Jumlah pembayaran (Rp):',String(data.amount));
+  if (amountText === null) return;
+  const amount = Number(amountText);
+  const paidAt = prompt('Tanggal pembayaran (YYYY-MM-DD):',data.paid_at);
+  if (paidAt === null) return;
+  const note = prompt('Catatan pembayaran:',data.note || '');
+  if (note === null) return;
+  if (!Number.isSafeInteger(amount) || amount <= 0 || !paidAt.trim()) {
+    toast('Jumlah dan tanggal pembayaran tidak valid.');
+    return;
+  }
+  const {error:updateError} = await sb.from('member_dues_payments').update({
+    amount, paid_at:paidAt.trim(), note:note.trim() || null
+  }).eq('id',id);
+  if (updateError) { toast('Koreksi pembayaran gagal: ' + updateError.message); return; }
+  toast('Pembayaran berhasil dikoreksi, transaksi kas ikut diperbarui, dan audit tersimpan.');
+  await loadMemberDues();
+}
+
 function renderView() {
   const v = $('view');
 
@@ -1082,6 +1352,11 @@ function renderView() {
       return;
     }
     renderPunia();
+    return;
+  }
+
+  if (active === 'riwayat-iuran') {
+    renderMemberDues();
     return;
   }
 
