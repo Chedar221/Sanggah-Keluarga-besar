@@ -17,7 +17,7 @@
 <meta property="og:title" content="Sanggah Gede Pan Rengen | Satu Keluarga, Satu Tujuan">
 <meta property="og:description" content="Pusat informasi dan kegiatan keluarga besar Sanggah Gede Pan Rengen.">
 <meta property="og:url" content="https://sanggah-keluarga-besar.vercel.app/">
-<meta property="og:image" content="https://sanggah-keluarga-besar.vercel.app/logo-sanggah.webp">
+<meta property="og:image" content="https://i.postimg.cc/62Zy5tZ7/file-00000000f2588211a76b23a77675c7d6.png">
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">
 {
@@ -414,23 +414,33 @@ header h1{white-space:nowrap;display:block;font-size:clamp(15px,2.7vw,34px);lett
 @media(max-width:700px){.heritage-header{padding:17px 15px 23px!important}.heritage-topline{font-size:8px;letter-spacing:1.3px;gap:7px}.heritage-header .brand{gap:10px}.heritage-header .emblem{width:58px;height:58px;flex-basis:58px}.heritage-header h1{font-size:clamp(14px,3.7vw,20px);letter-spacing:0}.heritage-header p{font-size:9px;letter-spacing:.7px}.heritage-header .welcome{font-size:24px}}
 @media(max-width:370px){.heritage-header .emblem{width:48px;height:48px;flex-basis:48px}.heritage-header h1{font-size:12px}.heritage-header p{font-size:8px}.heritage-topline{font-size:7px}}
 
+
+/* HEADER BANNER RESMI KELUARGA — gambar yang disetujui */
+.image-header{padding:0!important;margin:0 auto!important;border-radius:0 0 22px 22px!important;overflow:hidden!important;background:#173d32!important;box-shadow:0 8px 24px #173d3228!important}
+.image-header:before,.image-header:after{display:none!important}
+.image-header .header-banner-image{display:block;width:100%;height:auto;max-height:340px;object-fit:contain;object-position:center;background:#173d32}
+.image-header .header-banner-fallback{display:none;padding:24px 16px;text-align:center;color:#f7dc91;background:linear-gradient(135deg,#24180f,#123e2a,#49301b)}
+.image-header .header-banner-fallback h1{font-family:Georgia,serif;font-size:clamp(18px,3vw,30px);margin:8px 0;color:#f7dc91}
+.image-header .header-banner-fallback p{color:#f5ead0}
+.image-header .header-banner-fallback strong{display:block;margin-top:12px;font-family:Georgia,serif;font-size:22px;letter-spacing:2px}
+.image-header.header-image-failed .header-banner-fallback{display:block}
+@media(max-width:700px){.image-header{border-radius:0 0 16px 16px!important}.image-header .header-banner-image{max-height:230px}}
 </style>
 </head>
 <body>
 
-<header class="heritage-header">
-  <div class="heritage-frame" aria-hidden="true"></div>
-  <div class="heritage-topline"><span>✦</span> WARISAN • KEBERSAMAAN • KELUARGA <span>✦</span></div>
-  <div class="brand">
-    <div class="emblem"><img src="logo-sanggah.svg" alt="Logo Sanggah Keluarga Besar"></div>
-    <div>
-      <h1>SANGGAH GEDE PAN RENGEN</h1>
-      <p>Sistem Informasi & Manajemen Keluarga</p>
-    </div>
+<header class="heritage-header image-header">
+  <img class="header-banner-image"
+       src="https://i.postimg.cc/62Zy5tZ7/file-00000000f2588211a76b23a77675c7d6.png"
+       alt="Banner Sanggah Gede Pan Rengen dengan logo keluarga di tengah"
+       loading="eager" fetchpriority="high"
+       onerror="this.hidden=true;this.parentElement.classList.add('header-image-failed')">
+  <div class="header-banner-fallback">
+    <div class="heritage-topline"><span>✦</span> WARISAN • KEBERSAMAAN • KELUARGA <span>✦</span></div>
+    <h1>SANGGAH GEDE PAN RENGEN</h1>
+    <p>Satu Keluarga, Satu Warisan</p>
+    <strong>OM SWASTIASTU</strong>
   </div>
-  <div class="heritage-divider" aria-hidden="true"><span>❖</span></div>
-  <div class="welcome">OM SWASTIASTU</div>
-  <div class="sub">Satu Keluarga, Satu Warisan</div>
 </header>
 
 <main>
