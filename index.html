@@ -484,6 +484,35 @@ header .sub{margin:3px auto 0;text-align:center;max-width:520px;font-size:11px;l
   header .welcome{margin-top:7px;font-size:17px}
   header .sub{margin-top:2px;font-size:10px}
 }
+
+/* AURORA EMAS — CAHAYA MENGALIR DI SEPANJANG ORNAMEN LENGKUNG */
+header:before{
+  animation:ornamentAuroraGlow 7s ease-in-out infinite alternate;
+  will-change:opacity,filter;
+}
+header:after{
+  content:"";position:absolute;inset:-18% -35%;z-index:-1;pointer-events:none;
+  opacity:.62;mix-blend-mode:screen;filter:blur(13px);
+  background:linear-gradient(112deg,transparent 28%,rgba(255,220,132,0) 38%,
+    rgba(255,236,174,.2) 46%,rgba(255,255,222,.34) 50%,
+    rgba(129,224,190,.16) 54%,rgba(255,208,105,.2) 60%,transparent 72%);
+  background-size:240% 100%;background-position:200% 0;
+  animation:auroraRibbonFlow 10s ease-in-out infinite;
+}
+@keyframes auroraRibbonFlow{
+  0%{background-position:200% 0;opacity:.22;transform:translateX(-2%)}
+  45%{opacity:.72}
+  100%{background-position:-40% 0;opacity:.3;transform:translateX(2%)}
+}
+@keyframes ornamentAuroraGlow{
+  0%{opacity:.48;filter:drop-shadow(0 0 2px rgba(255,205,102,.22)) brightness(.94)}
+  50%{opacity:.88;filter:drop-shadow(0 0 7px rgba(255,225,145,.62)) brightness(1.12)}
+  100%{opacity:.62;filter:drop-shadow(0 0 4px rgba(161,235,196,.36)) brightness(1.04)}
+}
+@media(prefers-reduced-motion:reduce){
+  header:before,header:after{animation:none!important}
+}
+
 </style>
 </head>
 <body>
