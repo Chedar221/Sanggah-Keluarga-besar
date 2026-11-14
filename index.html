@@ -421,14 +421,14 @@ header .brand,header .welcome,header .sub{position:relative;z-index:1}
 }
 
 
-/* HEADER TENGAH + EFEK CAHAYA EMAS PADA LOGO */
+/* HEADER RINGKAS — LOGO BERCAHAYA EMAS HALUS */
 header{
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
   gap:0;
-  padding:28px 18px 30px;
+  padding:15px 16px 17px;
 }
 header .brand{
   width:100%;
@@ -436,73 +436,81 @@ header .brand{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:12px;
+  gap:6px;
   text-align:center;
 }
 header .emblem{
   position:relative;
   isolation:isolate;
-  width:104px;
-  height:104px;
-  flex:0 0 104px;
-  border:1px solid rgba(255,222,143,.72);
+  width:82px;
+  height:82px;
+  flex:0 0 82px;
+  border:1px solid rgba(255,222,143,.9);
   border-radius:50%;
   overflow:visible;
   display:grid;
   place-items:center;
-  background:radial-gradient(circle,rgba(255,238,183,.18) 0%,rgba(255,214,112,.08) 48%,transparent 72%);
-  box-shadow:0 0 12px 3px rgba(255,218,119,.62),0 0 28px 10px rgba(244,190,70,.34),0 0 52px 18px rgba(244,190,70,.17),inset 0 0 15px rgba(255,232,165,.28);
-  animation:logoGoldenGlow 3.2s ease-in-out infinite alternate;
+  background:radial-gradient(circle,rgba(255,239,195,.2) 0%,rgba(255,211,111,.08) 62%,transparent 76%);
+  box-shadow:0 0 0 3px rgba(255,220,135,.12),0 0 13px 3px rgba(255,211,105,.34),inset 0 0 10px rgba(255,232,165,.2);
+  animation:logoGoldenGlow 3.8s ease-in-out infinite alternate;
 }
 header .emblem:before{
   content:"";
   position:absolute;
-  inset:-13px;
+  inset:-5px;
   z-index:-1;
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,218,119,.34) 0%,rgba(255,198,72,.16) 42%,rgba(255,198,72,0) 72%);
-  filter:blur(7px);
+  background:radial-gradient(circle,rgba(255,218,119,.23) 0%,rgba(255,198,72,.09) 48%,transparent 72%);
+  filter:blur(5px);
   pointer-events:none;
 }
 header .emblem img{
-  width:88%;
-  height:88%;
+  width:90%;
+  height:90%;
   object-fit:contain;
   display:block;
-  filter:drop-shadow(0 0 5px rgba(255,232,164,.9)) drop-shadow(0 0 12px rgba(255,195,64,.75));
+  filter:drop-shadow(0 1px 2px rgba(255,232,164,.55)) drop-shadow(0 0 5px rgba(255,195,64,.3));
 }
 header .brand h1{
   margin:0;
-  font-size:clamp(19px,4vw,25px);
-  line-height:1.25;
-  letter-spacing:.045em;
+  font-size:clamp(18px,3.8vw,23px);
+  line-height:1.16;
+  letter-spacing:.035em;
   text-align:center;
 }
 header .brand p{
-  margin:5px 0 0;
+  margin:2px 0 0;
   text-align:center;
-  font-size:13px;
+  font-size:11px;
+  line-height:1.25;
+  letter-spacing:.8px;
 }
 header .welcome{
-  margin-top:17px;
+  margin:8px auto 0;
   text-align:center;
+  line-height:1.15;
+  font-size:18px;
 }
 header .sub{
-  margin-top:5px;
+  margin:3px auto 0;
   text-align:center;
   max-width:520px;
+  font-size:11px;
+  line-height:1.3;
 }
 @keyframes logoGoldenGlow{
-  from{box-shadow:0 0 10px 2px rgba(255,218,119,.48),0 0 24px 8px rgba(244,190,70,.25),0 0 44px 14px rgba(244,190,70,.12),inset 0 0 12px rgba(255,232,165,.2)}
-  to{box-shadow:0 0 16px 5px rgba(255,225,145,.78),0 0 34px 13px rgba(244,190,70,.42),0 0 62px 22px rgba(244,190,70,.22),inset 0 0 19px rgba(255,232,165,.38)}
+  from{box-shadow:0 0 0 2px rgba(255,220,135,.1),0 0 10px 2px rgba(255,211,105,.25),inset 0 0 8px rgba(255,232,165,.16)}
+  to{box-shadow:0 0 0 3px rgba(255,220,135,.18),0 0 17px 5px rgba(255,211,105,.43),inset 0 0 13px rgba(255,232,165,.27)}
 }
 @media(max-width:600px){
-  header{padding:25px 14px 27px}
-  header .emblem{width:94px;height:94px;flex-basis:94px}
-  header .brand{gap:10px}
-  header .brand h1{font-size:19px}
+  header{padding:12px 12px 14px}
+  header .emblem{width:74px;height:74px;flex-basis:74px}
+  header .brand{gap:5px}
+  header .brand h1{font-size:18px}
+  header .brand p{font-size:10px}
+  header .welcome{margin-top:7px;font-size:17px}
+  header .sub{margin-top:2px;font-size:10px}
 }
-
 </style>
 </head>
 <body>
