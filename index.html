@@ -492,28 +492,26 @@ header:before{
   will-change:opacity,filter;
 }
 header:after{content:none!important}
-/* Cahaya logo berbentuk sinar Cakra, tanpa lingkaran/halo bulat */
+/* Sinar Cakra tipis dan statis — tanpa garis berputar atau efek gerak */
 header .emblem{
   border:0!important;background:transparent!important;box-shadow:none!important;
   animation:none!important;filter:none!important;
 }
 header .emblem:before{content:none!important;display:none!important}
 header .emblem:after{
-  content:"";position:absolute;inset:-31px;z-index:0;border:0;border-radius:0;
+  content:"";position:absolute;inset:-27px;z-index:0;border:0;border-radius:0;
   background:repeating-conic-gradient(from 0deg,
-    rgba(255,231,164,0) 0deg 5deg,
-    rgba(255,239,190,.98) 5.5deg 6.5deg,
-    rgba(255,198,82,.78) 7deg 8deg,
-    rgba(255,231,164,0) 9deg 11.25deg);
-  -webkit-mask:radial-gradient(circle,transparent 0 39%,#000 43% 72%,transparent 79%);
-  mask:radial-gradient(circle,transparent 0 39%,#000 43% 72%,transparent 79%);
-  filter:drop-shadow(0 0 4px rgba(255,218,125,.95));
-  animation:logoRayRotate 24s linear infinite,logoRayPulse 3s ease-in-out infinite alternate;
+    rgba(255,231,164,0) 0deg 14deg,
+    rgba(255,235,183,.58) 14.35deg 14.8deg,
+    rgba(255,231,164,0) 15.2deg 16deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 40%,#000 45% 69%,transparent 76%);
+  mask:radial-gradient(circle,transparent 0 40%,#000 45% 69%,transparent 76%);
+  filter:drop-shadow(0 0 2px rgba(255,218,125,.48));
+  opacity:.78;
+  animation:none!important;
   pointer-events:none;
 }
 header .emblem img{position:relative;z-index:1}
-@keyframes logoRayRotate{to{transform:rotate(360deg)}}
-@keyframes logoRayPulse{0%{opacity:.62;filter:drop-shadow(0 0 2px rgba(255,218,125,.65))}100%{opacity:1;filter:drop-shadow(0 0 8px rgba(255,232,160,1))}}
 @keyframes ornamentAuroraGlow{
   0%{opacity:.5;filter:drop-shadow(0 0 3px rgba(255,205,102,.3)) brightness(.95)}
   50%{opacity:.94;filter:drop-shadow(0 0 9px rgba(255,232,165,.82)) brightness(1.18)}
