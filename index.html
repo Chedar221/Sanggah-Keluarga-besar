@@ -407,6 +407,19 @@ header:before{
   header:before{opacity:.5;background-size:auto 100%;background-position:center}
 }
 
+
+/* ORNAMEN BARU HEADER SANGGAH — garis lengkung emas khas Bali */
+header{position:relative;isolation:isolate;overflow:hidden}
+header:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.78;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 360' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23e8c96f' stroke-width='2'%3E%3Cpath opacity='.58' d='M-80 290 C140 20 300 15 520 175 S900 345 1120 130 S1390 10 1520 180'/%3E%3Cpath opacity='.34' d='M-80 325 C150 65 320 60 530 205 S900 365 1135 165 S1390 55 1520 215'/%3E%3Cpath opacity='.42' d='M-50 35 C170 205 300 210 470 95 S820 -25 1010 125 S1290 260 1490 70'/%3E%3Cpath opacity='.28' d='M-50 5 C170 175 300 180 470 65 S820 -55 1010 95 S1290 230 1490 40'/%3E%3C/g%3E%3Cg fill='%23f1d98e' opacity='.65'%3E%3Ccircle cx='90' cy='82' r='3'/%3E%3Ccircle cx='1350' cy='275' r='3'/%3E%3Ccircle cx='1170' cy='55' r='2'/%3E%3Ccircle cx='270' cy='300' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:100% 100%;background-position:center;background-repeat:no-repeat
+}
+header .brand,header .welcome,header .sub{position:relative;z-index:1}
+@media(max-width:600px){
+  header:before{opacity:.52;background-size:auto 100%;background-position:center}
+}
+
 </style>
 </head>
 <body>
