@@ -412,7 +412,7 @@ header:before{
 header{position:relative;isolation:isolate;overflow:hidden}
 header:before{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.78;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 360' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23e8c96f' stroke-width='2'%3E%3Cpath opacity='.58' d='M-80 290 C140 20 300 15 520 175 S900 345 1120 130 S1390 10 1520 180'/%3E%3Cpath opacity='.34' d='M-80 325 C150 65 320 60 530 205 S900 365 1135 165 S1390 55 1520 215'/%3E%3Cpath opacity='.42' d='M-50 35 C170 205 300 210 470 95 S820 -25 1010 125 S1290 260 1490 70'/%3E%3Cpath opacity='.28' d='M-50 5 C170 175 300 180 470 65 S820 -55 1010 95 S1290 230 1490 40'/%3E%3C/g%3E%3Cg fill='%23f1d98e' opacity='.65'%3E%3Ccircle cx='90' cy='82' r='3'/%3E%3Ccircle cx='1350' cy='275' r='3'/%3E%3Ccircle cx='1170' cy='55' r='2'/%3E%3Ccircle cx='270' cy='300' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 360' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23e8c96f' stroke-width='2'%3E%3Cpath opacity='.58' d='M-80 290 C140 20 300 15 520 175 S900 345 1120 130 S1390 10 1520 180'/%3E%3Cpath opacity='.34' d='M-80 325 C150 65 320 60 530 205 S900 365 1135 165 S1390 55 1520 215'/%3E%3Cpath opacity='.42' d='M-50 35 C170 205 300 210 470 95 S820 -25 1010 125 S1290 260 1490 70'/%3E%3Cpath opacity='.28' d='M-50 5 C170 175 300 180 470 65 S820 -55 1010 95 S1290 230 1490 40'/%3E%3C/g%3E%3Cg fill='none' stroke='%23fff0bd' stroke-width='3.2' stroke-linecap='round' opacity='.9'%3E%3Cpath stroke-dasharray='1 54' d='M-80 290 C140 20 300 15 520 175 S900 345 1120 130 S1390 10 1520 180'%3E%3Canimate attributeName='stroke-dashoffset' from='0' to='-440' dur='12s' repeatCount='indefinite'/%3E%3C/path%3E%3Cpath stroke-dasharray='1 62' d='M-80 325 C150 65 320 60 530 205 S900 365 1135 165 S1390 55 1520 215'%3E%3Canimate attributeName='stroke-dashoffset' from='0' to='-480' dur='15s' repeatCount='indefinite'/%3E%3C/path%3E%3Cpath stroke-dasharray='1 58' d='M-50 35 C170 205 300 210 470 95 S820 -25 1010 125 S1290 260 1490 70'%3E%3Canimate attributeName='stroke-dashoffset' from='0' to='440' dur='13s' repeatCount='indefinite'/%3E%3C/path%3E%3Cpath stroke-dasharray='1 70' d='M-50 5 C170 175 300 180 470 65 S820 -55 1010 95 S1290 230 1490 40'%3E%3Canimate attributeName='stroke-dashoffset' from='0' to='-520' dur='17s' repeatCount='indefinite'/%3E%3C/path%3E%3C/g%3E%3Cg fill='%23f1d98e' opacity='.65'%3E%3Ccircle cx='90' cy='82' r='3'/%3E%3Ccircle cx='1350' cy='275' r='3'/%3E%3Ccircle cx='1170' cy='55' r='2'/%3E%3Ccircle cx='270' cy='300' r='2'/%3E%3C/g%3E%3C/svg%3E");
   background-size:100% 100%;background-position:center;background-repeat:no-repeat
 }
 header .brand,header .welcome,header .sub{position:relative;z-index:1}
@@ -485,34 +485,37 @@ header .sub{margin:3px auto 0;text-align:center;max-width:520px;font-size:11px;l
   header .sub{margin-top:2px;font-size:10px}
 }
 
-/* AURORA EMAS — CAHAYA MENGALIR DI SEPANJANG ORNAMEN LENGKUNG */
+/* AURORA HIDUP — GARIS LENGKUNG MENGALIR + SINAR LOGO */
 header:before{
   animation:ornamentAuroraGlow 7s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 5px rgba(255,220,142,.48));
   will-change:opacity,filter;
 }
-header:after{
-  content:"";position:absolute;inset:-18% -35%;z-index:-1;pointer-events:none;
-  opacity:.62;mix-blend-mode:screen;filter:blur(13px);
-  background:linear-gradient(112deg,transparent 28%,rgba(255,220,132,0) 38%,
-    rgba(255,236,174,.2) 46%,rgba(255,255,222,.34) 50%,
-    rgba(129,224,190,.16) 54%,rgba(255,208,105,.2) 60%,transparent 72%);
-  background-size:240% 100%;background-position:200% 0;
-  animation:auroraRibbonFlow 10s ease-in-out infinite;
+header:after{content:none!important}
+header .emblem:after{
+  content:"";position:absolute;inset:-25px;z-index:-1;border:0;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,
+    rgba(255,229,157,0) 0deg 8deg,
+    rgba(255,239,190,.8) 9deg 10deg,
+    rgba(255,203,104,.22) 11deg 12deg,
+    rgba(255,229,157,0) 14deg 20deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 37%,#000 51%,transparent 77%);
+  mask:radial-gradient(circle,transparent 0 37%,#000 51%,transparent 77%);
+  filter:blur(1.5px) drop-shadow(0 0 7px rgba(255,218,125,.85));
+  animation:logoRayRotate 18s linear infinite,logoRayPulse 3.2s ease-in-out infinite alternate;
+  pointer-events:none;
 }
-@keyframes auroraRibbonFlow{
-  0%{background-position:200% 0;opacity:.22;transform:translateX(-2%)}
-  45%{opacity:.72}
-  100%{background-position:-40% 0;opacity:.3;transform:translateX(2%)}
-}
+header .emblem img{position:relative;z-index:1}
+@keyframes logoRayRotate{to{transform:rotate(360deg)}}
+@keyframes logoRayPulse{0%{opacity:.48;filter:blur(2px) drop-shadow(0 0 4px rgba(255,218,125,.55))}100%{opacity:1;filter:blur(1px) drop-shadow(0 0 11px rgba(255,232,160,1))}}
 @keyframes ornamentAuroraGlow{
-  0%{opacity:.48;filter:drop-shadow(0 0 2px rgba(255,205,102,.22)) brightness(.94)}
-  50%{opacity:.88;filter:drop-shadow(0 0 7px rgba(255,225,145,.62)) brightness(1.12)}
-  100%{opacity:.62;filter:drop-shadow(0 0 4px rgba(161,235,196,.36)) brightness(1.04)}
+  0%{opacity:.5;filter:drop-shadow(0 0 3px rgba(255,205,102,.3)) brightness(.95)}
+  50%{opacity:.94;filter:drop-shadow(0 0 9px rgba(255,232,165,.82)) brightness(1.18)}
+  100%{opacity:.68;filter:drop-shadow(0 0 6px rgba(157,235,195,.48)) brightness(1.08)}
 }
 @media(prefers-reduced-motion:reduce){
-  header:before,header:after{animation:none!important}
+  header:before,header .emblem:after{animation:none!important}
 }
-
 </style>
 </head>
 <body>
