@@ -576,6 +576,67 @@ header .emblem img{
   .site-footer .footer-icon{animation:none!important}
 }
 
+
+/* NAVIGASI CEPAT MENGAMBANG — PUBLIK */
+.homepage-action-buttons{
+  position:fixed!important;
+  z-index:950;
+  left:50%;
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  align-items:stretch;
+  gap:5px;
+  width:min(620px,calc(100% - 24px))!important;
+  max-width:620px!important;
+  margin:0!important;
+  padding:8px;
+  border:1px solid #e6c65d;
+  border-radius:19px;
+  background:linear-gradient(135deg,#063d24 0%,#08713a 55%,#123f2c 100%);
+  box-shadow:0 8px 26px #062d1f55,0 0 0 3px #d0a51b22;
+  backdrop-filter:blur(12px);
+}
+.homepage-action-buttons .chat-entry-button{
+  min-width:0;
+  min-height:48px;
+  padding:7px 3px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:3px;
+  border:0;
+  border-radius:11px;
+  background:transparent!important;
+  color:#ffe28a!important;
+  box-shadow:none!important;
+  font-size:10px;
+  line-height:1.1;
+  letter-spacing:.35px;
+  white-space:nowrap;
+}
+.homepage-action-buttons .chat-entry-button:active{background:#ffffff20!important;transform:scale(.97)}
+.homepage-action-buttons .chat-entry-button svg{
+  width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;flex:none;
+}
+.homepage-action-buttons .chat-entry-button:nth-child(2){color:#8df0b0!important}
+.homepage-action-buttons .chat-entry-button:nth-child(3),
+.homepage-action-buttons .chat-entry-button:nth-child(4){color:#ffe28a!important}
+body:has(#publicPage.hidden) .homepage-action-buttons{display:none!important}
+body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+@media(min-width:700px){
+  .homepage-action-buttons{bottom:20px;padding:9px 12px}
+  .homepage-action-buttons .chat-entry-button{flex-direction:row;min-height:44px;font-size:12px;gap:7px}
+  .homepage-action-buttons .chat-entry-button svg{width:19px;height:19px}
+}
+@media(max-width:360px){
+  .homepage-action-buttons{width:calc(100% - 16px)!important;padding:6px;gap:2px}
+  .homepage-action-buttons .chat-entry-button{font-size:9px}
+}
+
 </style>
 </head>
 <body>
