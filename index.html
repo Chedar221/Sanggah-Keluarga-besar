@@ -1128,9 +1128,7 @@ anggota: {
   table: 'members',
   fields: [
     {key: 'full_name', label: 'Nama lengkap', required: true},
-    {key: 'family_name', label: 'Nama keluarga'},
-    {key: 'relation', label: 'Hubungan keluarga'},
-    
+    {key: 'phone', label: 'Nomor WhatsApp', type: 'tel', placeholder: 'Contoh: 081234567890'},
     {key: 'member_type', label: 'Kategori anggota', type: 'select', required: true, options: [['pengarep','Anggota Pengarep'],['keluarga','Anggota Keluarga']]}
   ]
 },
@@ -1581,7 +1579,7 @@ function renderView() {
               ? `<textarea id="field${i}" rows="3" ${f.required?'required':''}></textarea>`
               : f.type === 'select'
               ? `<select id="field${i}">${f.options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`
-              : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''}>`
+              : `<input id="field${i}" type="${f.type||'text'}" ${f.required?'required':''} ${f.type==='number'?'min="0"':''} ${f.placeholder ? `placeholder="${esc(f.placeholder)}"` : ''} ${f.type==='tel' ? 'inputmode="tel" autocomplete="tel"' : ''}>`
             }
           `).join('')}
 
@@ -1922,7 +1920,7 @@ function displayValue(row, table) {
     detail = `${row.type || ''} · ${rupiah(row.amount)}`;
   } else if (table === 'members') {
     const category = row.member_type === 'pengarep' ? 'Anggota Pengarep' : row.member_type === 'keluarga' ? 'Anggota Keluarga' : 'Belum dikategorikan';
-    detail = [category, row.family_name, row.relation, 'Kontak dikelola melalui Aktivasi Notifikasi'].filter(Boolean).join(' · ');
+    detail = category;
   } else if (table === 'events' || table === 'ngayah') {
     detail = row.event_date || '';
   } else if (table === 'inventory') {
@@ -1938,6 +1936,7 @@ function displayValue(row, table) {
       <b>${esc(title)}</b>
       ${table === 'announcements' && row.image_url ? `<img class="announcement-admin-image" src="${esc(row.image_url)}" alt="Banner pengumuman" loading="lazy">` : ''}
       <div class="muted">${esc(detail)}</div>
+      ${table === 'members' && row.phone ? `<div class="record-actions"><a class="secondary" href="https://wa.me/${String(row.phone).replace(/\\D/g,'').replace(/^0/,'62')}" target="_blank" rel="noopener">WhatsApp · ${esc(row.phone)}</a></div>` : (table === 'members' ? '<div class="muted">Nomor WhatsApp belum diisi.</div>' : '')}
     </div>
   `;
 }
@@ -2924,9 +2923,7 @@ async function initializeApp() {
 const editableFields = {
   members: [
     ['full_name', 'Nama lengkap', 'text'],
-    ['family_name', 'Nama keluarga', 'text'],
-    ['relation', 'Hubungan keluarga', 'text'],
-    
+    ['phone', 'Nomor WhatsApp', 'tel'],
     ['member_type', 'Kategori (pengarep/keluarga)', 'text']
   ],
 
@@ -3017,7 +3014,7 @@ async function editRecord(table, id) {
 
     .select(
       table === 'members'
-        ? 'id,full_name,family_name,relation,member_type,created_at'
+        ? 'id,full_name,phone,member_type,created_at'
         : '*'
     )
     .eq('id', id)
@@ -3112,7 +3109,7 @@ async function loadRows(table) {
   el.classList.toggle('member-list', table === 'members');
 
   const columns = table === 'members'
-    ? 'id,full_name,family_name,relation,member_type,created_at'
+    ? 'id,full_name,phone,member_type,created_at'
     : '*';
 
   let query = sb
