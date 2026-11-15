@@ -651,6 +651,69 @@ body:has(#publicPage.hidden) .homepage-action-buttons{display:none!important}
   .homepage-action-buttons .chat-entry-button{min-height:48px}
 }
 
+
+/* TEMA HITAM & EMAS: mengganti seluruh aksen hijau tanpa mengubah fungsi aplikasi */
+:root{
+  --green:#111111!important;
+  --green2:#252525!important;
+  --ink:#202020!important;
+  --muted:#777777!important;
+  --line:#e3e0d8!important;
+  --cream:#f7f6f2!important;
+}
+body{
+  background:linear-gradient(180deg,#eeeeeb 0,#f7f6f2 340px,#f7f6f2 100%)!important;
+  color:#202020!important;
+}
+header{
+  background:radial-gradient(ellipse at 12% 8%,#ffffff18 0 10%,transparent 34%),
+    radial-gradient(ellipse at 90% 15%,#d7b65b18 0 12%,transparent 35%),
+    linear-gradient(125deg,#050505 0%,#171717 54%,#292929 100%)!important;
+  box-shadow:0 9px 24px #0003!important;
+}
+header:after{background:linear-gradient(90deg,transparent,#b88d2d,#f2d987,#b88d2d,transparent)!important}
+header h1,header .welcome{color:#f3d477!important}
+header p,header .sub{color:#e8e2d2!important}
+.card h2,.welcome-card h2{color:#171717!important}
+button{
+  background:linear-gradient(135deg,#080808,#303030)!important;
+  color:#f5f5f5!important;
+  box-shadow:0 2px 6px #0002!important;
+}
+button.secondary,.nav button,.chat-room{
+  background:#eeeeeb!important;color:#202020!important;border:1px solid #d8d5cd!important;box-shadow:none!important;
+}
+.nav button.active,.chat-room.active{
+  background:#171717!important;color:#f3d477!important;border-color:#b9943e!important;
+}
+.pill{background:#ece9e1!important;color:#262626!important}
+.tile span,.public-link{color:#171717!important}
+.welcome-card{
+  background:linear-gradient(115deg,#fffdf7,#f1eee5 62%,#e8e4d9)!important;
+  border-color:#d8cfb9!important;
+}
+.welcome-card h2{color:#171717!important}
+.welcome-card:after{color:#b9953019!important}
+.compact-details summary:after{color:#171717!important}
+.public-chat-head{background:#101010!important}
+.public-chat-compose-row button{background:#171717!important;color:#f3d477!important}
+.public-chat-compose input:focus,.public-chat-compose textarea:focus{border-color:#9c7a2c!important;box-shadow:0 0 0 3px #9c7a2c18!important}
+.public-chat-bubble strong{color:#292929!important}
+.chat-bubble.mine{background:#efede7!important;border-color:#ded9cc!important}
+.pipil-number-button.current{background:#171717!important;color:#f3d477!important}
+.pipil-modal-close{background:#eceae4!important;color:#171717!important}
+#toast{background:#171717!important}
+.homepage-action-buttons .chat-entry-button{
+  background:linear-gradient(145deg,#101010,#303030)!important;
+  color:#f3d477!important;border-color:#b9943e!important;
+  box-shadow:0 3px 9px #0003!important;
+}
+.homepage-action-buttons .chat-entry-button:nth-child(2){color:#f3d477!important}
+.homepage-action-buttons .chat-entry-button:hover,
+.homepage-action-buttons .chat-entry-button:active{
+  background:linear-gradient(145deg,#292929,#080808)!important;
+}
+
 </style>
 </head>
 <body>
