@@ -2203,7 +2203,7 @@ async function loadPublicMembers() {
 
   const { data, error } = await sb
     .from('members')
-    .select('full_name,family_name,relation')
+    .select('full_name')
     .order('full_name', { ascending: true })
     .limit(300);
 
@@ -2218,13 +2218,11 @@ async function loadPublicMembers() {
   }
 
   list.innerHTML = data.map((member, index) => {
-    const detail = [member.family_name, member.relation].filter(Boolean).join(' · ');
     return `
       <div class="record-item">
         <div class="row">
           <b>${index + 1}. ${esc(member.full_name || 'Tanpa nama')}</b>
         </div>
-        ${detail ? `<div class="muted">${esc(detail)}</div>` : ''}
       </div>
     `;
   }).join('');
