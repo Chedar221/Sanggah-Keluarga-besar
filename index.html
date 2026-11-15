@@ -620,6 +620,37 @@ body:has(#publicPage.hidden) .homepage-action-buttons{display:none!important}
   .homepage-action-buttons .chat-entry-button{font-size:9px}
 }
 
+
+/* NAVIGASI BERANDA: tanpa panel luar, tiap tombol menjadi kotak mandiri */
+.homepage-action-buttons{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  padding:0!important;
+  gap:9px!important;
+}
+.homepage-action-buttons .chat-entry-button{
+  background:linear-gradient(145deg,#08713a,#064b2b)!important;
+  color:#ffe28a!important;
+  border:1px solid #c9a227!important;
+  border-radius:12px!important;
+  box-shadow:0 3px 9px #062d1f24!important;
+  min-height:52px;
+}
+.homepage-action-buttons .chat-entry-button:nth-child(2){color:#a8f0bd!important}
+.homepage-action-buttons .chat-entry-button:nth-child(3),
+.homepage-action-buttons .chat-entry-button:nth-child(4){color:#ffe28a!important}
+.homepage-action-buttons .chat-entry-button:active,
+.homepage-action-buttons .chat-entry-button:hover{
+  background:linear-gradient(145deg,#0b8747,#075b33)!important;
+  box-shadow:0 4px 12px #062d1f30!important;
+}
+@media(max-width:360px){
+  .homepage-action-buttons{gap:6px!important}
+  .homepage-action-buttons .chat-entry-button{min-height:48px}
+}
+
 </style>
 </head>
 <body>
