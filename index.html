@@ -577,20 +577,21 @@ header .emblem img{
 }
 
 
-/* NAVIGASI CEPAT MENGAMBANG — PUBLIK */
+
+/* NAVIGASI CEPAT — PANEL DI ATAS SUSUNAN PENGURUS */
 .homepage-action-buttons{
-  position:fixed!important;
-  z-index:950;
-  left:50%;
-  bottom:calc(12px + env(safe-area-inset-bottom));
-  transform:translateX(-50%);
+  position:relative!important;
+  z-index:2;
+  left:auto;
+  bottom:auto;
+  transform:none;
   display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr));
   align-items:stretch;
   gap:5px;
   width:min(620px,calc(100% - 24px))!important;
   max-width:620px!important;
-  margin:0!important;
+  margin:12px auto 14px!important;
   padding:8px;
   border:1px solid #e6c65d;
   border-radius:19px;
@@ -599,23 +600,11 @@ header .emblem img{
   backdrop-filter:blur(12px);
 }
 .homepage-action-buttons .chat-entry-button{
-  min-width:0;
-  min-height:48px;
-  padding:7px 3px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:3px;
-  border:0;
-  border-radius:11px;
-  background:transparent!important;
-  color:#ffe28a!important;
-  box-shadow:none!important;
-  font-size:10px;
-  line-height:1.1;
-  letter-spacing:.35px;
-  white-space:nowrap;
+  min-width:0;min-height:48px;padding:7px 3px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  gap:3px;border:0;border-radius:11px;background:transparent!important;
+  color:#ffe28a!important;box-shadow:none!important;font-size:10px;
+  line-height:1.1;letter-spacing:.35px;white-space:nowrap;
 }
 .homepage-action-buttons .chat-entry-button:active{background:#ffffff20!important;transform:scale(.97)}
 .homepage-action-buttons .chat-entry-button svg{
@@ -626,12 +615,6 @@ header .emblem img{
 .homepage-action-buttons .chat-entry-button:nth-child(3),
 .homepage-action-buttons .chat-entry-button:nth-child(4){color:#ffe28a!important}
 body:has(#publicPage.hidden) .homepage-action-buttons{display:none!important}
-body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
-@media(min-width:700px){
-  .homepage-action-buttons{bottom:20px;padding:9px 12px}
-  .homepage-action-buttons .chat-entry-button{flex-direction:row;min-height:44px;font-size:12px;gap:7px}
-  .homepage-action-buttons .chat-entry-button svg{width:19px;height:19px}
-}
 @media(max-width:360px){
   .homepage-action-buttons{width:calc(100% - 16px)!important;padding:6px;gap:2px}
   .homepage-action-buttons .chat-entry-button{font-size:9px}
@@ -653,12 +636,7 @@ body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi.</div>
 </header>
 
-  <div class="actions homepage-action-buttons">
-    <button class="chat-entry-button" onclick="openPublicChat()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.8-3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></svg> PESAN</button>
-    <button class="chat-entry-button" onclick="openFamilyWhatsApp()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19l1.1-4.1A7.5 7.5 0 1 1 20 11.5Z"/><path d="M9 8.5c.5 2.4 2.1 4 4.5 4.5l1.2-1.2 2 1c-.2 1.5-1.2 2.2-2.5 2.1-3.8-.5-6.5-3.2-7-7-.1-1.3.6-2.3 2.1-2.5l1 2L9 8.5Z"/></svg> WHATSAPP</button>
-    <button class="chat-entry-button" onclick="showLogin()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg> MASUK</button>
-    <button class="chat-entry-button" onclick="showRegister()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h3a4.5 4.5 0 0 1 4.5 4.5V20M19 8v6M16 11h6"/></svg> DAFTAR</button>
-  </div>
+
 
 <main>
 
@@ -669,6 +647,13 @@ body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
     <h2>Selamat Datang di Keluarga Besar</h2>
     <p class="muted">SANGGAH GEDE PAN RENGEN · Satu Keluarga, Satu Tujuan</p>
     <details class="welcome-description"><summary>Tentang website keluarga · Baca selengkapnya</summary><p><strong>Website Keluarga Besar Sanggah Gede Pan Rengen</strong> merupakan pusat informasi keluarga untuk memudahkan anggota mengikuti kegiatan, pengumuman, giliran pipil, serta informasi administrasi keluarga. Dibangun untuk mempererat komunikasi dan menjaga kebersamaan keluarga besar.</p></details>
+  </div>
+
+  <div class="actions homepage-action-buttons">
+    <button class="chat-entry-button" onclick="openPublicChat()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.8-3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></svg> PESAN</button>
+    <button class="chat-entry-button" onclick="openFamilyWhatsApp()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19l1.1-4.1A7.5 7.5 0 1 1 20 11.5Z"/><path d="M9 8.5c.5 2.4 2.1 4 4.5 4.5l1.2-1.2 2 1c-.2 1.5-1.2 2.2-2.5 2.1-3.8-.5-6.5-3.2-7-7-.1-1.3.6-2.3 2.1-2.5l1 2L9 8.5Z"/></svg> WHATSAPP</button>
+    <button class="chat-entry-button" onclick="showLogin()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg> MASUK</button>
+    <button class="chat-entry-button" onclick="showRegister()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h3a4.5 4.5 0 0 1 4.5 4.5V20M19 8v6M16 11h6"/></svg> DAFTAR</button>
   </div>
 
   <div class="card committee-card" id="publicCommitteeCard">
