@@ -1872,16 +1872,30 @@ async function saveGeneric(event, table) {
     obj[f.key] = value === '' ? null : value;
   });
 
+  let privatePhone = null;
   if (table === 'members') {
     obj.created_by = session.user.id;
+    privatePhone = obj.phone || '';
+    delete obj.phone;
   }
 
-
-  const {error} = await sb.from(table).insert(obj);
+  const insertQuery = sb.from(table).insert(obj);
+  const {data: inserted, error} = table === 'members'
+    ? await insertQuery.select('id').single()
+    : await insertQuery;
 
   if (error) {
     toast('Gagal menyimpan: ' + error.message);
     return;
+  }
+
+  if (table === 'members' && privatePhone) {
+    try {
+      await familyPushRequest({action:'save_contact',member_id:inserted.id,phone:privatePhone});
+    } catch(contactError) {
+      toast('Anggota tersimpan, tetapi nomor WhatsApp gagal disimpan: ' + contactError.message);
+      return;
+    }
   }
 
   toast('Data berhasil disimpan.');
@@ -1936,7 +1950,7 @@ function displayValue(row, table) {
       <b>${esc(title)}</b>
       ${table === 'announcements' && row.image_url ? `<img class="announcement-admin-image" src="${esc(row.image_url)}" alt="Banner pengumuman" loading="lazy">` : ''}
       <div class="muted">${esc(detail)}</div>
-      ${table === 'members' && row.phone ? `<div class="record-actions"><a class="secondary" href="https://wa.me/${String(row.phone).replace(/\D/g,'').replace(/^0/,'62')}" target="_blank" rel="noopener">WhatsApp · ${esc(row.phone)}</a></div>` : (table === 'members' ? '<div class="muted">Nomor WhatsApp belum diisi.</div>' : '')}
+      ${table === 'members' && row.private_phone ? `<div class="record-actions"><a class="secondary" href="https://wa.me/${String(row.private_phone).replace(/\D/g,'').replace(/^0/,'62')}" target="_blank" rel="noopener">WhatsApp · ${esc(row.private_phone)}</a></div>` : (table === 'members' ? '<div class="muted">Nomor WhatsApp belum diisi.</div>' : '')}
     </div>
   `;
 }
@@ -3014,7 +3028,7 @@ async function editRecord(table, id) {
 
     .select(
       table === 'members'
-        ? 'id,full_name,phone,member_type,created_at'
+        ? 'id,full_name,member_type,created_at'
         : '*'
     )
     .eq('id', id)
@@ -3024,6 +3038,17 @@ async function editRecord(table, id) {
   if (error || !data) {
     alert('Gagal mengambil data: ' + (error?.message || 'Data tidak ditemukan.'));
     return;
+  }
+
+  if (table === 'members') {
+    try {
+      const contacts = await familyPushRequest({action:'list_members'});
+      const contact = (contacts.members || []).find(item => item.id === id);
+      data.phone = contact?.phone || '';
+    } catch (contactError) {
+      alert('Nomor WhatsApp privat gagal dimuat: ' + contactError.message);
+      return;
+    }
   }
 
   const changes = {};
@@ -3058,6 +3083,12 @@ async function editRecord(table, id) {
     }
   }
 
+  let privatePhone = null;
+  if (table === 'members') {
+    privatePhone = changes.phone ?? '';
+    delete changes.phone;
+  }
+
   const { error: updateError } = await sb
     .from(table)
     .update(changes)
@@ -3066,6 +3097,15 @@ async function editRecord(table, id) {
   if (updateError) {
     alert('Gagal menyimpan perubahan: ' + updateError.message);
     return;
+  }
+
+  if (table === 'members') {
+    try {
+      await familyPushRequest({action:'save_contact',member_id:id,phone:privatePhone});
+    } catch (contactError) {
+      alert('Data anggota diperbarui, tetapi nomor WhatsApp gagal disimpan: ' + contactError.message);
+      return;
+    }
   }
 
   alert('Data berhasil diperbarui.');
@@ -3109,7 +3149,7 @@ async function loadRows(table) {
   el.classList.toggle('member-list', table === 'members');
 
   const columns = table === 'members'
-    ? 'id,full_name,phone,member_type,created_at'
+    ? 'id,full_name,member_type,created_at'
     : '*';
 
   let query = sb
@@ -3127,6 +3167,16 @@ async function loadRows(table) {
   if (error) {
     el.textContent = 'Gagal memuat data: ' + error.message;
     return;
+  }
+
+  if (table === 'members' && allowedToEdit('members')) {
+    try {
+      const contacts = await familyPushRequest({action:'list_members'});
+      const phoneById = new Map((contacts.members || []).map(item => [item.id, item.phone || '']));
+      data.forEach(row => { row.private_phone = phoneById.get(row.id) || ''; });
+    } catch (contactError) {
+      console.warn('Kontak WhatsApp privat belum dapat dimuat:', contactError);
+    }
   }
 
   if (!data || !data.length) {
