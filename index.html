@@ -779,20 +779,69 @@ button:active{transform:translateY(1px)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button{transition:none}}
 
+
+/* === BERANDA REFERENSI SANGGAH GEDE PAN RENGEN === */
+body:has(#publicPage:not(.hidden)){background:#f8f1dc!important;color:#123d2b!important}
+.reference-header{padding:18px 16px 22px!important;border-radius:0 0 0 0!important;background:linear-gradient(120deg,#003d2b,#005137 60%,#003b2a)!important;border-bottom:5px solid #d5b347!important;box-shadow:0 5px 18px #002b1d44!important}
+.reference-header .brand{max-width:1100px;display:flex;align-items:center;justify-content:center;gap:16px;position:relative}
+.reference-header .emblem{width:104px;height:104px;flex:0 0 104px}
+.reference-header .emblem img{width:100%;height:100%;object-fit:contain}
+.reference-header h1{font-family:Georgia,serif!important;color:#f7d66e!important;text-align:center;font-size:clamp(22px,4vw,42px)!important;line-height:1.03!important;white-space:normal!important;letter-spacing:1px!important}
+.reference-header .header-blessing{font-family:Georgia,serif;font-style:italic;color:#fff!important;text-align:center;font-size:clamp(17px,2.5vw,25px);margin-top:7px}
+.reference-header .mobile-menu{display:none;position:absolute;right:0;top:10px;background:transparent!important;color:#f5d56a!important;font-size:32px!important;box-shadow:none!important;padding:4px!important}
+#publicPage{display:flex!important;flex-direction:column!important;gap:14px!important}
+#homepageBannerArea{width:100%;padding:0!important;margin:0 0 0!important}
+.homepage-banner-shell{border:0!important;border-radius:0 0 22px 22px!important;box-shadow:0 6px 18px #183b2b22!important}
+.homepage-banner-image{aspect-ratio:16/7!important;max-height:360px!important;object-fit:cover!important}
+.homepage-banner-caption{padding:48px 22px 22px!important}
+.reference-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important;width:calc(100% - 34px)!important;max-width:900px!important;margin:-2px auto 4px!important;padding:9px!important;border:2px solid #e8c54d!important;border-radius:60px!important;background:linear-gradient(120deg,#064629,#087b3e,#064629)!important;box-shadow:0 6px 16px #3b321b55!important}
+.reference-actions .chat-entry-button{min-height:76px!important;border:0!important;border-right:1px solid #e4c34b!important;border-radius:0!important;background:transparent!important;color:#fff!important;font-size:clamp(10px,1.5vw,15px)!important;font-weight:800!important;box-shadow:none!important}
+.reference-actions .chat-entry-button:last-child{border-right:0!important}
+.reference-actions .chat-entry-button svg{width:30px!important;height:30px!important;color:#f6d45e}
+.family-showcase{width:calc(100% - 28px);max-width:1000px;margin:0 auto;background:#fffaf0;border:2px solid #e5d5a6;border-radius:24px;overflow:hidden;box-shadow:0 6px 18px #493b1c22;text-align:center}
+.family-showcase-title{padding:12px 10px 7px}
+.family-showcase-title h2{font-family:Georgia,serif;font-size:clamp(23px,4vw,38px);font-style:italic;color:#06452e;margin:0}
+.family-showcase-title p{font-family:Georgia,serif;font-size:clamp(14px,2vw,21px);font-style:italic;margin:3px 0 0;color:#174b36}
+.family-showcase img{display:block;width:100%;height:clamp(170px,29vw,290px);object-fit:cover}
+.family-showcase .photo-note{font-size:10px;color:#867957;margin:5px 8px 7px}
+.home-quick-menus{width:calc(100% - 28px);max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.home-menu-tile{min-height:110px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:10px 5px;text-align:center;text-decoration:none;color:#06472e!important;background:linear-gradient(145deg,#fffdf5,#f4e9ca);border:2px solid #fff;border-radius:22px;box-shadow:0 4px 12px #4c3b1e2b}
+.home-menu-tile span{font-size:34px;line-height:1;color:#08623b}
+.home-menu-tile strong{font-family:Georgia,serif;font-size:clamp(12px,1.5vw,17px);line-height:1.15}
+.home-menu-tile:active{transform:scale(.97)}
+.home-callout{width:100%;margin:2px 0 0;padding:25px 12px 28px;text-align:center;color:#fff8dc;background:linear-gradient(120deg,#03432c,#075c38,#003b29);border-top:4px solid #d7b64e;border-bottom:4px solid #d7b64e}
+.home-callout h2{font-family:Georgia,serif;font-size:clamp(28px,4vw,42px);font-style:italic;color:#f7d76b;margin:0 0 5px}
+.home-callout p{font-family:Georgia,serif;font-size:clamp(15px,2.2vw,23px);font-style:italic;line-height:1.35;margin:0}
+#publicCommitteeCard{order:20}
+#pipilRotationPublic{scroll-margin-top:15px}
+@media(max-width:600px){
+ .reference-header{padding:14px 10px 17px!important}
+ .reference-header .brand{gap:9px;justify-content:flex-start;padding-right:36px}
+ .reference-header .emblem{width:76px;height:76px;flex-basis:76px}
+ .reference-header h1{font-size:clamp(18px,5vw,25px)!important;text-align:center}
+ .reference-header .mobile-menu{display:block}
+ .homepage-banner-image{aspect-ratio:16/8.8!important}
+ .reference-actions{width:calc(100% - 22px)!important;padding:6px!important}
+ .reference-actions .chat-entry-button{min-height:61px!important;font-size:9px!important}
+ .reference-actions .chat-entry-button svg{width:24px!important;height:24px!important}
+ .family-showcase{width:calc(100% - 20px);border-radius:18px}
+ .family-showcase img{height:190px}
+ .home-quick-menus{width:calc(100% - 20px);grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .home-menu-tile{min-height:94px;border-radius:17px}
+ .home-menu-tile span{font-size:29px}
+ .home-menu-tile strong{font-size:12px}
+}
+
 </style>
 </head>
 <body>
 
-<header>
+<header class="reference-header">
   <div class="brand">
     <div class="emblem"><img src="logo-sanggah.svg" alt="Logo Sanggah Keluarga Besar"></div>
-    <div>
-      <h1>SANGGAH GEDE PAN RENGEN</h1>
-      <p>Sistem Informasi & Manajemen Keluarga</p>
-    </div>
+    <div><h1>SANGGAH GEDE<br>PAN RENGEN</h1><p class="header-blessing">Om Swastyastu</p></div>
+    <button class="mobile-menu" onclick="document.getElementById('homeQuickMenus').scrollIntoView({behavior:'smooth'})" aria-label="Menu">☰</button>
   </div>
-  <div class="welcome">OM SWASTIASTU</div>
-  <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi.</div>
 </header>
 
 
@@ -801,19 +850,27 @@ button:active{transform:translateY(1px)}
 
 <section id="publicPage">
   <div id="homepageBannerArea"><div class="homepage-banner-empty">Memuat banner keluarga...</div></div>
-  <div class="card welcome-card">
-    <div class="welcome-kicker">OM SWASTIASTU</div>
-    <h2>Selamat Datang di Keluarga Besar</h2>
-    <p class="muted">SANGGAH GEDE PAN RENGEN · Satu Keluarga, Satu Tujuan</p>
-    <details class="welcome-description"><summary>Tentang website keluarga · Baca selengkapnya</summary><p><strong>Website Keluarga Besar Sanggah Gede Pan Rengen</strong> merupakan pusat informasi keluarga untuk memudahkan anggota mengikuti kegiatan, pengumuman, giliran pipil, serta informasi administrasi keluarga. Dibangun untuk mempererat komunikasi dan menjaga kebersamaan keluarga besar.</p></details>
-  </div>
+  <section class="family-showcase" aria-label="Keluarga besar">
+    <div class="family-showcase-title"><h2>Sanggah Keluarga Besar</h2><p>Kebersamaan adalah kekuatan kita</p></div>
+    <img id="familyGroupPhoto" src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1400&q=85" alt="Foto sementara keluarga besar" loading="lazy">
+    <p class="photo-note">Foto sementara — dapat diganti pengurus melalui menu Kelola Banner Beranda.</p>
+  </section>
 
-  <div class="actions homepage-action-buttons">
+  <div class="actions homepage-action-buttons reference-actions">
     <button class="chat-entry-button" onclick="openPublicChat()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.8-3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></svg> PESAN</button>
     <button class="chat-entry-button" onclick="openFamilyWhatsApp()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19l1.1-4.1A7.5 7.5 0 1 1 20 11.5Z"/><path d="M9 8.5c.5 2.4 2.1 4 4.5 4.5l1.2-1.2 2 1c-.2 1.5-1.2 2.2-2.5 2.1-3.8-.5-6.5-3.2-7-7-.1-1.3.6-2.3 2.1-2.5l1 2L9 8.5Z"/></svg> WHATSAPP</button>
     <button class="chat-entry-button" onclick="showLogin()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg> MASUK</button>
     <button class="chat-entry-button" onclick="showRegister()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h3a4.5 4.5 0 0 1 4.5 4.5V20M19 8v6M16 11h6"/></svg> DAFTAR</button>
   </div>
+
+  <nav class="home-quick-menus" id="homeQuickMenus" aria-label="Menu utama">
+    <a class="home-menu-tile" href="#publicMembersCard"><span>♟</span><strong>Anggota</strong></a>
+    <a class="home-menu-tile" href="#publicFinanceCard"><span>▤</span><strong>Keuangan<br>Laporan</strong></a>
+    <a class="home-menu-tile" href="#pipilRotationPublic"><span>♜</span><strong>Giliran Pipil</strong></a>
+    <a class="home-menu-tile" href="#publicAnnouncementsCard"><span>⚑</span><strong>Pengumuman</strong></a>
+    <a class="home-menu-tile" href="#pipilRotationPublic"><span>🛕</span><strong>Upacara</strong></a>
+  </nav>
+  <div class="home-callout"><h2>Mari Bersama</h2><p>Menjaga Sanggah, Melestarikan Budaya,<br>Membangun Keharmonisan Keluarga</p></div>
 
   <div class="card committee-card" id="publicCommitteeCard">
     <h2>👥 SUSUNAN PENGURUS</h2>
@@ -2217,6 +2274,7 @@ function renderHomepageBanner() {
     html+='</div>';
   }
   html+='</div>'; area.innerHTML=html;
+  const familyPhoto=$('familyGroupPhoto'); if(familyPhoto && homepageBannerItems[0]?.image_url) familyPhoto.src=homepageBannerItems[0].image_url;
 }
 function changeHomepageBanner(direction){if(!homepageBannerItems.length)return;homepageBannerIndex=(homepageBannerIndex+direction+homepageBannerItems.length)%homepageBannerItems.length;renderHomepageBanner();}
 function setHomepageBanner(index){if(index<0||index>=homepageBannerItems.length)return;homepageBannerIndex=index;renderHomepageBanner();}
