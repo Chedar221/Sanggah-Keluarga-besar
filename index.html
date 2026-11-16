@@ -802,7 +802,7 @@ header:after{
 }
 
 
-/* PANCARAN SINAR MATAHARI PADA LOGO HEADER */
+/* KEMBALI KE SINAR CAKRA AWAL — KILAU BERGERAK LEMBUT */
 header .emblem{
   position:relative!important;
   isolation:isolate!important;
@@ -813,74 +813,44 @@ header .emblem{
   box-shadow:none!important;
   animation:none!important;
 }
-/* Berkas-berkas sinar memancar keluar dari pusat logo */
 header .emblem:before{
   content:""!important;
   display:block!important;
   position:absolute!important;
-  inset:-39px!important;
-  z-index:-2!important;
+  inset:-30px!important;
+  z-index:0!important;
   border:0!important;
-  border-radius:50%!important;
+  border-radius:0!important;
   background:repeating-conic-gradient(
     from 0deg,
-    rgba(255,238,185,0) 0deg 5deg,
-    rgba(255,226,145,.92) 5.5deg 7deg,
-    rgba(255,191,76,.30) 7.5deg 9deg,
-    rgba(255,238,185,0) 9.5deg 14deg
+    rgba(255,231,164,0) 0deg 12deg,
+    rgba(255,235,183,.78) 12.5deg 14deg,
+    rgba(255,231,164,0) 14.5deg 16deg
   )!important;
-  -webkit-mask:radial-gradient(circle,transparent 0 22%,#000 31% 88%,transparent 100%)!important;
-  mask:radial-gradient(circle,transparent 0 22%,#000 31% 88%,transparent 100%)!important;
-  filter:drop-shadow(0 0 5px rgba(255,220,133,.9))!important;
-  opacity:.82!important;
-  transform-origin:center!important;
-  animation:sunRaysRotate 24s linear infinite,sunRaysPulse 3.4s ease-in-out infinite alternate!important;
-  pointer-events:none!important;
-}
-/* Cahaya keemasan menyebar di belakang logo, tanpa lingkaran */
-header .emblem:after{
-  content:""!important;
-  display:block!important;
-  position:absolute!important;
-  inset:-25px!important;
-  z-index:-1!important;
-  border:0!important;
-  border-radius:50%!important;
-  background:radial-gradient(ellipse at center,rgba(255,249,216,.48) 0%,rgba(255,220,139,.30) 32%,rgba(255,184,66,.15) 57%,transparent 76%)!important;
-  box-shadow:none!important;
+  -webkit-mask:radial-gradient(circle,transparent 0 27%,#000 34% 100%)!important;
+  mask:radial-gradient(circle,transparent 0 27%,#000 34% 100%)!important;
+  filter:drop-shadow(0 0 4px rgba(255,218,125,.62))!important;
   opacity:.78!important;
-  animation:sunCoreGlow 3s ease-in-out infinite alternate!important;
+  transform-origin:center!important;
+  animation:originalRaysDrift 22s linear infinite,originalRaysGlow 2.8s ease-in-out infinite alternate!important;
   pointer-events:none!important;
 }
+header .emblem:after{content:none!important;display:none!important}
 header .emblem img{
   position:relative!important;
   z-index:1!important;
-  width:90%!important;
-  height:90%!important;
-  object-fit:contain!important;
-  filter:drop-shadow(0 0 4px rgba(255,247,210,.95))
-    drop-shadow(0 0 9px rgba(255,205,91,.9))
-    drop-shadow(0 0 15px rgba(255,174,43,.62))!important;
-  animation:bannerLogoImageShine 2.7s ease-in-out infinite alternate!important;
+  animation:logoSoftGlow 2.8s ease-in-out infinite!important;
 }
-@keyframes sunRaysRotate{
+@keyframes originalRaysDrift{
   from{transform:rotate(0deg)}
   to{transform:rotate(360deg)}
 }
-@keyframes sunRaysPulse{
-  0%{opacity:.55;filter:drop-shadow(0 0 3px rgba(255,205,102,.5))}
-  100%{opacity:1;filter:drop-shadow(0 0 9px rgba(255,238,178,1))}
-}
-@keyframes sunCoreGlow{
-  0%{opacity:.48;transform:scale(.94)}
-  100%{opacity:.95;transform:scale(1.12)}
-}
-@keyframes bannerLogoImageShine{
-  0%{filter:drop-shadow(0 0 3px rgba(255,247,210,.75)) drop-shadow(0 0 7px rgba(255,205,91,.65)) drop-shadow(0 0 11px rgba(255,174,43,.4))}
-  100%{filter:drop-shadow(0 0 5px rgba(255,255,226,1)) drop-shadow(0 0 12px rgba(255,221,126,1)) drop-shadow(0 0 19px rgba(255,174,43,.72))}
+@keyframes originalRaysGlow{
+  0%{opacity:.48;filter:drop-shadow(0 0 3px rgba(255,205,102,.35))}
+  100%{opacity:.9;filter:drop-shadow(0 0 8px rgba(255,232,165,.9))}
 }
 @media(prefers-reduced-motion:reduce){
-  header .emblem:before,header .emblem:after,header .emblem img{animation:none!important}
+  header .emblem:before,header .emblem img{animation:none!important}
 }
 
 </style>
