@@ -728,6 +728,34 @@ button.secondary,.nav button,.chat-room{
 .site-footer em{color:#fff8e5!important}
 .site-footer span{color:#e8e2d2!important}
 
+
+/* HEADER BLACK & GOLD — FINISH MEWAH, TANPA MENGUBAH POSISI ELEMEN */
+header{
+  background:
+    radial-gradient(ellipse at 50% -35%,rgba(196,153,63,.25),transparent 58%),
+    radial-gradient(ellipse at 0% 100%,rgba(174,126,39,.13),transparent 38%),
+    radial-gradient(ellipse at 100% 100%,rgba(174,126,39,.12),transparent 38%),
+    linear-gradient(118deg,#030303 0%,#10100f 28%,#1b1915 52%,#0c0c0b 76%,#030303 100%)!important;
+  border-bottom:1px solid rgba(211,174,91,.72);
+  box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 -1px 0 rgba(255,225,155,.18)!important;
+}
+header:before{
+  opacity:.5!important;
+  background-image:
+    radial-gradient(ellipse at 50% 50%,transparent 42%,rgba(0,0,0,.45) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='300' viewBox='0 0 720 300'%3E%3Cg fill='none' stroke='%23c5a15a' stroke-width='1.15' opacity='.36'%3E%3Cpath d='M0 245 Q90 150 180 245 T360 245 T540 245 T720 245'/%3E%3Cpath d='M0 265 Q90 170 180 265 T360 265 T540 265 T720 265' opacity='.6'/%3E%3Cpath d='M0 55 Q90 150 180 55 T360 55 T540 55 T720 55'/%3E%3Cpath d='M0 35 Q90 130 180 35 T360 35 T540 35 T720 35' opacity='.6'/%3E%3C/g%3E%3Cg fill='none' stroke='%23d9bc79' stroke-width='1' opacity='.28'%3E%3Cpath d='M34 150 q28 -38 56 0 q-28 38 -56 0Zm56 0 q28 -38 56 0 q-28 38 -56 0ZM574 150q28 -38 56 0q-28 38 -56 0Zm56 0q28 -38 56 0q-28 38 -56 0Z'/%3E%3Cpath d='M360 5l9 16 18 4-13 13 3 18-17-9-17 9 3-18-13-13 18-4z' opacity='.65'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover,100% 100%!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  filter:drop-shadow(0 0 4px rgba(190,150,70,.12));
+}
+header:after{
+  content:""!important;display:block!important;position:absolute!important;
+  left:7%!important;right:7%!important;bottom:0!important;height:2px!important;
+  background:linear-gradient(90deg,transparent,#8f6b2b 15%,#f2d991 50%,#8f6b2b 85%,transparent)!important;
+  box-shadow:0 0 9px rgba(224,186,102,.38)!important;
+}
+
 </style>
 </head>
 <body>
