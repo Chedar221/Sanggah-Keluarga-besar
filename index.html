@@ -1933,8 +1933,31 @@ async function registerFamilyServiceWorker() {
   catch (error) { console.warn('Service worker belum dapat didaftarkan:',error); return null; }
 }
 async function familyPushRequest(body) {
+  // Kontak WhatsApp disimpan langsung pada tabel privat; tidak bergantung pada Edge Function.
+  if (body?.action === 'save_contact') {
+    if (!session?.user?.id) throw new Error('Silakan masuk sebagai pengurus terlebih dahulu.');
+    const digits=String(body.phone||'').replace(/[^0-9]/g,'');
+    let phone=digits;
+    if (phone.startsWith('0')) phone='62'+phone.slice(1);
+    else if (phone.startsWith('8')) phone='62'+phone;
+    if (phone && !/^62[0-9]{8,13}$/.test(phone)) throw new Error('Format nomor tidak valid. Gunakan 08xxxxxxxxxx atau 628xxxxxxxxxx.');
+    const {error}=await sb.from('member_private_contacts').upsert({
+      member_id:body.member_id, phone:phone||null, updated_by:session.user.id, updated_at:new Date().toISOString()
+    },{onConflict:'member_id'});
+    if(error) throw new Error(error.message || 'Database menolak penyimpanan nomor.');
+    return {ok:true,phone};
+  }
+  if (body?.action === 'list_members') {
+    const {data:members,error:memberError}=await sb.from('members').select('id,full_name').order('full_name');
+    if(memberError) throw new Error(memberError.message);
+    const {data:contacts,error:contactError}=await sb.from('member_private_contacts').select('member_id,phone');
+    if(contactError) throw new Error(contactError.message);
+    const byId=new Map((contacts||[]).map(x=>[x.member_id,x.phone||'']));
+    return {members:(members||[]).map(m=>({id:m.id,full_name:m.full_name,phone:byId.get(m.id)||'',active:false}))};
+  }
+  if (body?.action === 'status') return {available:false,message:'Penyimpanan nomor WhatsApp aktif; layanan notifikasi push belum dipasang.'};
   const {data,error}=await sb.functions.invoke('family-push',{body});
-  if(error) throw new Error(error.message || 'Permintaan notifikasi gagal.');
+  if(error) throw new Error('Layanan notifikasi belum tersedia: '+(error.message || 'permintaan gagal'));
   if(data?.error) throw new Error(data.error);
   return data;
 }
