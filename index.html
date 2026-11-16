@@ -801,6 +801,72 @@ header:after{
   header:after{animation:none!important}
 }
 
+
+/* AURA SINAR LOGO HEADER — pancaran berputar seperti cahaya pada banner */
+header .emblem{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+}
+/* Berkas sinar keemasan berputar perlahan di belakang logo */
+header .emblem:before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:-22px!important;
+  z-index:-1!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:repeating-conic-gradient(
+    from 0deg,
+    rgba(255,232,165,0) 0deg 8deg,
+    rgba(255,224,139,.78) 8.5deg 10deg,
+    rgba(255,194,79,.12) 10.5deg 13deg,
+    rgba(255,232,165,0) 13.5deg 18deg
+  )!important;
+  -webkit-mask:radial-gradient(circle,transparent 0 34%,#000 49% 72%,transparent 84%)!important;
+  mask:radial-gradient(circle,transparent 0 34%,#000 49% 72%,transparent 84%)!important;
+  filter:drop-shadow(0 0 5px rgba(255,222,142,.85))!important;
+  opacity:.85!important;
+  animation:headerLogoRays 16s linear infinite!important;
+  pointer-events:none!important;
+}
+/* Lingkaran aura yang berdenyut lembut */
+header .emblem:after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:-12px!important;
+  z-index:-2!important;
+  border:1px solid rgba(255,231,169,.82)!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(255,239,190,.22),rgba(255,190,67,.10) 48%,transparent 72%)!important;
+  box-shadow:0 0 9px rgba(255,225,153,.72),0 0 22px rgba(255,184,57,.52),inset 0 0 12px rgba(255,236,180,.34)!important;
+  opacity:.72!important;
+  animation:headerLogoAura 3s ease-in-out infinite!important;
+  pointer-events:none!important;
+}
+header .emblem img{
+  position:relative!important;
+  z-index:1!important;
+  animation:headerLogoShine 2.6s ease-in-out infinite!important;
+}
+@keyframes headerLogoRays{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes headerLogoAura{
+  0%,100%{transform:scale(.94);opacity:.52;filter:brightness(.95)}
+  50%{transform:scale(1.12);opacity:1;filter:brightness(1.2)}
+}
+@keyframes headerLogoShine{
+  0%,100%{filter:drop-shadow(0 0 4px rgba(255,235,178,.65)) drop-shadow(0 0 9px rgba(255,190,65,.48))}
+  50%{filter:drop-shadow(0 0 8px rgba(255,250,218,1)) drop-shadow(0 0 18px rgba(255,207,91,.95)) drop-shadow(0 0 27px rgba(255,170,45,.58))}
+}
+@media(prefers-reduced-motion:reduce){
+  header .emblem:before,header .emblem:after,header .emblem img{animation:none!important}
+}
+
 </style>
 </head>
 <body>
