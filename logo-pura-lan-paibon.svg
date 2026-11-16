@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo Pura Lan Paibon Pedekan"><defs><clipPath id="crop"><rect x="0" y="0" width="160" height="160"/></clipPath></defs><g clip-path="url(#crop)"><image href="https://i.postimg.cc/BvnFDkDP/IMG-20261116-WA0011.jpg" x="-11" y="-11" width="182" height="182" preserveAspectRatio="xMidYMid slice"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo Pura Lan Paibon Pedekan">
+  <defs>
+    <clipPath id="crop"><rect x="0" y="0" width="160" height="160"/></clipPath>
+    <filter id="remove-black" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="matrix" values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0.38268 0.38621 0.23109 0 -0.08"/>
+    </filter>
+  </defs>
+  <g clip-path="url(#crop)">
+    <image href="https://i.postimg.cc/BvnFDkDP/IMG-20261116-WA0011.jpg" x="-11" y="-11" width="182" height="182" preserveAspectRatio="xMidYMid slice" filter="url(#remove-black)"/>
+  </g>
+</svg>
