@@ -851,6 +851,24 @@ header .emblem img{
 
 </style>
 <style>.site-subtitle{margin:-8px 0 18px;text-align:center;font-size:.92rem;font-weight:700;letter-spacing:.12em;color:#b08a45;text-transform:uppercase}</style>
+
+<style id="pura-logo-final-fix">
+/* Logo diperbesar; latar hitam JPG disamarkan dengan screen blend */
+header .brand .emblem{
+  width:112px!important;height:112px!important;flex:0 0 112px!important;
+  overflow:visible!important;border:0!important;border-radius:50%!important;
+  background:transparent!important;box-shadow:none!important;
+}
+header .brand .emblem img{
+  width:100%!important;height:100%!important;object-fit:contain!important;
+  background:transparent!important;mix-blend-mode:screen!important;
+  filter:drop-shadow(0 2px 5px rgba(255,210,100,.55))!important;
+}
+@media(max-width:600px){
+  header .brand .emblem{width:88px!important;height:88px!important;flex-basis:88px!important}
+}
+</style>
+
 </head>
 <body>
 
