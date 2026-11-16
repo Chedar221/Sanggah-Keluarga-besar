@@ -6,9 +6,9 @@ self.addEventListener('push', event => {
   const title = payload.title || 'SANGGAH GEDE PAN RENGEN';
   const options = {
     body: payload.body || 'Ada informasi terbaru dari keluarga besar.',
-    icon: '/logo-sanggah.svg',
-    badge: '/logo-sanggah.svg',
-    tag: 'sanggah-family-' + (payload.category || 'info'),
+    icon: '/logo-pura-lan-paibon-pedekan.svg',
+    badge: '/logo-pura-lan-paibon-pedekan.svg',
+    tag: 'pura-lan-paibon-pedekan-family-' + (payload.category || 'info'),
     renotify: true,
     data: { url: payload.url || '/' }
   };
