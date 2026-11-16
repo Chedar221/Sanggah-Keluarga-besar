@@ -3361,7 +3361,8 @@ function allowedToEdit(table) {
 }
 
 function allowedToDelete(table) {
-  if (table === 'members') return false;
+  // Pengurus yang berwenang mengelola anggota juga boleh menghapus
+  // entri anggota yang salah, selama tidak sedang direferensikan data lain.
   return allowedToEdit(table);
 }
 
