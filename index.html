@@ -1321,6 +1321,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
   ['punia','✧','Dana Punia'],
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
+  ['giliran-pipil','🔄','Giliran Pipil'],
 ];
 
 function renderNav() {
@@ -1765,6 +1766,8 @@ function renderView() {
     if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pengaturan banner hanya untuk pengurus.</div>'; return; }
     renderBannerManager(); return;
   }
+
+  if (active === 'giliran-pipil') { renderPipilManager(); return; }
 
   if (active === 'dashboard') {
     v.innerHTML = `
@@ -2341,19 +2344,9 @@ async function deleteHomepageBanner(id){
 ===================================== */
 
 
-/* GILIRAN PIPIL: enam nama, hanya akun Agus boleh mengubah. */
-const PIPIL_OWNER_ID = 'e36b43db-a4c6-4571-83bd-a5d70dea73a0';
-const PIPIL_PEOPLE = [
-  { name: 'WAYAN SUDIASA', base: 1 },
-  { name: 'WAYAN SUDIARTA', base: 2 },
-  { name: 'NENGAH SUDIANA', base: 3 },
-  { name: 'NENGAH DIARTA', base: 4 },
-  { name: 'WAYAN NUSADA', base: 5 },
-  { name: 'PUTU DODY PUTRAWAN', base: 6 }
-];
-
-
-/* POP-UP GAMBAR PIPIL */
+/* GILIRAN PIPIL OTOMATIS
+   Urutan mengikuti daftar Pipil aktif. Setiap jadwal upacara mendapat giliran berikutnya.
+   Nama giliran baru ditampilkan mulai 14 hari sebelum tanggal upacara. */
 const PIPIL_IMAGE_LINKS = {
   1: 'https://drive.google.com/file/d/1iSpr26dOyyDLgJMr90IXQUC1DDInZlih/preview',
   2: 'https://drive.google.com/file/d/1JzWVkXcOPmQkBjV7m0stwaqOCVpp2mDd/preview',
@@ -2363,17 +2356,13 @@ const PIPIL_IMAGE_LINKS = {
   6: 'https://drive.google.com/file/d/1nbtqGkNynbYxzWXjbvcw0GDkWlCPBZri/preview'
 };
 function openPipilImage(number) {
-  const modal = $('pipilImageModal');
-  const body = $('pipilModalBody');
-  const title = $('pipilModalTitle');
+  const modal = $('pipilImageModal'), body = $('pipilModalBody'), title = $('pipilModalTitle');
   if (!modal || !body || !title) return;
   title.textContent = 'PIPIL ' + number;
   const url = PIPIL_IMAGE_LINKS[number];
-  if (url) {
-    body.innerHTML = '<iframe class="pipil-modal-frame" src="' + url + '" title="Gambar Pipil ' + number + '" allow="autoplay" loading="lazy"></iframe><p class="pipil-modal-note">Jika gambar tidak tampil, pastikan akses Google Drive diatur ke “Siapa saja yang memiliki link”.</p>';
-  } else {
-    body.innerHTML = '<div class="pipil-modal-empty"><div><div style="font-size:42px;margin-bottom:8px">🖼️</div><b>Gambar Pipil ' + number + ' belum terhubung</b><p class="muted">Nomor Pipil bisa dibuka. Gambar akan ditampilkan setelah file untuk nomor ini dipasang.</p></div></div>';
-  }
+  body.innerHTML = url
+    ? '<iframe class="pipil-modal-frame" src="' + url + '" title="Gambar Pipil ' + number + '" allow="autoplay" loading="lazy"></iframe><p class="pipil-modal-note">Jika gambar tidak tampil, pastikan akses Google Drive diatur ke “Siapa saja yang memiliki link”.</p>'
+    : '<div class="pipil-modal-empty">Dokumentasi Pipil belum terhubung.</div>';
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -2384,56 +2373,134 @@ function closePipilImage() {
 }
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closePipilImage(); });
 
-function isPipilOwner() {
-  return !!session && session.user.id === PIPIL_OWNER_ID;
-}
-
 function formatPipilDate(value) {
   if (!value) return 'Belum ditentukan';
   return new Date(value + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
 }
+function localDateString() {
+  const d = new Date();
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function pipilCanManage() { return !!session && canManageGeneral(); }
 
 async function renderPipilRotation(targetId) {
   const target = $(targetId);
   if (!target || !sb) return;
   target.textContent = 'Memuat giliran pipil...';
-  const {data,error} = await sb.from('pipil_rotation').select('round_no,rotation_date').eq('id',1).maybeSingle();
-  if (error || !data) {
-    target.textContent = 'Data giliran pipil belum tersedia. Hubungi pengurus.';
+  const today = localDateString();
+  const {data:events,error} = await sb.from('pipil_events')
+    .select('id,title,event_date,location,notes,notice_date,pipil_member_id')
+    .gte('event_date',today).order('event_date',{ascending:true}).limit(8);
+  if (error) { target.textContent = 'Giliran Pipil belum dapat dimuat: ' + error.message; return; }
+  if (!events || !events.length) {
+    target.innerHTML = '<div class="muted">Belum ada jadwal upacara. Pengurus dapat menambahkan jadwal melalui menu Giliran Pipil.</div>';
     return;
   }
-  const round = Math.max(1,Number(data.round_no || 1));
-  const people = PIPIL_PEOPLE.map(p => ({name:p.name,number:((p.base + round - 2) % 6) + 1})).sort((a,b)=>a.number-b.number);
-  let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
-  html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff"><span style="font-size:13px;font-weight:600">'+esc(p.name)+'</span><button type="button" class="pipil-number-button" onclick="openPipilImage('+p.number+')" aria-label="Lihat gambar Pipil '+p.number+'">PIPIL : '+p.number+'　⌕</button></div>').join('');
-  html += '</div>';
-  if (isPipilOwner()) {
-    html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
+  const ids = [...new Set(events.map(e=>e.pipil_member_id).filter(Boolean))];
+  let peopleById = {};
+  if (ids.length) {
+    const {data:people} = await sb.from('pipil_members').select('id,name').in('id',ids);
+    (people||[]).forEach(p=>peopleById[p.id]=p.name);
   }
-  target.innerHTML = html;
+  target.innerHTML = events.map(item => {
+    const announced = item.notice_date <= today;
+    const name = peopleById[item.pipil_member_id] || '';
+    const status = announced && name
+      ? '<div style="margin-top:7px;padding:9px 11px;border-radius:10px;background:#eaf5e7;color:#15572b"><span class="muted">PIPIL YANG MENDAPAT GILIRAN</span><br><b style="font-size:15px">' + esc(name) + '</b></div>'
+      : '<div class="muted" style="margin-top:7px">Giliran akan diumumkan pada <b>' + esc(formatPipilDate(item.notice_date)) + '</b> (14 hari sebelum upacara).</div>';
+    return '<div class="listitem"><b>' + esc(item.title) + '</b><div class="muted">' + esc(formatPipilDate(item.event_date)) + (item.location ? ' · ' + esc(item.location) : '') + '</div>' + status + '</div>';
+  }).join('');
 }
 
-async function savePipilDate() {
-  if (!isPipilOwner()) { toast('Hanya Agus yang dapat mengubah pengaturan pipil.'); return; }
-  const date = $('pipilDate')?.value;
-  if (!date) { toast('Pilih tanggal terlebih dahulu.'); return; }
-  const {error} = await sb.from('pipil_rotation').update({rotation_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
-  if (error) { toast('Tanggal gagal disimpan: '+error.message); return; }
-  toast('Tanggal giliran pipil berhasil diperbarui.');
-  await refreshPipilCards();
+async function renderPipilManager() {
+  const v = $('view');
+  if (!v || !sb) return;
+  const manager = pipilCanManage();
+  v.innerHTML = '<div class="card"><div class="row"><h2>🔄 GILIRAN PIPIL OTOMATIS</h2><button class="secondary" onclick="renderPipilManager()">Muat ulang</button></div><p class="muted">Urutan Pipil berputar otomatis mengikuti daftar aktif. Nama yang mendapat giliran ditampilkan kepada keluarga tepat 14 hari sebelum upacara.</p><div id="pipilManagerEvents" class="muted">Memuat jadwal...</div></div>' +
+    (manager ? '<div class="card"><h2>DAFTAR PIPIL</h2><p class="muted">Tambahkan nama sesuai urutan giliran. Nama yang dinonaktifkan tidak ikut putaran berikutnya; riwayat upacara yang sudah lewat tetap dipertahankan.</p><form onsubmit="addPipilMember(event)"><label>Nama Pipil</label><input id="newPipilName" maxlength="120" required placeholder="Masukkan nama Pipil"><button type="submit">Tambah Pipil</button></form><div id="pipilManagerPeople" class="muted">Memuat daftar Pipil...</div></div><div class="card"><h2>TAMBAH JADWAL UPACARA</h2><form onsubmit="addPipilEvent(event)"><label>Nama upacara</label><input id="pipilEventTitle" maxlength="160" required placeholder="Contoh: Piodalan Pura"><label>Tanggal upacara</label><input id="pipilEventDate" type="date" min="' + localDateString() + '" required><label>Lokasi</label><input id="pipilEventLocation" maxlength="160" placeholder="Lokasi upacara"><label>Catatan</label><textarea id="pipilEventNotes" rows="3" maxlength="1000" placeholder="Catatan tambahan (opsional)"></textarea><button type="submit">Simpan Jadwal & Tentukan Giliran</button></form></div>' : '') +
+    '<div class="card"><h2>RIWAYAT GILIRAN</h2><p class="muted">Riwayat upacara dan Pipil yang bertugas tersimpan di sini.</p><div id="pipilManagerHistory" class="muted">Memuat riwayat...</div></div>';
+  await loadPipilManagerRows(manager);
 }
 
-async function advancePipilRound() {
-  if (!isPipilOwner()) { toast('Hanya Agus yang dapat melanjutkan putaran pipil.'); return; }
-  if (!confirm('Selesaikan putaran ini dan naikkan nomor pipil keenam orang satu angka?')) return;
-  const {data,error:readError} = await sb.from('pipil_rotation').select('round_no').eq('id',1).single();
-  if (readError || !data) { toast('Data putaran gagal dibaca.'); return; }
-  const {error} = await sb.from('pipil_rotation').update({round_no:Number(data.round_no || 1)+1,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
-  if (error) { toast('Putaran gagal diperbarui: '+error.message); return; }
-  toast('Putaran pipil berhasil dilanjutkan.');
-  await refreshPipilCards();
+async function loadPipilManagerRows(manager) {
+  const peopleBox=$('pipilManagerPeople'), eventsBox=$('pipilManagerEvents'), historyBox=$('pipilManagerHistory');
+  const {data:people,error:peopleError}=await sb.from('pipil_members').select('id,name,sort_order,is_active').order('sort_order',{ascending:true});
+  if (peopleError) { if(peopleBox)peopleBox.textContent='Gagal memuat Pipil: '+peopleError.message; }
+  const {data:events,error:eventError}=await sb.from('pipil_events').select('id,title,event_date,location,notes,notice_date,pipil_member_id').order('event_date',{ascending:true}).limit(200);
+  if (eventError) { if(eventsBox)eventsBox.textContent='Gagal memuat jadwal: '+eventError.message; return; }
+  const peopleById={}; (people||[]).forEach(p=>peopleById[p.id]=p.name);
+  const today=localDateString();
+  const upcoming=(events||[]).filter(e=>e.event_date>=today);
+  if(eventsBox) eventsBox.innerHTML=upcoming.length ? upcoming.map(e=>{
+    const name=peopleById[e.pipil_member_id]||'Belum ada Pipil aktif';
+    const revealed=e.notice_date<=today;
+    return '<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+(e.location?' · '+esc(e.location):'')+'</div><div style="margin-top:6px"><span class="pill">'+(revealed?'Giliran sudah diumumkan':'Pengumuman '+esc(formatPipilDate(e.notice_date)))+'</span> <b>'+ (revealed?esc(name):'Belum ditampilkan') +'</b></div>'+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilEvent(\''+e.id+'\')">Edit jadwal</button></div>':'')+'</div>';
+  }).join('') : 'Belum ada jadwal upacara mendatang.';
+  if(peopleBox) peopleBox.innerHTML=(people||[]).length ? people.map(p=>'<div class="record-item"><b>'+esc(p.name)+'</b><div class="muted">Urutan '+p.sort_order+' · '+(p.is_active?'Aktif':'Nonaktif')+'</div>'+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilMember(\''+p.id+'\')">Ubah nama</button><button class="secondary" onclick="setPipilMemberActive(\''+p.id+'\','+(!p.is_active)+')">'+(p.is_active?'Nonaktifkan':'Aktifkan')+'</button></div>':'')+'</div>').join('') : 'Belum ada nama Pipil. Pengurus dapat menambahkannya di atas.';
+  if(historyBox) {
+    const past=(events||[]).filter(e=>e.event_date<today).sort((a,b)=>b.event_date.localeCompare(a.event_date));
+    historyBox.innerHTML=past.length?past.map(e=>'<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+' · '+esc(peopleById[e.pipil_member_id]||'Nama Pipil tidak tersedia')+'</div></div>').join(''):'Belum ada riwayat upacara.';
+  }
 }
 
+async function addPipilMember(event) {
+  event.preventDefault();
+  if(!pipilCanManage()){toast('Akses pengelolaan Pipil ditolak.');return;}
+  const name=$('newPipilName').value.trim();
+  if(name.length<2){toast('Nama Pipil minimal 2 karakter.');return;}
+  const {data:rows,error:readError}=await sb.from('pipil_members').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+  if(readError){toast('Gagal membaca urutan Pipil: '+readError.message);return;}
+  const sort_order=(rows?.[0]?.sort_order||0)+1;
+  const {error}=await sb.from('pipil_members').insert({name,sort_order,is_active:true});
+  if(error){toast('Gagal menambah Pipil: '+error.message);return;}
+  toast('Nama Pipil berhasil ditambahkan ke urutan berikutnya.');
+  await renderPipilManager(); await refreshPipilCards();
+}
+async function editPipilMember(id) {
+  if(!pipilCanManage())return;
+  const {data,error}=await sb.from('pipil_members').select('name').eq('id',id).single();
+  if(error||!data){toast('Nama Pipil tidak ditemukan.');return;}
+  const name=prompt('Ubah nama Pipil:',data.name);
+  if(name===null)return;
+  if(name.trim().length<2){toast('Nama minimal 2 karakter.');return;}
+  const result=await sb.from('pipil_members').update({name:name.trim()}).eq('id',id);
+  if(result.error){toast('Nama gagal diubah: '+result.error.message);return;}
+  toast('Nama Pipil diperbarui.'); await renderPipilManager(); await refreshPipilCards();
+}
+async function setPipilMemberActive(id,is_active) {
+  if(!pipilCanManage())return;
+  const result=await sb.from('pipil_members').update({is_active}).eq('id',id);
+  if(result.error){toast('Status Pipil gagal diubah: '+result.error.message);return;}
+  toast(is_active?'Pipil diaktifkan.':'Pipil dinonaktifkan dari putaran berikutnya.');
+  await renderPipilManager(); await refreshPipilCards();
+}
+async function addPipilEvent(event) {
+  event.preventDefault();
+  if(!pipilCanManage()){toast('Akses pengelolaan jadwal ditolak.');return;}
+  const title=$('pipilEventTitle').value.trim(), event_date=$('pipilEventDate').value;
+  if(!title||!event_date){toast('Nama upacara dan tanggal wajib diisi.');return;}
+  const {error}=await sb.from('pipil_events').insert({
+    title,event_date,location:$('pipilEventLocation').value.trim()||null,
+    notes:$('pipilEventNotes').value.trim()||null,created_by:session.user.id
+  });
+  if(error){toast('Jadwal gagal disimpan: '+error.message);return;}
+  toast('Jadwal tersimpan. Sistem otomatis menentukan giliran Pipil dan tanggal pengumumannya.');
+  await renderPipilManager(); await refreshPipilCards();
+}
+async function editPipilEvent(id) {
+  if(!pipilCanManage())return;
+  const {data,error}=await sb.from('pipil_events').select('title,event_date,location,notes').eq('id',id).single();
+  if(error||!data){toast('Jadwal tidak ditemukan.');return;}
+  const title=prompt('Nama upacara:',data.title); if(title===null)return;
+  const event_date=prompt('Tanggal upacara (YYYY-MM-DD):',data.event_date); if(event_date===null)return;
+  const location=prompt('Lokasi:',data.location||''); if(location===null)return;
+  const notes=prompt('Catatan:',data.notes||''); if(notes===null)return;
+  if(title.trim().length<2||!/^\d{4}-\d{2}-\d{2}$/.test(event_date)){toast('Nama atau tanggal upacara tidak valid.');return;}
+  const result=await sb.from('pipil_events').update({title:title.trim(),event_date,location:location.trim()||null,notes:notes.trim()||null}).eq('id',id);
+  if(result.error){toast('Jadwal gagal diperbarui: '+result.error.message);return;}
+  toast('Jadwal diperbarui; urutan giliran mendatang dihitung ulang.');
+  await renderPipilManager(); await refreshPipilCards();
+}
 async function refreshPipilCards() {
   await Promise.all([renderPipilRotation('pipilPublicContent'),renderPipilRotation('pipilDashboardContent')]);
 }
