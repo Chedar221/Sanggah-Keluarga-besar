@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sanggah-keluarga-besar.vercel.app/sitemap.xml
+Sitemap: https://pura-lan-paibon-pedekan.vercel.app/sitemap.xml
