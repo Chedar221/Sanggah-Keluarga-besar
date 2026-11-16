@@ -2383,32 +2383,30 @@ function localDateString() {
 }
 function pipilCanManage() { return !!session && canManageGeneral(); }
 
+function pipilSnapshotHtml(snapshot) {
+  const rows=Array.isArray(snapshot)?snapshot:[];
+  if(!rows.length)return '<div class="muted">Daftar Pipil belum diatur.</div>';
+  return '<div style="display:grid;gap:6px;margin-top:8px">'+rows.map(p=>'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff"><b style="font-size:13px">'+esc(p.name||'')+'</b><span class="pipil-number-button">PIPIL : '+esc(String(p.pipil_number))+'</span></div>').join('')+'</div>';
+}
 async function renderPipilRotation(targetId) {
-  const target = $(targetId);
-  if (!target || !sb) return;
-  target.textContent = 'Memuat giliran pipil...';
-  const today = localDateString();
-  const {data:events,error} = await sb.from('pipil_events')
-    .select('id,title,event_date,location,notes,notice_date,pipil_member_id')
-    .gte('event_date',today).order('event_date',{ascending:true}).limit(8);
-  if (error) { target.textContent = 'Giliran Pipil belum dapat dimuat: ' + error.message; return; }
-  if (!events || !events.length) {
-    target.innerHTML = '<div class="muted">Belum ada jadwal upacara. Pengurus dapat menambahkan jadwal melalui menu Giliran Pipil.</div>';
+  const target=$(targetId);
+  if(!target||!sb)return;
+  target.textContent='Memuat giliran pipil...';
+  const today=localDateString();
+  const {data:events,error}=await sb.from('pipil_events')
+    .select('id,title,event_date,location,notice_date,round_no,rotation_snapshot')
+    .gte('event_date',today).order('event_date',{ascending:true}).limit(5);
+  if(error){target.textContent='Giliran Pipil belum dapat dimuat: '+error.message;return;}
+  if(!events||!events.length){
+    target.innerHTML='<div class="muted">Belum ada jadwal upacara. Pengurus dapat menambahkan jadwal melalui menu Giliran Pipil.</div>';
     return;
   }
-  const ids = [...new Set(events.map(e=>e.pipil_member_id).filter(Boolean))];
-  let peopleById = {};
-  if (ids.length) {
-    const {data:people} = await sb.from('pipil_members').select('id,name').in('id',ids);
-    (people||[]).forEach(p=>peopleById[p.id]=p.name);
-  }
-  target.innerHTML = events.map(item => {
-    const announced = item.notice_date <= today;
-    const name = peopleById[item.pipil_member_id] || '';
-    const status = announced && name
-      ? '<div style="margin-top:7px;padding:9px 11px;border-radius:10px;background:#eaf5e7;color:#15572b"><span class="muted">PIPIL YANG MENDAPAT GILIRAN</span><br><b style="font-size:15px">' + esc(name) + '</b></div>'
-      : '<div class="muted" style="margin-top:7px">Giliran akan diumumkan pada <b>' + esc(formatPipilDate(item.notice_date)) + '</b> (14 hari sebelum upacara).</div>';
-    return '<div class="listitem"><b>' + esc(item.title) + '</b><div class="muted">' + esc(formatPipilDate(item.event_date)) + (item.location ? ' · ' + esc(item.location) : '') + '</div>' + status + '</div>';
+  target.innerHTML=events.map(item=>{
+    const announced=item.notice_date<=today;
+    const rotation=announced
+      ? pipilSnapshotHtml(item.rotation_snapshot)
+      : '<div class="muted" style="margin-top:8px">Susunan giliran akan ditampilkan pada <b>'+esc(formatPipilDate(item.notice_date))+'</b>, tepat 14 hari sebelum upacara.</div>';
+    return '<div class="listitem"><b>'+esc(item.title)+'</b><div class="muted">'+esc(formatPipilDate(item.event_date))+(item.location?' · '+esc(item.location):'')+' · Putaran ke-'+esc(String(item.round_no||1))+'</div>'+rotation+'</div>';
   }).join('');
 }
 
@@ -2423,23 +2421,21 @@ async function renderPipilManager() {
 }
 
 async function loadPipilManagerRows(manager) {
-  const peopleBox=$('pipilManagerPeople'), eventsBox=$('pipilManagerEvents'), historyBox=$('pipilManagerHistory');
+  const peopleBox=$('pipilManagerPeople'),eventsBox=$('pipilManagerEvents'),historyBox=$('pipilManagerHistory');
   const {data:people,error:peopleError}=await sb.from('pipil_members').select('id,name,sort_order,is_active').order('sort_order',{ascending:true});
-  if (peopleError) { if(peopleBox)peopleBox.textContent='Gagal memuat Pipil: '+peopleError.message; }
-  const {data:events,error:eventError}=await sb.from('pipil_events').select('id,title,event_date,location,notes,notice_date,pipil_member_id').order('event_date',{ascending:true}).limit(200);
-  if (eventError) { if(eventsBox)eventsBox.textContent='Gagal memuat jadwal: '+eventError.message; return; }
-  const peopleById={}; (people||[]).forEach(p=>peopleById[p.id]=p.name);
+  if(peopleError){if(peopleBox)peopleBox.textContent='Gagal memuat daftar Pipil: '+peopleError.message;}
+  const {data:events,error:eventError}=await sb.from('pipil_events').select('id,title,event_date,location,notice_date,round_no,rotation_snapshot').order('event_date',{ascending:true}).limit(300);
+  if(eventError){if(eventsBox)eventsBox.textContent='Gagal memuat jadwal: '+eventError.message;return;}
   const today=localDateString();
   const upcoming=(events||[]).filter(e=>e.event_date>=today);
-  if(eventsBox) eventsBox.innerHTML=upcoming.length ? upcoming.map(e=>{
-    const name=peopleById[e.pipil_member_id]||'Belum ada Pipil aktif';
-    const revealed=e.notice_date<=today;
-    return '<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+(e.location?' · '+esc(e.location):'')+'</div><div style="margin-top:6px"><span class="pill">'+(revealed?'Giliran sudah diumumkan':'Pengumuman '+esc(formatPipilDate(e.notice_date)))+'</span> <b>'+ (revealed?esc(name):'Belum ditampilkan') +'</b></div>'+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilEvent(\''+e.id+'\')">Edit jadwal</button></div>':'')+'</div>';
-  }).join('') : 'Belum ada jadwal upacara mendatang.';
-  if(peopleBox) peopleBox.innerHTML=(people||[]).length ? people.map(p=>'<div class="record-item"><b>'+esc(p.name)+'</b><div class="muted">Urutan '+p.sort_order+' · '+(p.is_active?'Aktif':'Nonaktif')+'</div>'+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilMember(\''+p.id+'\')">Ubah nama</button><button class="secondary" onclick="setPipilMemberActive(\''+p.id+'\','+(!p.is_active)+')">'+(p.is_active?'Nonaktifkan':'Aktifkan')+'</button></div>':'')+'</div>').join('') : 'Belum ada nama Pipil. Pengurus dapat menambahkannya di atas.';
-  if(historyBox) {
+  if(eventsBox)eventsBox.innerHTML=upcoming.length?upcoming.map(e=>{
+    const announced=e.notice_date<=today;
+    return '<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+(e.location?' · '+esc(e.location):'')+' · Putaran ke-'+esc(String(e.round_no||1))+'</div>'+(announced?pipilSnapshotHtml(e.rotation_snapshot):'<div class="muted" style="margin-top:7px">Susunan Pipil diumumkan '+esc(formatPipilDate(e.notice_date))+' (14 hari sebelumnya).</div>')+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilEvent(\''+e.id+'\')">Edit jadwal</button></div>':'')+'</div>';
+  }).join(''):'Belum ada jadwal upacara mendatang.';
+  if(peopleBox)peopleBox.innerHTML=(people||[]).length?people.map(p=>'<div class="record-item"><b>'+esc(p.name)+'</b><div class="muted">Urutan '+p.sort_order+' · '+(p.is_active?'Aktif':'Nonaktif')+'</div>'+(manager?'<div class="record-actions"><button class="secondary" onclick="editPipilMember(\''+p.id+'\')">Ubah nama</button><button class="secondary" onclick="setPipilMemberActive(\''+p.id+'\','+(!p.is_active)+')">'+(p.is_active?'Nonaktifkan':'Aktifkan')+'</button></div>':'')+'</div>').join(''):'Belum ada nama Pipil. Pengurus dapat menambahkannya di atas.';
+  if(historyBox){
     const past=(events||[]).filter(e=>e.event_date<today).sort((a,b)=>b.event_date.localeCompare(a.event_date));
-    historyBox.innerHTML=past.length?past.map(e=>'<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+' · '+esc(peopleById[e.pipil_member_id]||'Nama Pipil tidak tersedia')+'</div></div>').join(''):'Belum ada riwayat upacara.';
+    historyBox.innerHTML=past.length?past.map(e=>'<div class="record-item"><b>'+esc(e.title)+'</b><div class="muted">'+esc(formatPipilDate(e.event_date))+' · Putaran ke-'+esc(String(e.round_no||1))+'</div>'+pipilSnapshotHtml(e.rotation_snapshot)+'</div>').join(''):'Belum ada riwayat upacara.';
   }
 }
 
