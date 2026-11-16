@@ -1116,6 +1116,7 @@ function roleName(role) {
 
 function showPublic() {
   $('publicPage').classList.remove('hidden');
+  loadPublicCommittee();
   $('login').classList.add('hidden');
   $('register').classList.add('hidden');
   $('app').classList.add('hidden');
@@ -1340,6 +1341,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
   ['upacara','◷','Upacara'],
   ['ngayah','✣','Ngayah'],
   ['giliran-pipil','🔄','Giliran Pipil'],
+  ['susunan-pengurus','👥','Susunan Pengurus'],
 ];
 
 function renderNav() {
@@ -1763,6 +1765,46 @@ async function editMemberDuePayment(id) {
   await loadMemberDues();
 }
 
+const FAMILY_COMMITTEE_ROLES = [
+  ['klian','KLIAN'],['petajuh','PETAJUH'],['pemangku','PEMANGKU'],
+  ['krama_ngarep','KRAMA NGAREP'],['krama_dadia','KRAMA DADIA']
+];
+
+async function loadPublicCommittee() {
+  if (!sb) return;
+  const {data,error}=await sb.from('family_committee').select('id,full_name');
+  if (error) { console.warn('Susunan pengurus gagal dimuat:',error.message); return; }
+  const names=new Map((data||[]).map(row=>[row.id,row.full_name]));
+  const card=$('publicCommitteeCard');
+  if(!card) return;
+  const rows=card.querySelectorAll('.committee-row');
+  FAMILY_COMMITTEE_ROLES.forEach(([id,label],i)=>{
+    if(rows[i]) rows[i].querySelector('strong').textContent=(names.get(id)||'').trim()||'BELUM DITETAPKAN';
+  });
+}
+
+async function renderCommitteeManager() {
+  const v=$('view');
+  if(!canManageGeneral()) { v.innerHTML='<div class="card">Akses mengubah susunan pengurus hanya untuk pengurus.</div>'; return; }
+  const {data,error}=await sb.from('family_committee').select('id,full_name');
+  if(error) { v.innerHTML='<div class="card">Data susunan pengurus gagal dimuat: '+esc(error.message)+'</div>'; return; }
+  const names=new Map((data||[]).map(row=>[row.id,row.full_name]));
+  v.innerHTML='<div class="card"><h2>👥 SUSUNAN PENGURUS</h2><p class="muted">Isi nama untuk setiap jabatan. Perubahan akan langsung tampil di halaman Beranda.</p>'+
+    FAMILY_COMMITTEE_ROLES.map(([id,label])=>'<label for="committee-'+id+'">'+label+'</label><input id="committee-'+id+'" maxlength="120" value="'+esc(names.get(id)||'')+'" placeholder="Masukkan nama '+label.toLowerCase()+'">').join('')+
+    '<div class="actions"><button type="button" onclick="saveFamilyCommittee()">Simpan Susunan Pengurus</button></div></div>';
+}
+
+async function saveFamilyCommittee() {
+  if(!canManageGeneral()) { toast('Akses menyimpan susunan pengurus ditolak.'); return; }
+  const rows=FAMILY_COMMITTEE_ROLES.map(([id,label])=>({
+    id,full_name:($('committee-'+id)?.value||'').trim(),updated_by:session.user.id,updated_at:new Date().toISOString()
+  }));
+  const {error}=await sb.from('family_committee').upsert(rows,{onConflict:'id'});
+  if(error) { toast('Susunan pengurus gagal disimpan: '+error.message); return; }
+  toast('Susunan pengurus berhasil disimpan.');
+  await loadPublicCommittee();
+}
+
 function renderView() {
   const v = $('view');
 
@@ -1786,6 +1828,8 @@ function renderView() {
   }
 
   if (active === 'giliran-pipil') { renderPipilManager(); return; }
+
+  if (active === 'susunan-pengurus') { renderCommitteeManager(); return; }
 
   if (active === 'dashboard') {
     v.innerHTML = `
