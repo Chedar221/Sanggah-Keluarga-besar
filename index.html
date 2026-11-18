@@ -849,20 +849,99 @@ header .emblem img{
   header .emblem:after,header .emblem img{animation:none!important}
 }
 
+
+/* HEADER BARU SANGGAH GEDE PAN RENGEN — ornamen hijau tua & emas */
+header.heritage-header{
+  position:relative;isolation:isolate;overflow:hidden;
+  padding:30px 18px 27px;border-radius:0 0 28px 28px;
+  color:#fff8e7;
+  background:
+    radial-gradient(ellipse at 50% -35%,#d8b75b38 0,transparent 55%),
+    radial-gradient(circle at 8% 85%,#d5b04a18 0,transparent 28%),
+    linear-gradient(135deg,#071d16 0%,#103d2c 48%,#08251b 100%);
+  border-bottom:3px solid #c9a34b;
+  box-shadow:0 10px 28px #061c1230;
+}
+.heritage-header:before,.heritage-header:after{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  width:190px;height:190px;border:1px solid #d7b65b55;border-radius:50%;
+  box-shadow:0 0 0 8px #d7b65b0d,0 0 0 17px #d7b65b0a;
+}
+.heritage-header:before{left:-112px;top:-112px}
+.heritage-header:after{right:-112px;bottom:-112px}
+.heritage-header-inner{max-width:1120px;margin:0 auto;position:relative}
+.heritage-header .brand{display:flex;align-items:center;justify-content:center;gap:16px;text-align:left}
+.heritage-header .emblem{
+  width:82px;height:82px;flex:0 0 82px;padding:5px;
+  border:1px solid #e3c56f;border-radius:50%;
+  background:linear-gradient(145deg,#f8e7ae,#b78a32);
+  box-shadow:0 0 0 5px #d7b65b20,0 5px 16px #0007;
+}
+.heritage-header .emblem img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.heritage-header .brand-copy{min-width:0}
+.heritage-header .header-kicker{
+  display:block;margin-bottom:5px;color:#e4c879;font-size:9px;
+  font-weight:800;letter-spacing:3px
+}
+.heritage-header h1{
+  margin:0;color:#ffe5a0;font-family:Georgia,serif;
+  font-size:clamp(20px,3.5vw,34px);line-height:1.15;
+  letter-spacing:.7px;text-shadow:0 2px 8px #0008
+}
+.heritage-header p{
+  margin:7px 0 0;color:#e8ddc2;font-size:11px;
+  letter-spacing:1.1px;text-transform:uppercase
+}
+.heritage-header .header-divider{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  max-width:270px;margin:19px auto 8px;color:#e4c879
+}
+.heritage-header .header-divider span{height:1px;flex:1;background:linear-gradient(90deg,transparent,#d6b45c)}
+.heritage-header .header-divider span:last-child{transform:scaleX(-1)}
+.heritage-header .header-divider b{font-size:13px}
+.heritage-header .welcome{
+  margin:5px auto 5px;text-align:center;color:#ffdf82;
+  font-family:Georgia,serif;font-size:clamp(24px,4vw,34px);
+  font-weight:700;letter-spacing:2px;text-shadow:0 2px 8px #0008
+}
+.heritage-header .sub{
+  text-align:center;color:#f2e9d3;font-size:11px;letter-spacing:.8px
+}
+.heritage-header .sub i{padding:0 5px;color:#e5c46c;font-style:normal}
+.header-ornament{height:5px;max-width:170px;margin:0 auto;opacity:.85}
+.header-ornament-top{margin-bottom:15px;background:linear-gradient(90deg,transparent,#d8b75d,transparent)}
+.header-ornament-bottom{margin-top:17px;background:linear-gradient(90deg,transparent,#d8b75d,transparent)}
+@media(max-width:520px){
+  header.heritage-header{padding:22px 13px 20px}
+  .heritage-header .brand{gap:11px}
+  .heritage-header .emblem{width:65px;height:65px;flex-basis:65px;padding:4px}
+  .heritage-header .header-kicker{font-size:8px;letter-spacing:1.8px}
+  .heritage-header h1{font-size:clamp(17px,5vw,23px);letter-spacing:.2px}
+  .heritage-header p{font-size:9px;letter-spacing:.5px}
+  .heritage-header .welcome{font-size:24px;letter-spacing:1.5px}
+  .heritage-header .sub{font-size:9px;letter-spacing:.2px}
+}
+
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <div class="emblem"><img src="logo-sanggah.svg" alt="Logo Sanggah Keluarga Besar"></div>
-    <div>
-      <h1>SANGGAH GEDE PAN RENGEN</h1>
-      <p>Sistem Informasi & Manajemen Keluarga</p>
+<header class="heritage-header">
+  <div class="header-ornament header-ornament-top" aria-hidden="true"></div>
+  <div class="heritage-header-inner">
+    <div class="brand">
+      <div class="emblem"><img src="logo-sanggah.svg" alt="Logo asli Sanggah Gede Pan Rengen"></div>
+      <div class="brand-copy">
+        <span class="header-kicker">SANGGAH KELUARGA BESAR</span>
+        <h1>SANGGAH GEDE PAN RENGEN</h1>
+        <p>Sistem Informasi &amp; Manajemen Keluarga</p>
+      </div>
     </div>
+    <div class="header-divider"><span></span><b>✦</b><span></span></div>
+    <div class="welcome">OM SWASTIASTU</div>
+    <div class="sub">Satu Pura <i>•</i> Satu Keluarga <i>•</i> Satu Keharmonisan</div>
   </div>
-  <div class="welcome">OM SWASTIASTU</div>
-  <div class="sub">Satu tempat untuk mengelola kegiatan dan administrasi.</div>
+  <div class="header-ornament header-ornament-bottom" aria-hidden="true"></div>
 </header>
 
 
