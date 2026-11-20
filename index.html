@@ -934,43 +934,22 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
   display:block;position:relative;z-index:0;width:100%;height:auto;
   max-width:100%;object-fit:contain;margin:0 auto
 }
-/* Kilau emas menyapu permukaan logo dengan lembut */
-.logo-light-effects{
-  position:absolute;z-index:3;pointer-events:none;
-  left:50%;top:29%;width:clamp(130px,18vw,280px);
-  aspect-ratio:1;transform:translate(-50%,-50%);
-  border-radius:50%;overflow:hidden;mix-blend-mode:screen
+/* Logo asli berputar perlahan di atas header */
+.rotating-header-logo{
+  position:absolute;z-index:2;left:50%;top:29%;
+  width:clamp(64px,9vw,112px);height:auto;
+  transform:translate(-50%,-50%);
+  transform-origin:center;
+  object-fit:contain;pointer-events:none;
+  animation:logo-rotate-genuine 8s linear infinite;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))
 }
-.logo-light-effects:before{
-  content:"";position:absolute;inset:-35%;
-  background:linear-gradient(115deg,
-    transparent 34%,
-    rgba(255,190,25,.04) 40%,
-    rgba(255,204,65,.38) 46%,
-    rgba(255,249,205,.95) 49%,
-    rgba(255,190,25,.58) 52%,
-    rgba(255,220,110,.12) 58%,
-    transparent 65%);
-  animation:logo-gold-shimmer 2.6s ease-in-out infinite;
-  filter:blur(2px)
-}
-.logo-light-effects:after{
-  content:"";position:absolute;inset:13%;border-radius:50%;
-  box-shadow:0 0 14px 3px rgba(255,197,45,.48),inset 0 0 14px rgba(255,226,130,.24);
-  animation:logo-gold-glow 2.6s ease-in-out infinite
-}
-@keyframes logo-gold-shimmer{
-  0%{transform:translateX(-48%) rotate(0deg);opacity:0}
-  15%{opacity:.9}
-  75%{opacity:1}
-  100%{transform:translateX(48%) rotate(0deg);opacity:0}
-}
-@keyframes logo-gold-glow{
-  0%,100%{opacity:.25}
-  50%{opacity:.85}
+@keyframes logo-rotate-genuine{
+  from{transform:translate(-50%,-50%) rotate(0deg)}
+  to{transform:translate(-50%,-50%) rotate(360deg)}
 }
 @media(prefers-reduced-motion:reduce){
-  .logo-light-effects:before,.logo-light-effects:after{animation:none!important}
+  .rotating-header-logo{animation:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   header.heritage-header.image-banner:before,header.heritage-header.image-banner:after{animation:none!important}
@@ -982,7 +961,7 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
 
 <header class="heritage-header image-banner">
   <img class="site-header-banner" src="20261120_184412.png" alt="SANGGAH GEDE PAN RENGEN">
-  <div class="logo-light-effects" aria-hidden="true"></div>
+  <img class="rotating-header-logo" src="logo-sanggah.svg" alt="" aria-hidden="true">
 </header>
 
 
