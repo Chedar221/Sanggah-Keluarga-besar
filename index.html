@@ -928,8 +928,34 @@ header.heritage-header.image-banner{
   position:relative;padding:0!important;margin:0;border:0;border-radius:0;
   overflow:hidden;background:transparent!important;box-shadow:none!important
 }
-header.heritage-header.image-banner:before,
+header.heritage-header.image-banner:before{
+  content:""!important;display:block!important;
+  position:absolute;z-index:1;pointer-events:none;
+  left:50%;top:22%;width:min(30vw,330px);aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  background:repeating-conic-gradient(from 0deg,
+    rgba(255,226,143,0) 0deg 7deg,
+    rgba(255,226,143,.06) 7.5deg 9deg,
+    rgba(255,244,196,.9) 9.5deg 10.8deg,
+    rgba(255,220,130,.12) 11.3deg 13deg,
+    rgba(255,226,143,0) 13.5deg 18deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 28%,rgba(0,0,0,.85) 39%,#000 58%,transparent 76%);
+  mask:radial-gradient(circle,transparent 0 28%,rgba(0,0,0,.85) 39%,#000 58%,transparent 76%);
+  mix-blend-mode:screen;opacity:.76;
+  filter:drop-shadow(0 0 8px rgba(255,206,91,.75));
+  animation:headerLogoRays 3.2s ease-in-out infinite alternate;
+}
 header.heritage-header.image-banner:after{content:none!important;display:none!important}
+@keyframes headerLogoRays{
+  from{opacity:.52;filter:drop-shadow(0 0 4px rgba(255,206,91,.5)) brightness(.95)}
+  to{opacity:.92;filter:drop-shadow(0 0 12px rgba(255,229,157,.95)) brightness(1.18)}
+}
+@media(max-width:600px){
+  header.heritage-header.image-banner:before{width:min(48vw,260px);top:22%}
+}
+@media(prefers-reduced-motion:reduce){
+  header.heritage-header.image-banner:before{animation:none}
+}
 .site-header-banner{
   display:block;position:relative;z-index:0;width:100%;height:auto;
   max-width:100%;object-fit:contain;margin:0 auto
