@@ -930,6 +930,18 @@ header.heritage-header.image-banner{
 }
 header.heritage-header.image-banner:before,
 header.heritage-header.image-banner:after{content:none!important;display:none!important}
+/* Hilangkan garis emas di bawah header gambar */
+header.heritage-header.image-banner{
+  border-bottom:0!important;
+  box-shadow:none!important;
+}
+header.heritage-header.image-banner:after{
+  content:none!important;
+  display:none!important;
+  height:0!important;
+  background:none!important;
+  box-shadow:none!important;
+}
 header.heritage-header.image-banner:after{content:none!important;display:none!important}
 @media(max-width:600px){
   header.heritage-header.image-banner:before{width:min(48vw,260px);top:22%}
