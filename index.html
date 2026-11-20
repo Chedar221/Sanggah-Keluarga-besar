@@ -928,31 +928,9 @@ header.heritage-header.image-banner{
   position:relative;padding:0!important;margin:0;border:0;border-radius:0;
   overflow:hidden;background:transparent!important;box-shadow:none!important
 }
-header.heritage-header.image-banner:before{
-  content:""!important;display:block!important;
-  position:absolute!important;z-index:2!important;pointer-events:none!important;
-  left:50%!important;top:23%!important;
-  width:clamp(190px,38vw,500px)!important;aspect-ratio:1!important;
-  transform:translate(-50%,-50%)!important;
-  background:
-    radial-gradient(circle,rgba(255,247,204,.48) 0%,rgba(255,218,123,.27) 24%,rgba(255,190,75,.10) 47%,transparent 69%),
-    repeating-conic-gradient(from 0deg,
-      rgba(255,230,151,0) 0deg 4deg,
-      rgba(255,232,164,.32) 4.5deg 5.5deg,
-      rgba(255,250,211,.98) 6deg 7deg,
-      rgba(255,209,105,.28) 7.5deg 9deg,
-      rgba(255,230,151,0) 9.5deg 13deg);
-  -webkit-mask:radial-gradient(circle,transparent 0 19%,rgba(0,0,0,.95) 27%,#000 67%,transparent 88%);
-  mask:radial-gradient(circle,transparent 0 19%,rgba(0,0,0,.95) 27%,#000 67%,transparent 88%);
-  mix-blend-mode:screen!important;opacity:.96!important;
-  filter:drop-shadow(0 0 12px rgba(255,205,86,.95)) brightness(1.25);
-  animation:headerLogoRays 2.2s ease-in-out infinite alternate!important;
-}
+header.heritage-header.image-banner:before,
 header.heritage-header.image-banner:after{content:none!important;display:none!important}
-@keyframes headerLogoRays{
-  from{opacity:.52;filter:drop-shadow(0 0 4px rgba(255,206,91,.5)) brightness(.95)}
-  to{opacity:.92;filter:drop-shadow(0 0 12px rgba(255,229,157,.95)) brightness(1.18)}
-}
+header.heritage-header.image-banner:after{content:none!important;display:none!important}
 @media(max-width:600px){
   header.heritage-header.image-banner:before{width:min(48vw,260px);top:22%}
 }
