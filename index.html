@@ -927,6 +927,45 @@ header.heritage-header{
 header.heritage-header.image-banner{padding:0!important;margin:0;border:0;border-radius:0;overflow:hidden;background:transparent!important;box-shadow:none!important}
 header.heritage-header.image-banner:before,header.heritage-header.image-banner:after{display:none!important;content:none!important}
 .site-header-banner{display:block;width:100%;height:auto;max-width:100%;object-fit:contain;margin:0 auto}
+
+.site-header-banner{position:relative;z-index:0}
+header.heritage-header.image-banner{position:relative}
+header.heritage-header.image-banner:before{
+  content:""!important;display:block!important;position:absolute;z-index:1;pointer-events:none;
+  left:50%;top:28%;width:clamp(150px,22vw,350px);aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:conic-gradient(from 0deg,
+    transparent 0deg 9deg,rgba(255,220,112,.72) 11deg 13deg,transparent 16deg 29deg,
+    rgba(255,245,190,.55) 31deg 33deg,transparent 36deg 54deg,
+    rgba(255,211,86,.7) 56deg 58deg,transparent 61deg 79deg,
+    rgba(255,245,190,.55) 81deg 83deg,transparent 86deg 104deg,
+    rgba(255,211,86,.7) 106deg 108deg,transparent 111deg 129deg,
+    rgba(255,245,190,.55) 131deg 133deg,transparent 136deg 154deg,
+    rgba(255,211,86,.7) 156deg 158deg,transparent 161deg 179deg,
+    rgba(255,245,190,.55) 181deg 183deg,transparent 186deg 204deg,
+    rgba(255,211,86,.7) 206deg 208deg,transparent 211deg 229deg,
+    rgba(255,245,190,.55) 231deg 233deg,transparent 236deg 254deg,
+    rgba(255,211,86,.7) 256deg 258deg,transparent 261deg 279deg,
+    rgba(255,245,190,.55) 281deg 283deg,transparent 286deg 304deg,
+    rgba(255,211,86,.7) 306deg 308deg,transparent 311deg 329deg,
+    rgba(255,245,190,.55) 331deg 333deg,transparent 336deg 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 39%,#000 48%,#000 54%,transparent 72%);
+  mask:radial-gradient(circle,transparent 39%,#000 48%,#000 54%,transparent 72%);
+  filter:blur(2px);mix-blend-mode:screen;animation:heritage-rays-rotate 32s linear infinite
+}
+header.heritage-header.image-banner:after{
+  content:""!important;display:block!important;position:absolute;z-index:1;pointer-events:none;
+  left:50%;top:28%;width:clamp(135px,19vw,300px);aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,226,130,.05) 38%,rgba(255,220,112,.28) 54%,rgba(255,245,190,.1) 64%,transparent 74%);
+  filter:blur(5px);animation:heritage-logo-glow 4.8s ease-in-out infinite
+}
+@keyframes heritage-rays-rotate{from{rotate:0deg}to{rotate:360deg}}
+@keyframes heritage-logo-glow{0%,100%{opacity:.42;scale:.96}50%{opacity:.9;scale:1.06}}
+@media(prefers-reduced-motion:reduce){
+  header.heritage-header.image-banner:before,header.heritage-header.image-banner:after{animation:none!important}
+}
+
 </style>
 </head>
 <body>
