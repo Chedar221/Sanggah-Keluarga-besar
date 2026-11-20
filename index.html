@@ -934,34 +934,12 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
   display:block;position:relative;z-index:0;width:100%;height:auto;
   max-width:100%;object-fit:contain;margin:0 auto
 }
-/* Logo asli berputar perlahan di atas header */
-.rotating-header-logo{
-  position:absolute;z-index:2;left:50%;top:29%;
-  width:clamp(64px,9vw,112px);height:auto;
-  transform:translate(-50%,-50%);
-  transform-origin:center;
-  object-fit:contain;pointer-events:none;
-  animation:logo-rotate-genuine 8s linear infinite;
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))
-}
-@keyframes logo-rotate-genuine{
-  from{transform:translate(-50%,-50%) rotate(0deg)}
-  to{transform:translate(-50%,-50%) rotate(360deg)}
-}
-@media(prefers-reduced-motion:reduce){
-  .rotating-header-logo{animation:none!important}
-}
-@media(prefers-reduced-motion:reduce){
-  header.heritage-header.image-banner:before,header.heritage-header.image-banner:after{animation:none!important}
-}
-
 </style>
 </head>
 <body>
 
 <header class="heritage-header image-banner">
   <img class="site-header-banner" src="20261120_184412.png" alt="SANGGAH GEDE PAN RENGEN">
-  <img class="rotating-header-logo" src="logo-sanggah.svg" alt="" aria-hidden="true">
 </header>
 
 
