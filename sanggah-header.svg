@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" role="img" aria-label="Sanggah Gede Pan Rengen">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#080609"/><stop offset=".48" stop-color="#5b080d"/><stop offset="1" stop-color="#100609"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff0a0"/><stop offset=".45" stop-color="#d79a24"/><stop offset="1" stop-color="#6c3507"/></linearGradient>
+ <linearGradient id="white" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#bfc1c4"/></linearGradient>
+ <linearGradient id="red" x2="0" y2="1"><stop stop-color="#ff3028"/><stop offset="1" stop-color="#8c0007"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".8"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <pattern id="grain" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M0 16h32M16 0v32" stroke="#e4b84b" stroke-opacity=".08"/></pattern>
+</defs>
+<rect width="1600" height="400" fill="url(#bg)"/><rect width="1600" height="400" fill="url(#grain)"/>
+<path d="M0 0H1600V22Q1300 100 1100 20Q800 120 500 20Q250 100 0 20Z" fill="#090609"/>
+<path d="M0 34Q180 120 350 45T700 45T1050 45T1400 45T1600 34" fill="none" stroke="url(#red)" stroke-width="26"/>
+<path d="M0 53Q180 139 350 64T700 64T1050 64T1400 64T1600 53" fill="none" stroke="#fff" stroke-width="11"/>
+<path d="M0 67Q180 153 350 78T700 78T1050 78T1400 78T1600 67" fill="none" stroke="#b20c13" stroke-width="7"/>
+<g fill="#050507" stroke="url(#gold)" stroke-width="3" opacity=".95">
+ <path d="M55 300V166h18v-28h15v28h18v-56h16v56h18v-36h17v36h18v134z"/>
+ <path d="M1450 300V166h18v-28h15v28h18v-56h16v56h18v-36h17v36h18v134z"/>
+ <path d="M210 300V210h15v-20h14v20h15v-42h14v42h15v-25h14v25h15v90z"/>
+ <path d="M1288 300V210h15v-20h14v20h15v-42h14v42h15v-25h14v25h15v90z"/>
+</g>
+<g fill="none" stroke="url(#gold)" stroke-width="3" opacity=".85"><path d="M25 320Q170 250 300 320T575 320M1025 320Q1160 250 1300 320T1575 320"/><path d="M0 375Q400 330 800 375T1600 375"/></g>
+<circle cx="800" cy="135" r="111" fill="#16080a" stroke="url(#gold)" stroke-width="8" filter="url(#shadow)"/>
+<circle cx="800" cy="135" r="101" fill="#fff" stroke="#fff0a0" stroke-width="3"/>
+<image href="logo-sanggah.svg" x="716" y="51" width="168" height="168" preserveAspectRatio="xMidYMid meet"/>
+<g filter="url(#shadow)" text-anchor="middle" font-family="Georgia,serif" font-weight="900" letter-spacing="3">
+ <text x="800" y="282" font-size="77" fill="url(#white)" stroke="#080609" stroke-width="13" paint-order="stroke">SANGGAH GEDE</text>
+ <text x="800" y="355" font-size="78" fill="url(#red)" stroke="url(#gold)" stroke-width="5" paint-order="stroke">PAN RENGEN</text>
+</g>
+<path d="M265 370H1335" stroke="url(#gold)" stroke-width="5"/>
+<g fill="#fff" stroke="url(#gold)" stroke-width="2"><path d="M125 340q-22-22 0-44q22 22 0 44m0 0q-22 22-44 0q22-22 44 0m0 0q22 22 44 0q-22-22-44-44"/><path d="M1475 340q-22-22 0-44q22 22 0 44m0 0q-22 22-44 0q22-22 44 0m0 0q22 22 44 0q-22-22-44-44"/></g>
+</svg>
