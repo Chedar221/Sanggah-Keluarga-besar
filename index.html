@@ -936,15 +936,15 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
 }
 .logo-light-effects{
   position:absolute;z-index:2;pointer-events:none;
-  left:50%;top:29%;width:clamp(140px,20vw,310px);
+  left:50%;top:29%;width:clamp(170px,24vw,370px);
   aspect-ratio:1;transform:translate(-50%,-50%);
   border-radius:50%;mix-blend-mode:screen
 }
 .logo-light-effects:before{
   content:"";position:absolute;inset:0;border-radius:50%;
   background:conic-gradient(from 0deg,
-    transparent 0deg 7deg,rgba(255,211,92,.98) 9deg 11deg,transparent 14deg 27deg,
-    rgba(255,248,205,.9) 29deg 31deg,transparent 34deg 52deg,
+    transparent 0deg 6deg,rgba(255,194,35,1) 8deg 13deg,transparent 16deg 27deg,
+    rgba(255,255,225,1) 29deg 34deg,transparent 37deg 52deg,
     rgba(255,211,92,.98) 54deg 56deg,transparent 59deg 77deg,
     rgba(255,248,205,.9) 79deg 81deg,transparent 84deg 102deg,
     rgba(255,211,92,.98) 104deg 106deg,transparent 109deg 127deg,
@@ -959,16 +959,16 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
     rgba(255,248,205,.9) 329deg 331deg,transparent 334deg 360deg);
   -webkit-mask:radial-gradient(circle,transparent 34%,#000 43%,#000 51%,transparent 68%);
   mask:radial-gradient(circle,transparent 34%,#000 43%,#000 51%,transparent 68%);
-  filter:blur(1px);animation:logo-rays-spin 24s linear infinite
+  filter:blur(.4px) drop-shadow(0 0 12px rgba(255,190,25,.95));opacity:1;animation:logo-rays-spin 8s linear infinite
 }
 .logo-light-effects:after{
   content:"";position:absolute;inset:15%;border-radius:50%;
-  background:radial-gradient(circle,transparent 43%,rgba(255,220,112,.55) 57%,rgba(255,245,190,.18) 68%,transparent 76%);
-  box-shadow:0 0 24px 8px rgba(255,207,78,.34);
-  animation:logo-glow-pulse 3.8s ease-in-out infinite
+  background:radial-gradient(circle,transparent 43%,rgba(255,198,35,.88) 53%,rgba(255,245,190,.48) 65%,rgba(255,190,20,.18) 73%,transparent 82%);
+  box-shadow:0 0 38px 14px rgba(255,190,25,.72),0 0 70px 24px rgba(255,220,95,.34);
+  animation:logo-glow-pulse 2s ease-in-out infinite
 }
 @keyframes logo-rays-spin{from{rotate:0deg}to{rotate:360deg}}
-@keyframes logo-glow-pulse{0%,100%{opacity:.42;scale:.94}50%{opacity:1;scale:1.08}}
+@keyframes logo-glow-pulse{0%,100%{opacity:.62;scale:.96}50%{opacity:1;scale:1.13}}
 @media(prefers-reduced-motion:reduce){
   .logo-light-effects:before,.logo-light-effects:after{animation:none!important}
 }
