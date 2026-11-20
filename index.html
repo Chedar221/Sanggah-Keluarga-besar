@@ -935,40 +935,45 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
   max-width:100%;object-fit:contain;margin:0 auto
 }
 .logo-light-effects{
-  position:absolute;z-index:2;pointer-events:none;
+  position:absolute;z-index:3;pointer-events:none;
   left:50%;top:29%;width:clamp(170px,24vw,370px);
   aspect-ratio:1;transform:translate(-50%,-50%);
   border-radius:50%;mix-blend-mode:screen
 }
+/* Lingkaran orbit emas yang tetap terlihat */
+.logo-light-effects:after{
+  content:"";position:absolute;inset:8%;border-radius:50%;
+  border:2px solid rgba(255,205,55,.9);
+  box-shadow:0 0 8px 2px rgba(255,190,20,.85),inset 0 0 8px rgba(255,220,100,.5);
+  animation:logo-orbit-pulse 1.8s ease-in-out infinite
+}
+/* Kilatan cahaya terang bergerak mengelilingi logo */
 .logo-light-effects:before{
   content:"";position:absolute;inset:0;border-radius:50%;
   background:conic-gradient(from 0deg,
-    transparent 0deg 6deg,rgba(255,194,35,1) 8deg 13deg,transparent 16deg 27deg,
-    rgba(255,255,225,1) 29deg 34deg,transparent 37deg 52deg,
-    rgba(255,211,92,.98) 54deg 56deg,transparent 59deg 77deg,
-    rgba(255,248,205,.9) 79deg 81deg,transparent 84deg 102deg,
-    rgba(255,211,92,.98) 104deg 106deg,transparent 109deg 127deg,
-    rgba(255,248,205,.9) 129deg 131deg,transparent 134deg 152deg,
-    rgba(255,211,92,.98) 154deg 156deg,transparent 159deg 177deg,
-    rgba(255,248,205,.9) 179deg 181deg,transparent 184deg 202deg,
-    rgba(255,211,92,.98) 204deg 206deg,transparent 209deg 227deg,
-    rgba(255,248,205,.9) 229deg 231deg,transparent 234deg 252deg,
-    rgba(255,211,92,.98) 254deg 256deg,transparent 259deg 277deg,
-    rgba(255,248,205,.9) 279deg 281deg,transparent 284deg 302deg,
-    rgba(255,211,92,.98) 304deg 306deg,transparent 309deg 327deg,
-    rgba(255,248,205,.9) 329deg 331deg,transparent 334deg 360deg);
-  -webkit-mask:radial-gradient(circle,transparent 34%,#000 43%,#000 51%,transparent 68%);
-  mask:radial-gradient(circle,transparent 34%,#000 43%,#000 51%,transparent 68%);
-  filter:blur(.4px) drop-shadow(0 0 12px rgba(255,190,25,.95));opacity:1;animation:logo-rays-spin 8s linear infinite
+    transparent 0deg 300deg,
+    rgba(255,174,0,.12) 310deg,
+    rgba(255,205,45,.5) 326deg,
+    #fff4b0 337deg,
+    #ffffff 342deg,
+    #ffbd19 348deg,
+    rgba(255,220,100,.35) 356deg,
+    transparent 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 42%,#000 46%,#000 54%,transparent 59%);
+  mask:radial-gradient(circle,transparent 42%,#000 46%,#000 54%,transparent 59%);
+  filter:drop-shadow(0 0 5px #ffbd19) drop-shadow(0 0 13px rgba(255,190,20,.95));
+  animation:logo-rays-spin 3.2s linear infinite
 }
-.logo-light-effects:after{
-  content:"";position:absolute;inset:15%;border-radius:50%;
-  background:radial-gradient(circle,transparent 43%,rgba(255,198,35,.88) 53%,rgba(255,245,190,.48) 65%,rgba(255,190,20,.18) 73%,transparent 82%);
-  box-shadow:0 0 38px 14px rgba(255,190,25,.72),0 0 70px 24px rgba(255,220,95,.34);
-  animation:logo-glow-pulse 2s ease-in-out infinite
+.logo-orbit-dot{
+  position:absolute;left:50%;top:4%;width:13px;height:13px;
+  margin-left:-6.5px;border-radius:50%;background:#fffbdc;
+  box-shadow:0 0 7px 4px #fff1a1,0 0 18px 9px #ffc21c,0 0 30px 12px rgba(255,180,0,.65);
+  transform-origin:6.5px calc(clamp(170px,24vw,370px)*.46);
+  animation:logo-dot-orbit 3.2s linear infinite
 }
 @keyframes logo-rays-spin{from{rotate:0deg}to{rotate:360deg}}
-@keyframes logo-glow-pulse{0%,100%{opacity:.62;scale:.96}50%{opacity:1;scale:1.13}}
+@keyframes logo-dot-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes logo-orbit-pulse{0%,100%{opacity:.7}50%{opacity:1;box-shadow:0 0 15px 5px rgba(255,190,20,1),inset 0 0 12px rgba(255,240,170,.8)}}
 @media(prefers-reduced-motion:reduce){
   .logo-light-effects:before,.logo-light-effects:after{animation:none!important}
 }
@@ -982,7 +987,7 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
 
 <header class="heritage-header image-banner">
   <img class="site-header-banner" src="20261120_184412.png" alt="SANGGAH GEDE PAN RENGEN">
-  <div class="logo-light-effects" aria-hidden="true"></div>
+  <div class="logo-light-effects" aria-hidden="true"><span class="logo-orbit-dot"></span></div>
 </header>
 
 
