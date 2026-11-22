@@ -1036,6 +1036,113 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
 .gallery-image-unavailable{display:grid;place-items:center;aspect-ratio:4/3;background:#f1eee6;color:var(--muted);font-size:12px}
 @media(max-width:760px){.family-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.family-gallery-caption{padding:9px}}
 @media(max-width:380px){.family-gallery-grid{grid-template-columns:1fr}}
+
+/* =========================================
+   LUXURY GOLD MOTION — SANGGAH GEDE PAN RENGEN
+   Animasi dekoratif ringan, tanpa mengubah fungsi/data.
+========================================= */
+@keyframes luxuryGoldDrift {
+  0%,100% { background-position:0% 0%,100% 0%,50% 100%; opacity:.42; }
+  50% { background-position:8% 12%,92% 8%,55% 95%; opacity:.72; }
+}
+@keyframes luxuryGoldSweep {
+  0% { transform:translateX(-130%) skewX(-18deg); opacity:0; }
+  18% { opacity:.5; }
+  55%,100% { transform:translateX(220%) skewX(-18deg); opacity:0; }
+}
+@keyframes luxuryRiseIn {
+  from { opacity:0; transform:translateY(9px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes luxurySoftGlow {
+  0%,100% { box-shadow:0 5px 18px #153c2410,0 0 0 1px #d0a51b00; }
+  50% { box-shadow:0 7px 22px #153c2418,0 0 0 1px #d0a51b35; }
+}
+header::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 28%,#f4d77a55 0 1px,transparent 2px),
+    radial-gradient(circle at 78% 18%,#ffe8a455 0 1px,transparent 2px),
+    radial-gradient(circle at 88% 72%,#f4d77a44 0 1.5px,transparent 2.5px),
+    radial-gradient(ellipse at 18% 15%,#e9c65a20,transparent 35%),
+    radial-gradient(ellipse at 84% 82%,#e9c65a18,transparent 32%);
+  background-size:160px 130px,190px 150px,220px 180px,100% 100%,100% 100%;
+  animation:luxuryGoldDrift 18s ease-in-out infinite;
+}
+header .brand, header .welcome, header .sub { position:relative; z-index:1; }
+header h1 { animation:luxuryRiseIn .8s ease-out both; }
+header .welcome { animation:luxuryRiseIn 1s .12s ease-out both; }
+#publicPage>.card, #publicPage>details, #app main>.card, #app main>.grid>.tile {
+  animation:luxuryRiseIn .55s ease-out both;
+}
+#publicPage>.card:nth-of-type(2), #app main>.card:nth-of-type(2) { animation-delay:.05s; }
+#publicPage>.card:nth-of-type(3), #app main>.card:nth-of-type(3) { animation-delay:.1s; }
+.card, .tile {
+  transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;
+}
+@media (hover:hover) and (pointer:fine) {
+  .card:hover {
+    border-color:#d9c17a;
+    box-shadow:0 9px 26px #153c2418,0 0 0 1px #d0a51b20;
+  }
+  .tile:hover {
+    transform:translateY(-3px);
+    border-color:#d0a51b88;
+    box-shadow:0 9px 22px #153c241a;
+  }
+  button:not(:disabled):hover {
+    filter:brightness(1.07);
+    box-shadow:0 5px 13px #80601626;
+  }
+}
+button:not(:disabled), .nav button:not(:disabled) {
+  transition:transform .18s ease,filter .22s ease,box-shadow .22s ease;
+}
+button:not(:disabled):active, .nav button:not(:disabled):active {
+  transform:scale(.975);
+}
+button:not(:disabled) { position:relative; overflow:hidden; }
+button:not(:disabled)::after {
+  content:"";
+  position:absolute;
+  top:-35%;
+  left:0;
+  width:34%;
+  height:170%;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,#fff7c855,transparent);
+  transform:translateX(-150%) skewX(-18deg);
+  opacity:0;
+}
+button:not(:disabled):active::after {
+  animation:luxuryGoldSweep .7s ease-out;
+}
+.nav button.active {
+  box-shadow:0 3px 12px #a9842228, inset 0 0 0 1px #e6c96b55;
+}
+.family-gallery-item, .calendar-event-item, .record-item {
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+@media (hover:hover) and (pointer:fine) {
+  .family-gallery-item:hover, .calendar-event-item:hover, .record-item:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px #153c2412;
+    border-color:#d9c17a;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    scroll-behavior:auto !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+
 </style>
 </head>
 <body>
