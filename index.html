@@ -1144,16 +1144,20 @@ button:not(:disabled):active::after {
 }
 
 
-/* ANIMASI MEWAH — OVERLAY EMAS LANGSUNG DI DALAM BANNER */
-@keyframes sgprBannerBreath{
-  0%,100%{filter:brightness(1) contrast(1)}
-  50%{filter:brightness(1.075) contrast(1.025)}
+/* ANIMASI HEADER MEWAH — ZOOM HALUS + PARTIKEL, TANPA SAPUAN EMAS */
+@keyframes sgprHeaderZoom{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.035)}
 }
-@keyframes sgprSheenTravel{
-  0%{transform:translateX(-130%) skewX(-18deg);opacity:0}
-  12%{opacity:.9}
-  72%{opacity:.75}
-  100%{transform:translateX(230%) skewX(-18deg);opacity:0}
+@keyframes sgprParticlesDrift{
+  0%{transform:translate3d(-1%,2%,0) rotate(0deg);opacity:.34}
+  50%{transform:translate3d(1%,-2%,0) rotate(2deg);opacity:.62}
+  100%{transform:translate3d(-1%,2%,0) rotate(0deg);opacity:.34}
+}
+@keyframes sgprParticlesFloat{
+  0%{transform:translate3d(1%,3%,0);opacity:.2}
+  50%{transform:translate3d(-1%,-3%,0);opacity:.42}
+  100%{transform:translate3d(1%,3%,0);opacity:.2}
 }
 @keyframes sgprCardReveal{
   from{opacity:.45;transform:translateY(10px)}
@@ -1166,30 +1170,38 @@ header.heritage-header.image-banner{
 }
 header.heritage-header.image-banner .site-header-banner{
   display:block;
-  animation:sgprBannerBreath 6s ease-in-out infinite;
+  transform-origin:center center;
+  animation:sgprHeaderZoom 14s ease-in-out infinite;
+  will-change:transform;
 }
-header.heritage-header.image-banner .sgpr-gold-sheen{
+header.heritage-header.image-banner:before,
+header.heritage-header.image-banner:after{
+  content:""!important;
+  display:block!important;
   position:absolute;
-  inset:0;
-  z-index:5;
-  display:block;
-  overflow:hidden;
+  inset:-8%;
+  z-index:2;
   pointer-events:none;
+  background-repeat:repeat;
+  mix-blend-mode:screen;
 }
-header.heritage-header.image-banner .sgpr-gold-sheen:after{
-  content:"";
-  position:absolute;
-  top:-30%;
-  bottom:-30%;
-  left:0;
-  width:24%;
-  background:linear-gradient(90deg,transparent,rgba(255,220,139,.12) 25%,rgba(255,244,205,.38) 50%,rgba(255,213,115,.16) 75%,transparent);
-  filter:blur(5px);
-  animation:sgprSheenTravel 8s ease-in-out infinite;
+header.heritage-header.image-banner:before{
+  background-image:
+    radial-gradient(circle,rgba(255,225,150,.75) 0 1px,transparent 1.8px),
+    radial-gradient(circle,rgba(255,205,105,.5) 0 1.2px,transparent 2px);
+  background-size:83px 71px,127px 109px;
+  background-position:12px 18px,48px 39px;
+  animation:sgprParticlesDrift 11s ease-in-out infinite;
 }
-.card{
-  animation:sgprCardReveal .6s ease both;
+header.heritage-header.image-banner:after{
+  background-image:
+    radial-gradient(circle,rgba(255,239,190,.55) 0 1px,transparent 1.9px),
+    radial-gradient(circle,rgba(226,183,92,.38) 0 1.3px,transparent 2.2px);
+  background-size:151px 127px,197px 163px;
+  background-position:73px 51px,21px 88px;
+  animation:sgprParticlesFloat 16s ease-in-out infinite;
 }
+.card{animation:sgprCardReveal .6s ease both}
 button,.chat-entry-button{
   transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,filter .22s ease;
 }
@@ -1207,37 +1219,10 @@ button:focus-visible,.chat-entry-button:focus-visible{
 }
 @media(prefers-reduced-motion:reduce){
   header.heritage-header.image-banner .site-header-banner,
-  header.heritage-header.image-banner .sgpr-gold-sheen:after,
+  header.heritage-header.image-banner:before,
+  header.heritage-header.image-banner:after,
   .card{animation:none!important}
-  header.heritage-header.image-banner .sgpr-gold-sheen{border-bottom:1px solid rgba(224,185,94,.65)}
   button,.chat-entry-button{transition:none!important}
-}
-
-/* PENEGASAN SAPUAN EMAS — lebih cepat dan lebih terlihat */
-@keyframes sgprSheenTravel{
-  0%{transform:translateX(-145%) skewX(-18deg);opacity:0}
-  8%{opacity:1}
-  82%{opacity:.95}
-  100%{transform:translateX(270%) skewX(-18deg);opacity:0}
-}
-header.heritage-header.image-banner .sgpr-gold-sheen:after{
-  width:38%!important;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,190,55,.22) 18%,
-    rgba(255,226,143,.78) 38%,
-    rgba(255,250,220,.98) 50%,
-    rgba(255,218,116,.82) 62%,
-    rgba(255,181,42,.24) 82%,
-    transparent 100%)!important;
-  filter:blur(2px) drop-shadow(0 0 10px rgba(255,205,95,.9))!important;
-  animation:sgprSheenTravel 3.2s linear infinite!important;
-}
-/* Efek sapuan banner tetap berjalan meskipun perangkat membatasi animasi umum */
-@media(prefers-reduced-motion:reduce){
-  header.heritage-header.image-banner .sgpr-gold-sheen:after{
-    animation:sgprSheenTravel 3.2s linear infinite!important;
-  }
 }
 
 </style>
@@ -1246,7 +1231,6 @@ header.heritage-header.image-banner .sgpr-gold-sheen:after{
 
 <header class="heritage-header image-banner">
   <img class="site-header-banner" src="20261121_015000.png" alt="SANGGAH GEDE PAN RENGEN">
-  <span class="sgpr-gold-sheen" aria-hidden="true"></span>
 </header>
 
 
