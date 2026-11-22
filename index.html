@@ -1144,41 +1144,51 @@ button:not(:disabled):active::after {
 }
 
 
-/* ANIMASI MEWAH HALUS — DISESUAIKAN DENGAN HEADER BANNER AKTUAL */
-@keyframes sgprBannerGlow{
-  0%,100%{filter:brightness(1) saturate(1)}
-  50%{filter:brightness(1.055) saturate(1.04)}
+/* ANIMASI MEWAH — OVERLAY EMAS LANGSUNG DI DALAM BANNER */
+@keyframes sgprBannerBreath{
+  0%,100%{filter:brightness(1) contrast(1)}
+  50%{filter:brightness(1.075) contrast(1.025)}
+}
+@keyframes sgprSheenTravel{
+  0%{transform:translateX(-130%) skewX(-18deg);opacity:0}
+  12%{opacity:.9}
+  72%{opacity:.75}
+  100%{transform:translateX(230%) skewX(-18deg);opacity:0}
 }
 @keyframes sgprCardReveal{
-  from{opacity:0;transform:translateY(9px)}
+  from{opacity:.45;transform:translateY(10px)}
   to{opacity:1;transform:translateY(0)}
 }
-@keyframes sgprGoldSweep{
-  0%{background-position:180% 0}
-  100%{background-position:-180% 0}
-}
 header.heritage-header.image-banner{
-  position:relative;
+  position:relative!important;
   isolation:isolate;
-  overflow:hidden;
+  overflow:hidden!important;
 }
 header.heritage-header.image-banner .site-header-banner{
   display:block;
-  animation:sgprBannerGlow 7s ease-in-out infinite;
-  transform:translateZ(0);
+  animation:sgprBannerBreath 6s ease-in-out infinite;
 }
-header.heritage-header.image-banner:after{
-  content:"";
+header.heritage-header.image-banner .sgpr-gold-sheen{
   position:absolute;
   inset:0;
+  z-index:5;
+  display:block;
+  overflow:hidden;
   pointer-events:none;
-  z-index:2;
-  background:linear-gradient(110deg,transparent 35%,rgba(255,226,155,.12) 48%,rgba(255,244,205,.22) 50%,rgba(255,226,155,.12) 52%,transparent 65%);
-  background-size:220% 100%;
-  animation:sgprGoldSweep 11s ease-in-out infinite;
+}
+header.heritage-header.image-banner .sgpr-gold-sheen:after{
+  content:"";
+  position:absolute;
+  top:-30%;
+  bottom:-30%;
+  left:0;
+  width:24%;
+  background:linear-gradient(90deg,transparent,rgba(255,220,139,.12) 25%,rgba(255,244,205,.38) 50%,rgba(255,213,115,.16) 75%,transparent);
+  filter:blur(5px);
+  animation:sgprSheenTravel 8s ease-in-out infinite;
 }
 .card{
-  animation:sgprCardReveal .55s ease both;
+  animation:sgprCardReveal .6s ease both;
 }
 button,.chat-entry-button{
   transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,filter .22s ease;
@@ -1192,29 +1202,23 @@ button:focus-visible,.chat-entry-button:focus-visible{
   outline-offset:3px;
 }
 @media(hover:hover){
-  .card:hover{
-    box-shadow:0 12px 28px rgba(96,70,25,.09);
-    transition:box-shadow .25s ease;
-  }
-  button:hover,.chat-entry-button:hover{
-    filter:brightness(1.035);
-  }
+  .card:hover{box-shadow:0 12px 28px rgba(96,70,25,.09);transition:box-shadow .25s ease}
+  button:hover,.chat-entry-button:hover{filter:brightness(1.035)}
 }
 @media(prefers-reduced-motion:reduce){
   header.heritage-header.image-banner .site-header-banner,
-  header.heritage-header.image-banner:after,
-  .card{
-    animation:none!important;
-  }
+  header.heritage-header.image-banner .sgpr-gold-sheen:after,
+  .card{animation:none!important}
+  header.heritage-header.image-banner .sgpr-gold-sheen{border-bottom:1px solid rgba(224,185,94,.65)}
   button,.chat-entry-button{transition:none!important}
 }
-
 </style>
 </head>
 <body>
 
 <header class="heritage-header image-banner">
   <img class="site-header-banner" src="20261121_015000.png" alt="SANGGAH GEDE PAN RENGEN">
+  <span class="sgpr-gold-sheen" aria-hidden="true"></span>
 </header>
 
 
