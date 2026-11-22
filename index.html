@@ -1212,6 +1212,34 @@ button:focus-visible,.chat-entry-button:focus-visible{
   header.heritage-header.image-banner .sgpr-gold-sheen{border-bottom:1px solid rgba(224,185,94,.65)}
   button,.chat-entry-button{transition:none!important}
 }
+
+/* PENEGASAN SAPUAN EMAS — lebih cepat dan lebih terlihat */
+@keyframes sgprSheenTravel{
+  0%{transform:translateX(-145%) skewX(-18deg);opacity:0}
+  8%{opacity:1}
+  82%{opacity:.95}
+  100%{transform:translateX(270%) skewX(-18deg);opacity:0}
+}
+header.heritage-header.image-banner .sgpr-gold-sheen:after{
+  width:38%!important;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,190,55,.22) 18%,
+    rgba(255,226,143,.78) 38%,
+    rgba(255,250,220,.98) 50%,
+    rgba(255,218,116,.82) 62%,
+    rgba(255,181,42,.24) 82%,
+    transparent 100%)!important;
+  filter:blur(2px) drop-shadow(0 0 10px rgba(255,205,95,.9))!important;
+  animation:sgprSheenTravel 3.2s linear infinite!important;
+}
+/* Efek sapuan banner tetap berjalan meskipun perangkat membatasi animasi umum */
+@media(prefers-reduced-motion:reduce){
+  header.heritage-header.image-banner .sgpr-gold-sheen:after{
+    animation:sgprSheenTravel 3.2s linear infinite!important;
+  }
+}
+
 </style>
 </head>
 <body>
