@@ -1023,6 +1023,19 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
 .calendar-empty{font-size:12px;color:#718078;padding:10px 0;line-height:1.5}
 @media(max-width:650px){.calendar-wrap{grid-template-columns:1fr}.calendar-day{min-height:40px}.calendar-event-panel{min-height:0}}
 
+
+/* GALERI FOTO DOKUMENTASI KELUARGA */
+.family-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.family-gallery-item{overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:0}
+.family-gallery-item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#eee}
+.family-gallery-caption{display:grid;gap:5px;padding:11px}
+.family-gallery-caption strong{font-size:13px;overflow-wrap:anywhere}
+.family-gallery-caption small{color:var(--muted);font-size:11px}
+.gallery-delete{justify-self:start;margin-top:4px}
+.gallery-upload-form{display:grid;gap:9px;margin-top:15px;padding:14px;border:1px solid rgba(180,160,100,.3);border-radius:13px;background:#fffdf8}
+.gallery-image-unavailable{display:grid;place-items:center;aspect-ratio:4/3;background:#f1eee6;color:var(--muted);font-size:12px}
+@media(max-width:760px){.family-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.family-gallery-caption{padding:9px}}
+@media(max-width:380px){.family-gallery-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1485,6 +1498,7 @@ function canDelete(table) {
 const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'], ['aktivasi-push','♧','Aktivasi Notifikasi'],
   ['dashboard','⌂','Beranda'],
   ['kalender','▦','Kalender Kegiatan'],
+  ['galeri','▧','Foto Dokumentasi'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
   ['riwayat-iuran','▤','Riwayat Iuran'],
@@ -1939,6 +1953,11 @@ function renderView() {
   if (active === 'kalender') {
     v.innerHTML = '<div class="card"><div class="row"><h2>▦ KALENDER KEGIATAN KELUARGA</h2><button type="button" class="secondary" onclick="renderCalendar(\'calendarView\')">Muat ulang</button></div><p class="muted">Jadwal kegiatan keluarga yang sudah dicatat pengurus.</p><div id="calendarView">Memuat kalender kegiatan...</div></div>';
     renderCalendar('calendarView');
+    return;
+  }
+
+  if (active === 'galeri') {
+    renderFamilyGallery();
     return;
   }
 
@@ -3339,6 +3358,113 @@ function openFamilyWhatsApp() {
   window.open(inviteUrl,'_blank','noopener');}
 
 
+
+/* =====================================
+   FOTO DOKUMENTASI KELUARGA
+   Galeri privat untuk anggota yang sudah login.
+   Unggah dan hapus hanya untuk pengurus berwenang.
+===================================== */
+async function renderFamilyGallery() {
+  const v = $('view');
+  const manager = canManageGeneral();
+  v.innerHTML = `
+    <div class="card">
+      <div class="row">
+        <div><h2>▧ FOTO DOKUMENTASI KELUARGA</h2><p class="muted">Album kenangan kegiatan dan kebersamaan keluarga besar.</p></div>
+        <button type="button" class="secondary" onclick="loadFamilyGallery()">Muat ulang</button>
+      </div>
+      ${manager ? `
+        <form id="familyGalleryUploadForm" onsubmit="uploadFamilyPhoto(event)" class="gallery-upload-form">
+          <div class="grid">
+            <div><label>Foto dokumentasi</label><input id="familyGalleryFile" type="file" accept="image/jpeg,image/png,image/webp" required></div>
+            <div><label>Tanggal dokumentasi (opsional)</label><input id="familyGalleryDate" type="date"></div>
+          </div>
+          <label>Keterangan foto</label><input id="familyGalleryCaption" maxlength="140" required placeholder="Contoh: Upacara keluarga di Pura">
+          <button type="submit">＋ Unggah Foto</button>
+          <p class="muted">Format JPG, PNG, atau WEBP. Maksimal 8 MB per foto.</p>
+        </form>
+      ` : '<p class="muted">Anda dapat melihat seluruh foto dokumentasi keluarga. Pengunggahan dikelola oleh pengurus.</p>'}
+    </div>
+    <div class="card"><div id="familyGalleryGrid" class="family-gallery-grid"><div class="muted">Memuat foto dokumentasi...</div></div></div>
+  `;
+  await loadFamilyGallery();
+}
+
+async function loadFamilyGallery() {
+  const box = $('familyGalleryGrid');
+  if (!box || !sb) return;
+  box.innerHTML = '<div class="muted">Memuat foto dokumentasi...</div>';
+  const {data,error} = await sb.from('gallery')
+    .select('id,caption,storage_path,taken_at,created_at')
+    .order('taken_at',{ascending:false,nullsFirst:false})
+    .order('created_at',{ascending:false})
+    .limit(300);
+  if (error) {
+    box.innerHTML = '<div class="muted">Foto belum dapat dimuat. Periksa akses akun dan koneksi.</div>';
+    console.warn('Galeri keluarga gagal dimuat:',error);
+    return;
+  }
+  if (!data?.length) {
+    box.innerHTML = '<div class="muted">Belum ada foto dokumentasi. Pengurus dapat mulai mengunggah foto keluarga.</div>';
+    return;
+  }
+  const signed = await Promise.all(data.map(async item => {
+    const {data:urlData,error:urlError} = await sb.storage.from('family-documentation').createSignedUrl(item.storage_path,3600);
+    return {...item,url:urlError ? null : urlData?.signedUrl};
+  }));
+  box.innerHTML = signed.map(item => `
+    <article class="family-gallery-item">
+      ${item.url ? '<img src="'+esc(item.url)+'" alt="'+esc(item.caption)+'" loading="lazy">' : '<div class="gallery-image-unavailable">Foto tidak dapat ditampilkan</div>'}
+      <div class="family-gallery-caption"><strong>${esc(item.caption)}</strong><small>${item.taken_at ? esc(calendarFormatDate(item.taken_at)) : 'Tanggal tidak dicantumkan'}</small>
+      ${canManageGeneral() ? '<button type="button" class="secondary gallery-delete" onclick="deleteFamilyPhoto(\''+esc(item.id)+'\')">Hapus foto</button>' : ''}</div>
+    </article>
+  `).join('');
+}
+
+async function uploadFamilyPhoto(event) {
+  event.preventDefault();
+  if (!canManageGeneral() || !session?.user?.id) { toast('Hanya pengurus berwenang yang dapat mengunggah foto.'); return; }
+  const file = $('familyGalleryFile')?.files?.[0];
+  const caption = $('familyGalleryCaption')?.value.trim();
+  const takenAt = $('familyGalleryDate')?.value || null;
+  const allowed = ['image/jpeg','image/png','image/webp'];
+  if (!file || !caption || caption.length > 140) { toast('Pilih foto dan isi keterangannya.'); return; }
+  if (!allowed.includes(file.type) || file.size > 8*1024*1024) { toast('Gunakan JPG, PNG, atau WEBP dengan ukuran maksimal 8 MB.'); return; }
+  const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+  const path = session.user.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,10)+'.'+ext;
+  const submit = event.submitter;
+  if (submit) { submit.disabled = true; submit.textContent = 'Mengunggah...'; }
+  const {error:uploadError} = await sb.storage.from('family-documentation').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+  if (uploadError) {
+    if (submit) { submit.disabled = false; submit.textContent = '＋ Unggah Foto'; }
+    toast('Foto gagal diunggah: '+uploadError.message);
+    return;
+  }
+  const {error:insertError} = await sb.from('gallery').insert({
+    caption, storage_path:path, taken_at:takenAt, created_by:session.user.id
+  });
+  if (insertError) {
+    await sb.storage.from('family-documentation').remove([path]);
+    if (submit) { submit.disabled = false; submit.textContent = '＋ Unggah Foto'; }
+    toast('Data foto gagal disimpan: '+insertError.message);
+    return;
+  }
+  toast('Foto dokumentasi berhasil diunggah.');
+  event.target.reset();
+  await loadFamilyGallery();
+}
+
+async function deleteFamilyPhoto(id) {
+  if (!canManageGeneral()) { toast('Akses menghapus foto ditolak.'); return; }
+  if (!confirm('Hapus foto dokumentasi ini?')) return;
+  const {data,error:readError} = await sb.from('gallery').select('storage_path').eq('id',id).single();
+  if (readError || !data) { toast('Data foto tidak ditemukan.'); return; }
+  const {error:deleteError} = await sb.from('gallery').delete().eq('id',id);
+  if (deleteError) { toast('Foto gagal dihapus: '+deleteError.message); return; }
+  const {error:storageError} = await sb.storage.from('family-documentation').remove([data.storage_path]);
+  toast(storageError ? 'Data foto dihapus, tetapi berkas penyimpanan perlu dibersihkan pengurus.' : 'Foto dokumentasi berhasil dihapus.');
+  await loadFamilyGallery();
+}
 
 /* =====================================
    KALENDER KEGIATAN KELUARGA
