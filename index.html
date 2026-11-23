@@ -1232,12 +1232,27 @@ header.heritage-header.image-banner {
   top: 0 !important;
   z-index: 1000 !important;
 }
+
+/* Header baru: tampilkan gambar asli secara utuh tanpa efek visual tambahan */
+header.heritage-header.image-banner .site-header-banner{
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+header.heritage-header.image-banner:before,
+header.heritage-header.image-banner:after{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+  animation:none!important;
+}
+
 </style>
 </head>
 <body>
 
 <header class="heritage-header image-banner">
-  <img class="site-header-banner" src="20261122_095944.png" alt="SANGGAH GEDE PAN RENGEN">
+  <img class="site-header-banner" src="20261123_142033.png" alt="SANGGAH GEDE PAN RENGEN">
 </header>
 
 
