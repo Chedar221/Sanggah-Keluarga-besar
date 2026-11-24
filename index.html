@@ -2965,20 +2965,34 @@ async function loadRows(table) {
 async function loadHomepageBanners() {
   const area = $('homepageBannerArea');
   if (!area || !sb) return;
-  const result = await sb.from('homepage_banners').select('id,title,subtitle,image_url,is_active,sort_order').eq('is_active',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false});
-  if (result.error) { area.innerHTML='<div class="homepage-banner-empty">Banner belum dapat dimuat.</div>'; return; }
-  homepageBannerItems = result.data || [];
-  homepageBannerIndex = 0;
-  renderHomepageBanner();
-  if (homepageBannerTimer) clearInterval(homepageBannerTimer);
-  homepageBannerTimer = homepageBannerItems.length > 1 ? setInterval(function(){changeHomepageBanner(1);},5000) : null;
+  area.innerHTML='<div class="homepage-banner-empty">Memuat banner keluarga...</div>';
+  try {
+    const request = sb.from('homepage_banners').select('id,title,subtitle,image_url,is_active,sort_order').eq('is_active',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false});
+    const result = await Promise.race([
+      request,
+      new Promise(function(resolve){setTimeout(function(){resolve({error:{message:'Koneksi terlalu lama'}});},12000);})
+    ]);
+    if (result.error) {
+      area.innerHTML='<div class="homepage-banner-empty">Banner belum dapat dimuat. <button type="button" class="secondary" onclick="loadHomepageBanners()">Coba lagi</button></div>';
+      console.warn('Homepage banner load:',result.error.message);
+      return;
+    }
+    homepageBannerItems = (result.data || []).filter(function(item){return !!item.image_url;});
+    homepageBannerIndex = 0;
+    renderHomepageBanner();
+    if (homepageBannerTimer) clearInterval(homepageBannerTimer);
+    homepageBannerTimer = homepageBannerItems.length > 1 ? setInterval(function(){changeHomepageBanner(1);},5000) : null;
+  } catch (error) {
+    console.error('Homepage banner error:',error);
+    area.innerHTML='<div class="homepage-banner-empty">Banner gagal dimuat. <button type="button" class="secondary" onclick="loadHomepageBanners()">Coba lagi</button></div>';
+  }
 }
 function renderHomepageBanner() {
   const area=$('homepageBannerArea');
   if(!area)return;
   if(!homepageBannerItems.length){area.innerHTML='';return;}
   const item=homepageBannerItems[homepageBannerIndex];
-  let html='<div class="homepage-banner-shell"><img class="homepage-banner-image" src="'+esc(item.image_url)+'" alt="'+esc(item.title||'Banner keluarga')+'" loading="lazy">';
+  let html='<div class="homepage-banner-shell"><img class="homepage-banner-image" src="'+esc(item.image_url)+'" alt="'+esc(item.title||'Banner keluarga')+'" loading="eager" fetchpriority="high" onerror="this.parentElement.innerHTML=\'<div class=&quot;homepage-banner-empty&quot;>Gambar banner tidak bisa dibuka. Periksa file gambar di penyimpanan.</div>\'">';
   if(item.title||item.subtitle) html+='<div class="homepage-banner-caption">'+(item.title?'<strong>'+esc(item.title)+'</strong>':'')+(item.subtitle?'<span>'+esc(item.subtitle)+'</span>':'')+'</div>';
   if(homepageBannerItems.length>1){
     html+='<button class="homepage-banner-arrow prev" onclick="changeHomepageBanner(-1)" aria-label="Banner sebelumnya">‹</button><button class="homepage-banner-arrow next" onclick="changeHomepageBanner(1)" aria-label="Banner berikutnya">›</button><div class="homepage-banner-dots">';
