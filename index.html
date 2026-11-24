@@ -214,6 +214,18 @@ footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
 #publicPage>.card{margin-bottom:10px}
 header{padding:17px 18px 8px}
 header .welcome{margin-top:14px;font-size:21px}
+/* POPUP DATA ANGGOTA DAN RIWAYAT KAS */
+.public-data-modal{position:fixed;inset:0;z-index:1210;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(5,22,17,.72);backdrop-filter:blur(5px)}
+.public-data-modal.open{display:flex}
+.public-data-modal-card{width:min(100%,680px);max-height:calc(100dvh - 28px);display:flex;flex-direction:column;overflow:hidden;background:#fbfcfa;border:1px solid #dfe8df;border-radius:20px;box-shadow:0 24px 80px #0004}
+.public-data-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:17px 18px 14px;background:#123d2d;color:#fff;flex:0 0 auto}
+.public-data-modal-head h2{margin:3px 0 2px;font-size:18px;letter-spacing:.04em}
+.public-data-modal-head p{margin:0;color:#d5e5da;font-size:12px}
+.public-data-modal-content{padding:14px;overflow-y:auto;overscroll-behavior:contain}
+.public-data-modal-content>div>details{margin:0}
+.public-data-modal-content #publicMembers,.public-data-modal-content #publicTransactions{max-height:65vh;overflow-y:auto}
+@media(max-width:480px){.public-data-modal{padding:9px}.public-data-modal-card{max-height:calc(100dvh - 18px);border-radius:16px}.public-data-modal-content{padding:10px}}
+
 /* CHAT PUBLIK BERANDA */
 .public-chat-modal{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(5,22,17,.68);backdrop-filter:blur(5px)}
 .public-chat-modal.open{display:flex}
@@ -1372,8 +1384,8 @@ header.heritage-header.image-banner:after{
   </div>
 
   <div class="quick-access" aria-label="Akses cepat data keluarga dan kas">
-    <button type="button" onclick="openPublicSection('publicMembersCard')">♙ DATA ANGGOTA</button>
-    <button type="button" onclick="openPublicSection('publicTransactionsCard')">▤ RIWAYAT KAS</button>
+    <button type="button" onclick="openPublicDataModal('members')">♙ DATA ANGGOTA</button>
+    <button type="button" onclick="openPublicDataModal('cash')">▤ RIWAYAT KAS</button>
   </div>
 
   <div class="card committee-card" id="publicCommitteeCard">
@@ -1525,6 +1537,19 @@ header.heritage-header.image-banner:after{
 </footer>
 
 <div id="toast"></div>
+
+<div id="publicDataModal" class="public-data-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="publicDataModalTitle" onclick="if(event.target===this)closePublicDataModal()">
+  <section class="public-data-modal-card">
+    <header class="public-data-modal-head">
+      <div><div class="public-chat-kicker">SANGGAH GEDE PAN RENGEN</div><h2 id="publicDataModalTitle">DATA ANGGOTA</h2><p id="publicDataModalSubtitle">Daftar anggota keluarga</p></div>
+      <button type="button" class="public-chat-close" aria-label="Tutup" onclick="closePublicDataModal()">×</button>
+    </header>
+    <div class="public-data-modal-content">
+      <div id="publicMembersModalContent"></div>
+      <div id="publicCashModalContent" class="hidden"></div>
+    </div>
+  </section>
+</div>
 
 <div id="pipilImageModal" class="pipil-modal" role="dialog" aria-modal="true" aria-labelledby="pipilModalTitle" onclick="if(event.target===this)closePipilImage()">
   <div class="pipil-modal-card">
@@ -1704,6 +1729,42 @@ function connectSupabase() {
 /* =====================================
    LOGIN DAN SESSION
 ===================================== */
+
+function mountPublicDataModal() {
+  const members = $('publicMembersCard');
+  const cash = $('publicTransactionsCard');
+  const membersTarget = $('publicMembersModalContent');
+  const cashTarget = $('publicCashModalContent');
+  if (members && membersTarget && members.parentElement !== membersTarget) membersTarget.appendChild(members);
+  if (cash && cashTarget && cash.parentElement !== cashTarget) cashTarget.appendChild(cash);
+}
+
+function openPublicDataModal(type) {
+  const modal = $('publicDataModal');
+  const membersWrap = $('publicMembersModalContent');
+  const cashWrap = $('publicCashModalContent');
+  const isMembers = type === 'members';
+  if (!modal || !membersWrap || !cashWrap) return;
+  membersWrap.classList.toggle('hidden', !isMembers);
+  cashWrap.classList.toggle('hidden', isMembers);
+  $('publicDataModalTitle').textContent = isMembers ? 'DATA ANGGOTA' : 'RIWAYAT KAS';
+  $('publicDataModalSubtitle').textContent = isMembers ? 'Daftar anggota keluarga' : 'Catatan pemasukan dan pengeluaran kas';
+  const details = isMembers ? $('publicMembersCard') : $('publicTransactionsCard');
+  if (details) details.open = true;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  if (isMembers) void loadPublicMembers();
+  else void loadPublicFinance();
+}
+
+function closePublicDataModal() {
+  const modal = $('publicDataModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
 
 function openPublicSection(id) {
   const section = document.getElementById(id);
@@ -4614,6 +4675,8 @@ async function initializeApp() {
     showPublic();
     return;
   }
+
+  mountPublicDataModal();
 
   // Tampilkan halaman publik lebih dahulu agar layar tidak tertahan
   // jika salah satu permintaan data Supabase lambat atau tidak merespons.
