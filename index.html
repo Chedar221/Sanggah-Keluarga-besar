@@ -133,6 +133,16 @@ label {font-size:12px;font-weight:650}
 .nav {display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
 .nav button {white-space:nowrap;background:#e9eee8;color:var(--green)}
 .nav button.active {background:var(--green);color:white}
+.quick-access{position:sticky;top:6px;z-index:30;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 12px;padding:9px;background:#f7f4eced;border:1px solid #e5e8e2;border-radius:14px;backdrop-filter:blur(10px)}
+.quick-access button{min-height:44px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 7px #183b2a12}
+.cash-history-list{max-height:65vh;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.cash-history-item{padding:12px 0;border-bottom:1px solid var(--line)}
+.cash-history-item:last-child{border-bottom:0}
+.cash-history-item .cash-history-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.cash-history-item .cash-history-amount{font-weight:800;white-space:nowrap}
+.cash-history-item .cash-in{color:#23734b}
+.cash-history-item .cash-out{color:#a83d35}
+@media(max-width:360px){.quick-access button{font-size:11px;padding:8px 4px}}
 footer {text-align:center;color:var(--muted);font-size:11px;padding:18px}
 #login {max-width:440px;margin:25px auto}
 
@@ -1460,6 +1470,10 @@ header.heritage-header.image-banner:after{
     </div>
   </div>
 
+  <div class="quick-access" aria-label="Akses cepat">
+    <button type="button" onclick="go('anggota')">♙ Data Anggota</button>
+    <button type="button" onclick="go('riwayat-kas')">▤ Riwayat Kas</button>
+  </div>
   <div class="nav" id="nav"></div>
   <div id="view"></div>
 </section>
@@ -1845,6 +1859,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
   ['kartu-anggota','▣','Kartu Anggota'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
+  ['riwayat-kas','▤','Riwayat Kas'],
   ['riwayat-iuran','▤','Riwayat Iuran'],
   ['punia','✧','Dana Punia'],
   ['upacara','◷','Upacara'],
@@ -2541,6 +2556,15 @@ function renderView() {
 
     loadStats();
     renderPipilRotation('pipilDashboardContent', true);
+    return;
+  }
+
+  if (active === 'riwayat-kas') {
+    if (!canFinance()) {
+      v.innerHTML = '<div class="card">Akses riwayat kas terbatas untuk Ketua, Wakil Ketua, dan Bendahara.</div>';
+      return;
+    }
+    renderCashHistory();
     return;
   }
 
@@ -3620,6 +3644,70 @@ function renderFinance() {
   $('txDate').value = new Date().toISOString().slice(0,10);
   loadRows('transactions');
   loadFinanceSummary();
+}
+
+async function renderCashHistory() {
+  const view = $('view');
+  view.innerHTML = `
+    <div class="card">
+      <div class="row">
+        <h2>RIWAYAT KAS KELUARGA</h2>
+        <button type="button" class="secondary" onclick="renderCashHistory()">Muat ulang</button>
+      </div>
+      <p class="muted">Catatan pemasukan dan pengeluaran kas, diurutkan dari tanggal terbaru.</p>
+      <div id="cashHistorySummary" class="grid" style="margin:12px 0">
+        <div><div class="muted">Pemasukan</div><div class="stat">Memuat...</div></div>
+        <div><div class="muted">Pengeluaran</div><div class="stat">Memuat...</div></div>
+        <div><div class="muted">Saldo</div><div class="stat">Memuat...</div></div>
+      </div>
+      <div id="cashHistoryRows" class="cash-history-list muted">Memuat riwayat kas...</div>
+    </div>
+    <div class="actions"><button type="button" class="secondary" onclick="go('keuangan')">Buka menu Keuangan</button></div>
+  `;
+
+  const summary = await sb.from('transactions').select('type,amount');
+  const target = $('cashHistorySummary');
+  if (summary.error) {
+    target.innerHTML = '<div class="muted">Ringkasan kas tidak dapat dimuat.</div>';
+  } else {
+    let income = 0, expense = 0;
+    (summary.data || []).forEach(row => {
+      if (row.type === 'pemasukan') income += Number(row.amount || 0);
+      else if (row.type === 'pengeluaran') expense += Number(row.amount || 0);
+    });
+    target.innerHTML = `
+      <div><div class="muted">Pemasukan</div><div class="stat">${rupiah(income)}</div></div>
+      <div><div class="muted">Pengeluaran</div><div class="stat">${rupiah(expense)}</div></div>
+      <div><div class="muted">Saldo</div><div class="stat">${rupiah(income-expense)}</div></div>
+    `;
+  }
+
+  const {data,error} = await sb.from('transactions')
+    .select('id,type,transaction_date,description,amount')
+    .order('transaction_date',{ascending:false})
+    .order('created_at',{ascending:false})
+    .limit(200);
+  const rows = $('cashHistoryRows');
+  if (error) {
+    rows.textContent = 'Riwayat kas gagal dimuat: ' + error.message;
+    return;
+  }
+  if (!data || !data.length) {
+    rows.textContent = 'Belum ada transaksi kas.';
+    return;
+  }
+  rows.innerHTML = data.map(item => {
+    const isIncome = item.type === 'pemasukan';
+    const date = item.transaction_date ? new Date(item.transaction_date + 'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : 'Tanggal tidak tersedia';
+    return `
+      <article class="cash-history-item">
+        <div class="cash-history-top">
+          <div><strong>${esc(item.description || 'Tanpa keterangan')}</strong><div class="muted">${esc(date)} · ${isIncome ? 'Pemasukan' : 'Pengeluaran'}</div></div>
+          <div class="cash-history-amount ${isIncome ? 'cash-in' : 'cash-out'}">${isIncome ? '+' : '−'} ${rupiah(item.amount)}</div>
+        </div>
+      </article>
+    `;
+  }).join('');
 }
 
 async function addTransaction(event) {
