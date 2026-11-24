@@ -3821,11 +3821,10 @@ function memberCardCategory(member) {
 }
 
 async function getSequentialMemberCardNumber(memberId) {
-  // Nomor mengikuti urutan pendaftaran awal (created_at), lalu UUID sebagai penentu jika waktunya sama.
-  const {data,error} = await sb.from('members').select('id').order('created_at',{ascending:true,nullsFirst:false}).order('id',{ascending:true}).limit(1000);
-  if (error || !data) return null;
-  const index = data.findIndex(row => row.id === memberId);
-  return index < 0 ? null : index + 1;
+  // Nomor disimpan permanen di database agar tidak berubah ketika data anggota bertambah.
+  const {data,error} = await sb.from('members').select('member_number').eq('id',memberId).maybeSingle();
+  if (error || !data || data.member_number == null) return null;
+  return Number(data.member_number);
 }
 
 async function renderMemberCardPage() {
