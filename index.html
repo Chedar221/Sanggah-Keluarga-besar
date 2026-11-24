@@ -3977,6 +3977,15 @@ async function shareMemberCardImage() {
     const exportCard = card.cloneNode(true);
     const exportLogo = exportCard.querySelector('.member-card-logo');
     exportLogo.src = logoPng;
+    // Tunggu browser selesai mendekode PNG logo baru sebelum html2canvas berjalan.
+    if (typeof exportLogo.decode === 'function') {
+      await exportLogo.decode();
+    } else if (!exportLogo.complete || !exportLogo.naturalWidth) {
+      await new Promise((resolve, reject) => {
+        exportLogo.onload = resolve;
+        exportLogo.onerror = () => reject(new Error('Logo gagal disiapkan untuk gambar kartu.'));
+      });
+    }
     exportCard.style.position = 'fixed';
     exportCard.style.left = '-10000px';
     exportCard.style.top = '0';
