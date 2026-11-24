@@ -3116,7 +3116,7 @@ const BUDA_CEMENG_PEOPLE = ['WAYAN NUSADA','PUTU DODY PUTRAWAN','WAYAN SUDIASA /
 const BUDA_CEMENG_NAMES = ['Ukir','Warigadean','Langkir','Merakih','Menail','Kelawu'];
 function budaCemengDateLabel(value) {
   if (!value) return 'Belum ditentukan';
-  return new Date(value + 'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Makassar'});
+  return new Date(value + 'T00:00:00Z').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
 }
 function shiftBudaCemengDate(anchorDate, occurrence) {
   const date = new Date(anchorDate + 'T00:00:00Z');
@@ -3128,7 +3128,7 @@ function getBudaCemengSchedule(anchorDate, todayValue) {
   const today = new Date(todayValue + 'T00:00:00Z');
   if (Number.isNaN(anchor.getTime())) return [];
   const elapsedDays = Math.floor((today-anchor)/86400000);
-  let occurrence = Math.max(0,Math.ceil(elapsedDays/35));
+  let occurrence = Math.max(1,Math.ceil(elapsedDays/35));
   const schedule = [];
   while (schedule.length < 6 && occurrence < 10000) {
     const nameIndex = occurrence % 6;
