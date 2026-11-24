@@ -1673,7 +1673,19 @@ function connectSupabase() {
    LOGIN DAN SESSION
 ===================================== */
 
+function withRequestTimeout(request, milliseconds, message) {
+  let timer;
+  return Promise.race([
+    Promise.resolve(request).catch(error => ({data:null,error})),
+    new Promise(resolve => {
+      timer = setTimeout(() => resolve({data:null,error:{message}}), milliseconds);
+    })
+  ]).finally(() => clearTimeout(timer));
+}
+
 async function signIn() {
+  const button = $('login')?.querySelector('button[onclick="signIn()"]');
+  if (button?.disabled) return;
   if (!sb) {
     showSetup();
     return;
@@ -1687,18 +1699,38 @@ async function signIn() {
     return;
   }
 
-  const { data, error } = await sb.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    toast(error.message);
-    return;
+  if (button) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.textContent = 'Memeriksa akun...';
   }
 
-  session = data.session;
-  await loadProfile();
+  try {
+    const result = await withRequestTimeout(
+      sb.auth.signInWithPassword({email,password}),
+      15000,
+      'Koneksi login terlalu lama. Periksa internet lalu coba lagi.'
+    );
+    if (result.error) {
+      toast('Login gagal: ' + result.error.message);
+      return;
+    }
+    session = result.data?.session || null;
+    if (!session) {
+      toast('Login belum menghasilkan sesi. Silakan coba lagi.');
+      return;
+    }
+    await loadProfile();
+  } catch (error) {
+    console.error('Login error:',error);
+    toast('Login gagal: ' + (error?.message || 'Terjadi kesalahan.'));
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = button.dataset.originalText || 'Masuk';
+      delete button.dataset.originalText;
+    }
+  }
 }
 
 async function signOut() {
@@ -1716,14 +1748,20 @@ async function signOut() {
 async function loadProfile() {
   if (!session || !sb) return;
 
-  const { data, error } = await sb
-    .from('profiles')
-    .select('full_name,role,member_id')
-    .eq('id', session.user.id)
-    .single();
+  const profileResult = await withRequestTimeout(
+    sb.from('profiles')
+      .select('full_name,role,member_id')
+      .eq('id', session.user.id)
+      .single(),
+    12000,
+    'Koneksi profil terlalu lama. Coba masuk kembali.'
+  );
+  const {data,error} = profileResult;
 
   if (error || !data) {
-    toast('Akun belum disetujui pengurus atau profil belum aktif. Silakan tunggu persetujuan.');
+    toast(error?.message?.includes('terlalu lama')
+      ? error.message
+      : 'Akun belum disetujui pengurus atau profil belum aktif. Silakan tunggu persetujuan.');
     $('app').classList.add('hidden');
     showLogin();
     return;
@@ -3103,11 +3141,17 @@ async function renderPipilRotation(targetId) {
   const target = $(targetId);
   if (!target || !sb) return;
   target.textContent = 'Memuat giliran pipil...';
-  const {data,error} = await sb.from('pipil_rotation').select('round_no,rotation_date').eq('id',1).maybeSingle();
-  if (error || !data) {
-    target.textContent = 'Data giliran pipil belum tersedia. Hubungi pengurus.';
-    return;
-  }
+  try {
+    const result = await withRequestTimeout(
+      sb.from('pipil_rotation').select('round_no,rotation_date').eq('id',1).maybeSingle(),
+      12000,
+      'Koneksi Giliran Pipil terlalu lama. Tekan muat ulang halaman untuk mencoba lagi.'
+    );
+    const {data,error} = result;
+    if (error || !data) {
+      target.textContent = error?.message || 'Data giliran pipil belum tersedia. Hubungi pengurus.';
+      return;
+    }
   const round = Math.max(1,Number(data.round_no || 1));
   const people = PIPIL_PEOPLE.map(p => ({name:p.name,number:((p.base + round - 2) % 6) + 1})).sort((a,b)=>a.number-b.number);
   let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
@@ -3117,6 +3161,10 @@ async function renderPipilRotation(targetId) {
     html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
   }
   target.innerHTML = html;
+  } catch (error) {
+    console.error('Giliran Pipil error:',error);
+    target.textContent = 'Giliran Pipil gagal dimuat: ' + (error?.message || 'Terjadi kesalahan.');
+  }
 }
 
 async function savePipilDate() {
