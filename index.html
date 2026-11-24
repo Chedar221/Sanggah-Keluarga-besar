@@ -1326,6 +1326,17 @@ header.heritage-header.image-banner:after{
 }
 
 
+
+/* MENU CEPAT BERANDA: akses anggota dan riwayat kas tanpa scroll panjang */
+.homepage-family-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:1160px;margin:12px auto 18px}
+.homepage-family-shortcut{display:flex;align-items:center;gap:10px;min-width:0;min-height:76px;padding:12px;background:linear-gradient(135deg,#fffdf5,#f1f7ec);border:1px solid #dce8d8;border-radius:15px;color:#174c2d;text-align:left;box-shadow:0 3px 10px #153c240c}
+.homepage-family-shortcut .homepage-shortcut-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:12px;background:#e7f0e3;font-size:21px}
+.homepage-family-shortcut strong{display:block;font-size:11px;letter-spacing:.25px;line-height:1.3}
+.homepage-family-shortcut small{display:block;margin-top:4px;color:#718078;font-size:10px;font-weight:500;line-height:1.3}
+.homepage-family-shortcut .homepage-shortcut-arrow{margin-left:auto;color:#bd941d;font-size:24px;font-weight:500}
+#publicMembersCard,#publicTransactionsCard{scroll-margin-top:14px}
+@media(max-width:360px){.homepage-family-shortcuts{gap:7px}.homepage-family-shortcut{padding:9px;gap:7px}.homepage-family-shortcut .homepage-shortcut-icon{flex-basis:32px;width:32px;height:32px;font-size:18px}.homepage-family-shortcut strong{font-size:10px}}
+
 </style>
 </head>
 <body>
@@ -1353,6 +1364,19 @@ header.heritage-header.image-banner:after{
     <button class="chat-entry-button" onclick="showLogin()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg> MASUK</button>
     <button class="chat-entry-button" onclick="showRegister()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h3a4.5 4.5 0 0 1 4.5 4.5V20M19 8v6M16 11h6"/></svg> DAFTAR</button>
   </div>
+
+  <nav class="homepage-family-shortcuts" aria-label="Menu cepat keluarga">
+    <button type="button" class="homepage-family-shortcut" onclick="openHomepageSection('publicMembersCard')">
+      <span class="homepage-shortcut-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+      <span><strong>DAFTAR ANGGOTA</strong><small>Lihat daftar keluarga</small></span>
+      <span class="homepage-shortcut-arrow" aria-hidden="true">›</span>
+    </button>
+    <button type="button" class="homepage-family-shortcut" onclick="openHomepageSection('publicTransactionsCard')">
+      <span class="homepage-shortcut-icon" aria-hidden="true">💰</span>
+      <span><strong>RIWAYAT KAS</strong><small>Lihat catatan kas keluarga</small></span>
+      <span class="homepage-shortcut-arrow" aria-hidden="true">›</span>
+    </button>
+  </nav>
 
   <div class="card committee-card" id="publicCommitteeCard">
     <h2>👥 SUSUNAN PENGURUS</h2>
@@ -1568,6 +1592,13 @@ function roleName(role) {
     koordinator:'Koordinator',
     anggota:'Anggota Keluarga'
   })[role] || role;
+}
+
+function openHomepageSection(id) {
+  const target = $(id);
+  if (!target) return;
+  if (target.tagName === 'DETAILS') target.open = true;
+  target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function showPublic() {
