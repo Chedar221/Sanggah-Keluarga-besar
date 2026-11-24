@@ -2237,11 +2237,17 @@ async function openPaymentReceipt(kind,id) {
     ];
     if (period) rows.push(['PERIODE',period]);
     if (note) rows.push(['CATATAN',note]);
-    let estimated = 360;
-    rows.forEach(([label,value]) => {
-      estimated += 34 + measureWrap(value,'28px Arial',contentWidth).length * 36;
-    });
-    const height = estimated + 170;
+    // Hitung tinggi berdasarkan seluruh baris yang benar-benar akan digambar.
+    // Ini mencegah bagian bawah nota terpotong saat keterangan panjang.
+    const wrappedRows = rows.map(([label,value]) => ({
+      label,
+      value,
+      lines: measureWrap(value,'28px Arial',contentWidth)
+    }));
+    const headerHeight = 56 + (logo.complete && logo.naturalWidth ? 132 : 0) + 38 + 32 + 34;
+    const detailHeight = wrappedRows.reduce((sum,row) => sum + 30 + row.lines.length * 36 + 12, 0);
+    const footerHeight = 42 + 54 + 48 + 32 + 40 + 70;
+    const height = Math.ceil(headerHeight + detailHeight + footerHeight);
     canvas.width = width;
     canvas.height = height;
     ctx.fillStyle = '#fff';
@@ -2265,12 +2271,11 @@ async function openPaymentReceipt(kind,id) {
     ctx.setLineDash([]);
     y += 34;
     ctx.textAlign = 'left';
-    rows.forEach(([label,value]) => {
+    wrappedRows.forEach(({label,lines}) => {
       ctx.font = 'bold 21px Arial';
       ctx.fillText(label,margin,y);
       y += 30;
       ctx.font = '28px Arial';
-      const lines = measureWrap(value,'28px Arial',contentWidth);
       lines.forEach(line => { ctx.fillText(line,margin,y); y += 36; });
       y += 12;
     });
