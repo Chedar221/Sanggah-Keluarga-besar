@@ -2520,7 +2520,7 @@ function renderView() {
     `;
 
     loadStats();
-    renderPipilRotation('pipilDashboardContent');
+    renderPipilRotation('pipilDashboardContent', true);
     return;
   }
 
@@ -3141,7 +3141,7 @@ function formatPipilDate(value) {
   return new Date(value + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
 }
 
-async function renderPipilRotation(targetId) {
+async function renderPipilRotation(targetId, showAdminControls = false) {
   const target = $(targetId);
   if (!target) return;
   if (!sb) {
@@ -3165,7 +3165,7 @@ async function renderPipilRotation(targetId) {
   let html = '<div class="muted" style="margin-bottom:8px">Tanggal: <b>'+esc(formatPipilDate(data.rotation_date))+'</b> · Putaran ke-'+round+'</div><div style="display:grid;gap:7px">';
   html += people.map(p => '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff"><span style="font-size:13px;font-weight:600">'+esc(p.name)+'</span><button type="button" class="pipil-number-button" onclick="openPipilImage('+p.number+')" aria-label="Lihat gambar Pipil '+p.number+'">PIPIL : '+p.number+'　⌕</button></div>').join('');
   html += '</div>';
-  if (isPipilOwner()) {
+  if (showAdminControls && isPipilOwner()) {
     html += '<div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px"><label for="pipilDate">Ubah tanggal giliran (khusus Agus)</label><input id="pipilDate" type="date" value="'+esc(data.rotation_date || '')+'"><div class="actions"><button class="secondary" onclick="savePipilDate()">Simpan Tanggal</button><button onclick="advancePipilRound()">Putaran Selesai — Lanjut</button></div><p class="muted" style="margin:8px 0 0">Hanya akun Agus yang dapat mengubah tanggal atau memajukan putaran.</p></div>';
   }
   target.innerHTML = html;
