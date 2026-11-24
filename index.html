@@ -3001,7 +3001,11 @@ async function loadRows(table) {
 
 async function loadHomepageBanners() {
   const area = $('homepageBannerArea');
-  if (!area || !sb) return;
+  if (!area) return;
+  if (!sb) {
+    area.innerHTML='<div class="homepage-banner-empty">Layanan data belum tersambung. Periksa koneksi lalu muat ulang halaman.</div>';
+    return;
+  }
   area.innerHTML='<div class="homepage-banner-empty">Memuat banner keluarga...</div>';
   try {
     const request = sb.from('homepage_banners').select('id,title,subtitle,image_url,is_active,sort_order').eq('is_active',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false});
@@ -3138,7 +3142,11 @@ function formatPipilDate(value) {
 
 async function renderPipilRotation(targetId) {
   const target = $(targetId);
-  if (!target || !sb) return;
+  if (!target) return;
+  if (!sb) {
+    target.textContent = 'Layanan data belum tersambung. Periksa koneksi lalu muat ulang halaman.';
+    return;
+  }
   target.textContent = 'Memuat giliran pipil...';
   try {
     const result = await withRequestTimeout(
@@ -3193,33 +3201,40 @@ async function refreshPipilCards() {
 
 async function loadPublicAnnouncements() {
   const list = $('publicAnnouncements');
-  if (!list || !sb) return;
+  if (!list) return;
+  if (!sb) {
+    list.textContent = 'Layanan data belum tersambung. Periksa koneksi lalu muat ulang halaman.';
+    return;
+  }
 
   list.textContent = 'Memuat pengumuman...';
-
-  const { data, error } = await sb
-    .from('announcements')
-    .select('title,body,image_url,created_at')
-    .order('created_at', { ascending: false })
-    .limit(10);
-
-  if (error) {
-    list.textContent = 'Gagal memuat pengumuman: ' + error.message;
-    return;
+  try {
+    const result = await withRequestTimeout(
+      sb.from('announcements').select('title,body,image_url,created_at').order('created_at', { ascending: false }).limit(10),
+      12000,
+      'Koneksi pengumuman terlalu lama. Periksa internet lalu coba muat ulang.'
+    );
+    const {data,error} = result || {};
+    if (error) {
+      list.textContent = 'Pengumuman belum dapat dimuat. Periksa koneksi lalu coba muat ulang.';
+      console.warn('Pengumuman gagal dimuat:',error.message);
+      return;
+    }
+    if (!data || !data.length) {
+      list.textContent = 'Belum ada pengumuman.';
+      return;
+    }
+    list.innerHTML = data.map(item => `
+      <div class="listitem">
+        <b>${esc(item.title || 'Pengumuman')}</b>
+        <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
+        <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
+      </div>
+    `).join('');
+  } catch(error) {
+    console.warn('Pengumuman gagal dimuat:',error);
+    list.textContent = 'Pengumuman gagal dimuat. Periksa koneksi lalu coba lagi.';
   }
-
-  if (!data || !data.length) {
-    list.textContent = 'Belum ada pengumuman.';
-    return;
-  }
-
-  list.innerHTML = data.map(item => `
-    <div class="listitem">
-      <b>${esc(item.title || 'Pengumuman')}</b>
-      <div class="muted" style="white-space:pre-wrap;margin-top:5px">${esc(item.body || '')}</div>
-      <div class="muted" style="margin-top:5px">${esc(item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '')}</div>
-    </div>
-  `).join('');
 }
 
 /* =====================================
@@ -4046,21 +4061,31 @@ function calendarFormatDate(value, options={day:'numeric',month:'long',year:'num
 }
 async function renderCalendar(targetId) {
   const target=$(targetId);
-  if(!target || !sb) return;
-  target.innerHTML='<div class="calendar-empty">Memuat jadwal kegiatan...</div>';
-  const [eventResult,ngayahResult]=await Promise.all([
-    sb.from('events').select('id,title,event_date,location').not('event_date','is',null).order('event_date',{ascending:true}).limit(500),
-    sb.from('ngayah').select('id,task,event_date').not('event_date','is',null).order('event_date',{ascending:true}).limit(500)
-  ]);
-  if(eventResult.error || ngayahResult.error) {
-    target.innerHTML='<div class="calendar-empty">Kalender belum dapat dimuat. Periksa koneksi data kegiatan.</div>';
-    console.warn('Kalender gagal dimuat:',eventResult.error||ngayahResult.error);
+  if(!target) return;
+  if(!sb) {
+    target.innerHTML='<div class="calendar-empty">Layanan data belum tersambung. Periksa koneksi lalu muat ulang halaman.</div>';
     return;
   }
-  const eventRows=(eventResult.data||[]).map(e=>({...e,calendarType:'Kegiatan'}));
-  const ngayahRows=(ngayahResult.data||[]).map(n=>({id:'ngayah-'+n.id,title:n.task,event_date:n.event_date,location:null,calendarType:'Ngayah'}));
-  calendarCachedEvents=[...eventRows,...ngayahRows].sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
-  paintCalendar(targetId);
+  target.innerHTML='<div class="calendar-empty">Memuat jadwal kegiatan...</div>';
+  try {
+    const results=await withRequestTimeout(Promise.all([
+      sb.from('events').select('id,title,event_date,location').not('event_date','is',null).order('event_date',{ascending:true}).limit(500),
+      sb.from('ngayah').select('id,task,event_date').not('event_date','is',null).order('event_date',{ascending:true}).limit(500)
+    ]),12000,'Koneksi kalender terlalu lama. Periksa internet lalu coba muat ulang.');
+    const [eventResult,ngayahResult]=results;
+    if(!eventResult || !ngayahResult || eventResult.error || ngayahResult.error) {
+      target.innerHTML='<div class="calendar-empty">Kalender belum dapat dimuat. Periksa koneksi data kegiatan lalu coba muat ulang.</div>';
+      console.warn('Kalender gagal dimuat:',eventResult?.error||ngayahResult?.error||'Permintaan data melewati batas waktu');
+      return;
+    }
+    const eventRows=(eventResult.data||[]).map(e=>({...e,calendarType:'Kegiatan'}));
+    const ngayahRows=(ngayahResult.data||[]).map(n=>({id:'ngayah-'+n.id,title:n.task,event_date:n.event_date,location:null,calendarType:'Ngayah'}));
+    calendarCachedEvents=[...eventRows,...ngayahRows].sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
+    paintCalendar(targetId);
+  } catch(error) {
+    console.warn('Kalender gagal dimuat:',error);
+    target.innerHTML='<div class="calendar-empty">Kalender gagal dimuat. Periksa koneksi lalu coba lagi.</div>';
+  }
 }
 function paintCalendar(targetId) {
   const target=$(targetId); if(!target)return;
