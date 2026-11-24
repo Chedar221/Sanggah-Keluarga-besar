@@ -1253,6 +1253,57 @@ header.heritage-header.image-banner:after{
   animation:none!important;
 }
 
+
+/* KARTU ANGGOTA DIGITAL */
+.member-card-page-intro{margin:5px 0 14px}
+.member-card-controls{display:flex;gap:9px;align-items:end;flex-wrap:wrap}
+.member-card-controls>div{flex:1 1 220px}
+.member-card-controls label{display:block}
+.member-card-controls select{margin-bottom:0}
+.member-id-card{position:relative;overflow:hidden;width:min(100%,760px);aspect-ratio:1.586/1;margin:14px auto 12px;padding:clamp(16px,3.2vw,28px);border-radius:22px;color:#fff;background:radial-gradient(circle at 88% 15%,#d9b84b35 0 12%,transparent 35%),linear-gradient(125deg,#063b24 0%,#08713a 58%,#123c2c 100%);box-shadow:0 12px 30px #123d282b;border:1px solid #d6b64d;display:flex;flex-direction:column;justify-content:space-between}
+.member-id-card:before{content:"";position:absolute;inset:8px;border:1px solid #e6c96a88;border-radius:16px;pointer-events:none}
+.member-card-top,.member-card-main,.member-card-bottom{position:relative;z-index:1}
+.member-card-top{display:flex;align-items:center;gap:10px}
+.member-card-logo{width:clamp(36px,7vw,54px);height:clamp(36px,7vw,54px);object-fit:contain;border-radius:50%;background:#fff1;padding:3px}
+.member-card-brand{min-width:0;flex:1}
+.member-card-brand strong{display:block;font:700 clamp(12px,2vw,19px) Georgia,serif;letter-spacing:.4px;color:#ffe08a}
+.member-card-brand small{display:block;margin-top:3px;font-size:clamp(7px,1.1vw,10px);letter-spacing:1.2px;color:#f2e9c8}
+.member-card-chip{padding:5px 9px;border:1px solid #f0d77d;border-radius:20px;color:#ffe08a;font-size:clamp(7px,1vw,9px);font-weight:800;letter-spacing:1px}
+.member-card-main{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:0}
+.member-card-details{min-width:0;flex:1}
+.member-card-kicker{font-size:clamp(7px,1vw,10px);letter-spacing:1.5px;color:#e9d68e;font-weight:800}
+.member-card-details h3{font:700 clamp(18px,3.3vw,29px) Georgia,serif;line-height:1.12;margin:7px 0 4px;color:#fff;overflow-wrap:anywhere}
+.member-card-details>p{font-size:clamp(9px,1.5vw,13px);color:#e1eadf;margin:0 0 12px}
+.member-card-fields{display:flex;gap:18px;flex-wrap:wrap}
+.member-card-fields small{display:block;color:#e7d28b;font-size:clamp(7px,1vw,9px);letter-spacing:1px;margin-bottom:4px}
+.member-card-fields b{font-size:clamp(9px,1.5vw,13px);color:#fff}
+.member-card-qr{flex:0 0 clamp(72px,15vw,116px);width:clamp(72px,15vw,116px);text-align:center;background:#fff;padding:6px;border-radius:10px}
+.member-card-qr img{display:block;width:100%;aspect-ratio:1;object-fit:contain}
+.member-card-qr small{display:block;color:#16442c;font-size:clamp(6px,.9vw,8px);font-weight:900;letter-spacing:.4px;margin-top:4px}
+.member-card-bottom{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #e8cf7a88;padding-top:8px;color:#f1dda0;font-size:clamp(6px,1vw,9px);font-weight:800;letter-spacing:.7px}
+.member-card-note{max-width:760px;margin:0 auto;color:var(--muted);font-size:11px;line-height:1.5}
+.member-card-verify-shell{max-width:620px;margin:8vh auto;padding:16px}
+.member-card-verify-panel{background:#fff;border:1px solid #dce7d9;border-radius:22px;padding:24px;box-shadow:0 12px 34px #173d2514;text-align:center}
+.member-card-verify-mark{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:50%;background:#e8f5e8;color:#16723b;font-size:28px;margin-bottom:12px}
+.member-card-verify-panel h1{font:700 23px Georgia,serif;color:#15532f;margin:0 0 8px}
+.member-card-verify-panel h2{font-size:19px;color:#173d2a;margin:18px 0 5px}
+.member-card-verify-panel p{font-size:13px;color:#66766b;line-height:1.55}
+.member-card-verify-details{margin-top:16px;padding:14px;background:#f4f8f1;border-radius:14px;text-align:left}
+.member-card-verify-details div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #e0e9dc;font-size:12px}
+.member-card-verify-details div:last-child{border-bottom:0}
+.member-card-verify-details span{color:#718078}
+.member-card-verify-details strong{text-align:right;color:#1c4e30}
+.member-card-verify-footer{margin-top:18px;font-size:10px;letter-spacing:1px;color:#9a7a23;font-weight:800}
+@media(max-width:430px){.member-id-card{border-radius:15px;padding:13px}.member-card-top{gap:7px}.member-card-fields{gap:9px}.member-card-bottom{letter-spacing:0}.member-card-verify-panel{padding:18px}}
+@media print{
+  @page{size:85.6mm 54mm;margin:0}
+  body{background:#fff!important}
+  body *{visibility:hidden!important}
+  #memberCardPrint,#memberCardPrint *{visibility:visible!important}
+  #memberCardPrint{position:fixed!important;left:0!important;top:0!important;width:85.6mm!important;height:54mm!important;aspect-ratio:auto!important;margin:0!important;padding:4mm!important;border-radius:0!important;box-shadow:none!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .no-print{display:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1716,6 +1767,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
   ['dashboard','⌂','Beranda'],
   ['kalender','▦','Kalender Kegiatan'],
   ['galeri','▧','Foto Dokumentasi'],
+  ['kartu-anggota','▣','Kartu Anggota'],
   ['anggota','♙','Anggota'],
   ['keuangan','Rp','Keuangan'],
   ['riwayat-iuran','▤','Riwayat Iuran'],
@@ -2175,6 +2227,11 @@ function renderView() {
 
   if (active === 'galeri') {
     renderFamilyGallery();
+    return;
+  }
+
+  if (active === 'kartu-anggota') {
+    renderMemberCardPage();
     return;
   }
 
@@ -3750,13 +3807,181 @@ function selectCalendarDate(dateKey,targetId) {
   paintCalendar(targetId);
 }
 
+
+/* =====================================
+   KARTU ANGGOTA DIGITAL
+   Kartu anggota memakai data anggota yang sudah ada.
+   QR hanya berisi tautan verifikasi dengan UUID anggota.
+===================================== */
+function memberCardCategory(member) {
+  const raw = String(member.member_type || member.member_category || '').toLowerCase();
+  if (raw === 'pengarep') return 'Anggota Pengarep';
+  if (raw === 'keluarga') return 'Anggota Keluarga';
+  return member.member_type || member.member_category || 'Anggota Keluarga';
+}
+
+async function renderMemberCardPage() {
+  const v = $('view');
+  if (!v || !sb) return;
+  const linkedId = profile?.member_id || '';
+
+  if (!canManageGeneral() && !linkedId) {
+    v.innerHTML = '<div class="card"><h2>▣ KARTU ANGGOTA DIGITAL</h2><p>Akun ini belum terhubung dengan data anggota keluarga. Hubungi pengurus agar akun Anda ditautkan ke data anggota yang benar.</p></div>';
+    return;
+  }
+
+  v.innerHTML = `
+    <div class="card">
+      <div class="row"><h2>▣ KARTU ANGGOTA DIGITAL</h2><span class="pill">Digital</span></div>
+      <p class="muted member-card-page-intro">Kartu identitas anggota keluarga dengan QR Code untuk memeriksa data keanggotaan.</p>
+      ${canManageGeneral() ? `
+        <div class="member-card-controls no-print">
+          <div><label for="memberCardSelect">Pilih anggota keluarga</label><select id="memberCardSelect"><option value="">Memuat daftar anggota...</option></select></div>
+          <button type="button" onclick="showSelectedMemberCard()">Tampilkan Kartu</button>
+        </div>
+      ` : ''}
+      <div id="memberCardDisplay"><p class="muted">Memuat kartu anggota...</p></div>
+    </div>
+  `;
+
+  if (canManageGeneral()) {
+    const picker = $('memberCardSelect');
+    const {data,error} = await sb.from('members').select('id,full_name').order('full_name',{ascending:true}).limit(1000);
+    if (error) {
+      picker.innerHTML = '<option value="">Daftar anggota gagal dimuat</option>';
+      $('memberCardDisplay').innerHTML = '<p class="muted">Kartu belum dapat dimuat: '+esc(error.message)+'</p>';
+      return;
+    }
+    picker.innerHTML = '<option value="">Pilih nama anggota</option>' + (data || []).map(m => '<option value="'+esc(m.id)+'">'+esc(m.full_name)+'</option>').join('');
+    if (linkedId && (data || []).some(m => m.id === linkedId)) {
+      picker.value = linkedId;
+      await renderMemberCardById(linkedId);
+    } else {
+      $('memberCardDisplay').innerHTML = '<div class="member-card-note">Pilih nama anggota untuk menampilkan kartu digitalnya.</div>';
+    }
+  } else {
+    await renderMemberCardById(linkedId);
+  }
+}
+
+async function showSelectedMemberCard() {
+  const id = $('memberCardSelect')?.value;
+  if (!id) { toast('Pilih nama anggota terlebih dahulu.'); return; }
+  await renderMemberCardById(id);
+}
+
+async function renderMemberCardById(id) {
+  const target = $('memberCardDisplay');
+  if (!target || !sb) return;
+  target.innerHTML = '<p class="muted">Menyiapkan kartu anggota...</p>';
+
+  // Akun non-pengurus hanya dapat membuka kartu yang tertaut pada profilnya.
+  if (!canManageGeneral() && id !== profile?.member_id) {
+    target.innerHTML = '<p class="muted">Akses kartu ini tidak tersedia untuk akun Anda.</p>';
+    return;
+  }
+
+  const {data:member,error} = await sb.from('members')
+    .select('id,full_name,family_name,relation,member_type,member_category,created_at')
+    .eq('id',id).maybeSingle();
+
+  if (error || !member) {
+    target.innerHTML = '<p class="muted">Data anggota tidak ditemukan atau tidak dapat dimuat.</p>';
+    return;
+  }
+
+  const cardCode = 'SGPR-' + String(member.id).replace(/-/g,'').slice(0,10).toUpperCase();
+  const verifyUrl = location.origin + '/?verifikasi-kartu=' + encodeURIComponent(member.id);
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=4&data=' + encodeURIComponent(verifyUrl);
+  const familyLabel = member.family_name || member.relation || 'Keluarga Besar Sanggah Gede Pan Rengen';
+
+  target.innerHTML = `
+    <div class="member-card-print-wrap">
+      <article class="member-id-card" id="memberCardPrint">
+        <div class="member-card-top">
+          <img class="member-card-logo" src="/logo-sanggah.svg" alt="Logo Sanggah Gede Pan Rengen">
+          <div class="member-card-brand"><strong>SANGGAH GEDE PAN RENGEN</strong><small>SATU KELUARGA, SATU TUJUAN</small></div>
+          <span class="member-card-chip">ANGGOTA</span>
+        </div>
+        <div class="member-card-main">
+          <div class="member-card-details">
+            <span class="member-card-kicker">IDENTITAS ANGGOTA KELUARGA</span>
+            <h3>${esc(member.full_name || 'Nama anggota')}</h3>
+            <p>${esc(familyLabel)}</p>
+            <div class="member-card-fields">
+              <div><small>NOMOR ANGGOTA</small><b>${esc(cardCode)}</b></div>
+              <div><small>KATEGORI</small><b>${esc(memberCardCategory(member))}</b></div>
+            </div>
+          </div>
+          <div class="member-card-qr"><img src="${esc(qrUrl)}" alt="QR Code verifikasi kartu"><small>SCAN UNTUK VERIFIKASI</small></div>
+        </div>
+        <div class="member-card-bottom"><span>KARTU ANGGOTA DIGITAL</span><span>TERDAFTAR DI DATABASE KELUARGA</span></div>
+      </article>
+      <div class="actions no-print" style="justify-content:center;margin-top:12px">
+        <button type="button" onclick="window.print()">Cetak / Simpan PDF</button>
+        <button type="button" class="secondary" onclick="copyMemberCardLink('${encodeURIComponent(verifyUrl)}')">Salin Link Verifikasi</button>
+      </div>
+      <p class="member-card-note">Simpan kartu ini di HP. Saat QR dipindai, halaman verifikasi akan mencocokkan nomor anggota dengan data yang tercatat di website keluarga.</p>
+    </div>
+  `;
+}
+
+async function copyMemberCardLink(encodedUrl) {
+  const url = decodeURIComponent(encodedUrl);
+  try {
+    await navigator.clipboard.writeText(url);
+    toast('Link verifikasi berhasil disalin.');
+  } catch (error) {
+    window.prompt('Salin link verifikasi kartu ini:',url);
+  }
+}
+
+async function renderMemberCardVerification(memberId) {
+  document.body.innerHTML = '<main class="member-card-verify-shell"><div id="memberCardVerificationContent" class="member-card-verify-panel"><p class="muted">Memeriksa data anggota...</p></div></main>';
+  const target = $('memberCardVerificationContent');
+  const {data:member,error} = await sb.from('members')
+    .select('id,full_name,family_name,relation,member_type,member_category,created_at')
+    .eq('id',memberId).maybeSingle();
+
+  if (error || !member) {
+    target.innerHTML = '<div class="member-card-verify-mark" style="background:#fff0ed;color:#a83d35">!</div><h1>KARTU TIDAK TERVERIFIKASI</h1><p>Nomor anggota tidak ditemukan dalam database SANGGAH GEDE PAN RENGEN. Periksa kembali kartu atau hubungi pengurus.</p><div class="member-card-verify-footer">SANGGAH GEDE PAN RENGEN</div>';
+    return;
+  }
+
+  const cardCode = 'SGPR-' + String(member.id).replace(/-/g,'').slice(0,10).toUpperCase();
+  const familyLabel = member.family_name || member.relation || 'Keluarga Besar Sanggah Gede Pan Rengen';
+  target.innerHTML = `
+    <div class="member-card-verify-mark">✓</div>
+    <h1>ANGGOTA TERVERIFIKASI</h1>
+    <p>Data kartu cocok dengan catatan anggota keluarga di database.</p>
+    <h2>${esc(member.full_name || 'Nama anggota')}</h2>
+    <p>${esc(familyLabel)}</p>
+    <div class="member-card-verify-details">
+      <div><span>Nomor anggota</span><strong>${esc(cardCode)}</strong></div>
+      <div><span>Kategori</span><strong>${esc(memberCardCategory(member))}</strong></div>
+      <div><span>Status data</span><strong>Terdaftar</strong></div>
+    </div>
+    <div class="member-card-verify-footer">SANGGAH GEDE PAN RENGEN · SATU KELUARGA, SATU TUJUAN</div>
+  `;
+}
+
 /* =====================================
    MULAI APLIKASI
 ===================================== */
 
 async function initializeApp() {
-  const activationToken = new URLSearchParams(location.search).get('aktivasi_notifikasi');
+  const params = new URLSearchParams(location.search);
+  const activationToken = params.get('aktivasi_notifikasi');
   if (activationToken) { await renderFamilyPushActivation(activationToken); return; }
+  const cardVerificationId = params.get('verifikasi-kartu');
+  if (cardVerificationId) {
+    if (!connectSupabase()) {
+      document.body.innerHTML = '<main class="member-card-verify-shell"><div class="member-card-verify-panel"><h1>VERIFIKASI TIDAK TERSEDIA</h1><p>Koneksi database belum siap. Coba muat ulang halaman.</p></div></main>';
+      return;
+    }
+    await renderMemberCardVerification(cardVerificationId);
+    return;
+  }
   if (!connectSupabase()) {
     showPublic();
     return;
