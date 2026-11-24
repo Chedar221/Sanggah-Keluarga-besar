@@ -3316,6 +3316,8 @@ function renderPunia() {
         </select>
         <label>Tanggal</label>
         <input type="date" id="puniaDate" required>
+        <label>Nama Pemberi Punia</label>
+        <input id="puniaName" placeholder="Masukkan nama pemberi punia" required>
         <label>Keterangan</label>
         <input id="puniaDescription" placeholder="Contoh: Punia upacara..." required>
         <label>Jumlah (Rp)</label>
@@ -3334,16 +3336,17 @@ function renderPunia() {
 
 async function addPunia(event) {
   event.preventDefault();
+  const name = $('puniaName').value.trim();
   const detail = $('puniaDescription').value.trim();
   const amount = Number($('puniaAmount').value);
-  if (!detail || amount <= 0) {
-    toast('Periksa keterangan dan jumlah Dana Punia.');
+  if (!name || !detail || amount <= 0) {
+    toast('Isi nama pemberi punia, keterangan, dan jumlah Dana Punia.');
     return;
   }
   const obj = {
     type: $('puniaType').value,
     transaction_date: $('puniaDate').value,
-    description: 'Dana Punia: ' + detail,
+    description: 'Dana Punia: ' + name + ' — ' + detail,
     amount,
     created_by: session.user.id
   };
