@@ -311,6 +311,13 @@ button.danger{background:#fff0ee;color:#a83d35;box-shadow:none}
 #publicPage>.card,#publicPage>details{margin-bottom:14px;min-width:0}
 #publicPage>.welcome-card,#publicPage>#publicCommitteeCard,#publicPage>#publicTransactionsCard{grid-column:1/-1}
 #publicPage>#pipilRotationPublic{grid-column:1}
+#publicPage>#budaCemengRotationPublic{grid-column:1/-1;background:linear-gradient(145deg,#fff9e9,#f7efd8);border-color:#ead9a9}
+#budaCemengRotationPublic h2{color:#70520b}
+.buda-cemeng-next{padding:14px;border:1px solid #ead9a9;border-radius:14px;background:#fffdf6;margin:10px 0}
+.buda-cemeng-next strong{display:block;font-size:17px;color:#684c08;margin-top:4px}
+.buda-cemeng-row{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border:1px solid #eee5d2;border-radius:10px;background:#fff;margin:6px 0}
+.buda-cemeng-row span{font-size:12px;color:#6d6250}
+.buda-cemeng-row b{font-size:12px;text-align:right;color:#453916}
 #publicPage>#publicAnnouncementsCard{grid-column:2}
 #publicPage>#publicFinanceCard{grid-column:2}
 #publicPage>#publicMembersCard{grid-column:1}
@@ -1369,6 +1376,11 @@ header.heritage-header.image-banner:after{
   </div>
 
 
+  <div class="card" id="budaCemengRotationPublic">
+    <h2>🔄 GILIRAN NGERAININ BUDA CEMENG</h2>
+    <div id="budaCemengPublicContent" class="muted">Memuat giliran Buda Cemeng...</div>
+  </div>
+
   <div class="card" id="publicCalendarCard">
     <div class="row" style="margin-bottom:10px"><h2>▦ KALENDER KEGIATAN KELUARGA</h2><button type="button" class="secondary" onclick="renderCalendar('publicCalendar')">Muat ulang</button></div>
     <div id="publicCalendar" class="muted">Memuat kalender kegiatan...</div>
@@ -1827,6 +1839,7 @@ function canDelete(table) {
 
 const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'], ['aktivasi-push','♧','Aktivasi Notifikasi'],
   ['dashboard','⌂','Beranda'],
+  ['giliran-buda-cemeng','🔄','Giliran Buda Cemeng'],
   ['kalender','▦','Kalender Kegiatan'],
   ['galeri','▧','Foto Dokumentasi'],
   ['kartu-anggota','▣','Kartu Anggota'],
@@ -1839,7 +1852,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
 ];
 
 function renderNav() {
-  $('nav').innerHTML = pages.filter(p => (p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()).map(p => `
+  $('nav').innerHTML = pages.filter(p => ((p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()) && (p[0] !== 'giliran-buda-cemeng' || isPipilOwner())).map(p => `
     <button
       class="${active === p[0] ? 'active' : ''}"
       onclick="go('${p[0]}')">
@@ -2480,6 +2493,13 @@ function renderView() {
     renderBannerManager(); return;
   }
 
+  if (active === 'giliran-buda-cemeng') {
+    if (!isPipilOwner()) { v.innerHTML='<div class="card">Pengaturan giliran hanya dapat diakses Agus.</div>'; return; }
+    v.innerHTML = '<div class="card"><h2>🔄 GILIRAN NGERAININ BUDA CEMENG</h2><p class="muted">Atur tanggal Buda Cemeng Ukir terakhir yang sudah dilaksanakan. Jadwal berikutnya dihitung otomatis setiap 35 hari. Kelawu dilewati tanpa mengambil giliran anggota.</p><div id="budaCemengAdminContent">Memuat jadwal...</div></div>';
+    renderBudaCemengRotation('budaCemengAdminContent', true);
+    return;
+  }
+
   if (active === 'kalender') {
     v.innerHTML = '<div class="card"><div class="row"><h2>▦ KALENDER KEGIATAN KELUARGA</h2><button type="button" class="secondary" onclick="renderCalendar(\'calendarView\')">Muat ulang</button></div><p class="muted">Jadwal kegiatan keluarga yang sudah dicatat pengurus.</p><div id="calendarView">Memuat kalender kegiatan...</div></div>';
     renderCalendar('calendarView');
@@ -3089,8 +3109,70 @@ async function deleteHomepageBanner(id){
 ===================================== */
 
 
-/* GILIRAN PIPIL: enam nama, hanya akun Agus boleh mengubah. */
+/* GILIRAN PIPIL dan pengaturan rotasi khusus akun Agus. */
 const PIPIL_OWNER_ID = 'e36b43db-a4c6-4571-83bd-a5d70dea73a0';
+
+const BUDA_CEMENG_PEOPLE = ['WAYAN NUSADA','PUTU DODY PUTRAWAN','WAYAN SUDIASA / MOYO','WAYAN SUDIARTA / KAPANG','NENGAH SUDIANA / KRES','NENGAH DIARTA / DADAP'];
+const BUDA_CEMENG_NAMES = ['Ukir','Warigadean','Langkir','Merakih','Menail','Kelawu'];
+function budaCemengDateLabel(value) {
+  if (!value) return 'Belum ditentukan';
+  return new Date(value + 'T00:00:00Z').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+}
+function shiftBudaCemengDate(anchorDate, occurrence) {
+  const date = new Date(anchorDate + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() + occurrence * 35);
+  return date.toISOString().slice(0,10);
+}
+function getBudaCemengSchedule(anchorDate, todayValue) {
+  const anchor = new Date(anchorDate + 'T00:00:00Z');
+  const today = new Date(todayValue + 'T00:00:00Z');
+  if (Number.isNaN(anchor.getTime())) return [];
+  const elapsedDays = Math.floor((today-anchor)/86400000);
+  let occurrence = Math.max(1,Math.ceil(elapsedDays/35));
+  const schedule = [];
+  while (schedule.length < 6 && occurrence < 10000) {
+    const nameIndex = occurrence % 6;
+    if (nameIndex !== 5) {
+      const personIndex = (occurrence - Math.floor(occurrence/6)) % 6;
+      schedule.push({name:BUDA_CEMENG_NAMES[nameIndex],person:BUDA_CEMENG_PEOPLE[personIndex],date:shiftBudaCemengDate(anchorDate,occurrence)});
+    }
+    occurrence++;
+  }
+  return schedule;
+}
+function localIsoDate() {
+  const parts = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Makassar',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const get = type => parts.find(part=>part.type===type)?.value || '';
+  return get('year')+'-'+get('month')+'-'+get('day');
+}
+async function renderBudaCemengRotation(targetId, showAdminControls=false) {
+  const target=$(targetId);
+  if(!target)return;
+  if(!sb){target.textContent='Layanan data belum tersambung.';return;}
+  target.textContent='Memuat giliran Buda Cemeng...';
+  const {data,error}=await sb.from('buda_cemeng_rotation').select('last_ukir_date').eq('id',1).maybeSingle();
+  if(error||!data){target.textContent='Jadwal belum dapat dimuat. Periksa koneksi database.';console.warn('Buda Cemeng:',error?.message);return;}
+  const schedule=getBudaCemengSchedule(data.last_ukir_date,localIsoDate());
+  if(!schedule.length){target.textContent='Jadwal belum tersedia.';return;}
+  const next=schedule[0];
+  let html='<div class="buda-cemeng-next"><div class="muted">GILIRAN BERIKUTNYA · '+esc(budaCemengDateLabel(next.date))+'</div><strong>Buda Cemeng '+esc(next.name)+'</strong><div style="margin-top:7px">Yang bertugas: <b>'+esc(next.person)+'</b></div></div>';
+  html+='<div style="font-weight:800;font-size:12px;margin:12px 0 6px">ANTREAN BERIKUTNYA</div>';
+  html+=schedule.map(item=>'<div class="buda-cemeng-row"><span>'+esc(budaCemengDateLabel(item.date))+' · Buda Cemeng '+esc(item.name)+'</span><b>'+esc(item.person)+'</b></div>').join('');
+  html+='<p class="muted" style="font-size:11px;margin-top:10px">Buda Cemeng Kelawu dilewati karena sudah Ngodalin. Setelah Menail, giliran anggota berikutnya baru berjalan pada Ukir selanjutnya.</p>';
+  if(showAdminControls && isPipilOwner()){
+    html+='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><label for="budaCemengAnchorDate">Tanggal Buda Cemeng Ukir terakhir (sudah dilaksanakan)</label><input id="budaCemengAnchorDate" type="date" value="'+esc(data.last_ukir_date)+'"><button type="button" onclick="saveBudaCemengAnchorDate()">Simpan Tanggal Acuan</button><p class="muted" style="font-size:11px">Pengaturan ini terpisah dari Giliran Pipil. Hanya akun Agus yang dapat mengubahnya.</p></div>';
+  }
+  target.innerHTML=html;
+}
+async function saveBudaCemengAnchorDate(){
+  if(!isPipilOwner()){toast('Hanya Agus yang dapat mengubah pengaturan ini.');return;}
+  const date=$('budaCemengAnchorDate')?.value;
+  if(!date){toast('Pilih tanggal acuan terlebih dahulu.');return;}
+  const {error}=await sb.from('buda_cemeng_rotation').update({last_ukir_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',1);
+  if(error){toast('Tanggal acuan gagal disimpan: '+error.message);return;}
+  toast('Tanggal acuan Buda Cemeng berhasil disimpan.');
+  await Promise.all([renderBudaCemengRotation('budaCemengPublicContent'),renderBudaCemengRotation('budaCemengAdminContent',true)]);
+}
 const PIPIL_PEOPLE = [
   { name: 'WAYAN SUDIASA', base: 1 },
   { name: 'WAYAN SUDIARTA', base: 2 },
@@ -4442,6 +4524,7 @@ async function initializeApp() {
   void Promise.allSettled([
     loadPublicAnnouncements(),
     renderPipilRotation('pipilPublicContent'),
+    renderBudaCemengRotation('budaCemengPublicContent'),
     loadPublicMembers(),
     loadPublicFinance(),
     renderCalendar('publicCalendar')
