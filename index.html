@@ -4346,12 +4346,19 @@ async function initializeApp() {
     return;
   }
 
-  // Tampilkan pengumuman dan laporan publik walaupun belum login.
-  await loadPublicAnnouncements();
-  await renderPipilRotation('pipilPublicContent');
-  await loadPublicMembers();
-  await loadPublicFinance();
-  await renderCalendar('publicCalendar');
+  // Tampilkan halaman publik lebih dahulu agar layar tidak tertahan
+  // jika salah satu permintaan data Supabase lambat atau tidak merespons.
+  showPublic();
+
+  // Muat bagian publik secara paralel dan biarkan masing-masing fungsi
+  // menampilkan pesan kegagalannya sendiri tanpa memblokir aplikasi.
+  void Promise.allSettled([
+    loadPublicAnnouncements(),
+    renderPipilRotation('pipilPublicContent'),
+    loadPublicMembers(),
+    loadPublicFinance(),
+    renderCalendar('publicCalendar')
+  ]);
 
   const {data,error} = await sb.auth.getSession();
 
