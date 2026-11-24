@@ -2150,12 +2150,6 @@ async function recordMemberDuePayment(event,id) {
 }
 
 async function openPaymentReceipt(kind,id) {
-  const receiptWindow = window.open('', '_blank');
-  if (!receiptWindow) {
-    toast('Izinkan pop-up browser untuk membuka nota pembayaran.');
-    return;
-  }
-  receiptWindow.document.write('<!doctype html><title>Menyiapkan nota...</title><p style="font:16px Arial;padding:24px">Menyiapkan nota pembayaran...</p>');
   let title = '';
   let receiptNo = '';
   let date = '';
@@ -2191,7 +2185,7 @@ async function openPaymentReceipt(kind,id) {
       title = 'BUKTI PENERIMAAN DANA PUNIA';
       receiptNo = 'PN-' + String(p.id).slice(0,8).toUpperCase();
       date = p.transaction_date;
-      const detail = String(p.description || '').replace(/^Dana Punia:\s*/i,'');
+      const detail = String(p.description || '').replace(/^Dana Punia:\\s*/i,'');
       const parts = detail.split(' — ');
       payer = parts.length > 1 ? parts.shift() : 'Pemberi punia';
       item = parts.join(' — ') || detail;
@@ -2199,17 +2193,127 @@ async function openPaymentReceipt(kind,id) {
     } else {
       throw new Error('Jenis nota tidak dikenali.');
     }
-    const money = rupiah(amount);
+
     const dateText = date ? new Date(date + 'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
-    const message = 'SANGGAH GEDE PAN RENGEN\n' + title + '\nNo. Nota: ' + receiptNo + '\nTanggal: ' + dateText + '\nDiterima dari: ' + payer + '\nKeterangan: ' + item + (period ? '\nPeriode: ' + period : '') + '\nJumlah: ' + money + (note ? '\nCatatan: ' + note : '') + '\n\nTerima kasih.';
-    const waUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
-    receiptWindow.document.open();
-    receiptWindow.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} - ${esc(receiptNo)}</title><style>
-      *{box-sizing:border-box}body{margin:0;padding:24px;background:#f1f1ed;color:#20221e;font-family:Arial,sans-serif}.receipt{max-width:620px;margin:20px auto;background:#fff;border:1px solid #c5a45b;border-radius:16px;padding:30px;box-shadow:0 8px 30px #0001}.head{text-align:center;border-bottom:2px solid #b9974b;padding-bottom:18px;margin-bottom:18px}.head img{width:70px;height:70px;object-fit:contain}.brand{font-size:19px;font-weight:800;letter-spacing:1px;color:#1c2a22;margin-top:8px}.sub{font-size:12px;color:#777;margin-top:4px}.tag{display:inline-block;margin-top:18px;padding:8px 14px;border:1px solid #c5a45b;border-radius:30px;color:#755b22;font-size:12px;font-weight:bold}.line{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid #eee;font-size:14px}.line span{color:#777}.line strong{text-align:right}.total{margin-top:18px;padding:18px;background:#f8f4e9;border-radius:12px;text-align:center}.total small{color:#76643c}.total b{display:block;font-size:25px;color:#755b22;margin-top:6px}.foot{text-align:center;color:#777;font-size:12px;margin-top:22px;line-height:1.6}.actions{display:flex;justify-content:center;gap:10px;margin:18px auto;max-width:620px}.actions a,.actions button{border:0;border-radius:9px;padding:12px 16px;background:#173d32;color:#fff;text-decoration:none;font-weight:bold;font-size:14px}.actions a{background:#167b49}@media print{body{padding:0;background:#fff}.receipt{box-shadow:none;margin:0 auto;border-radius:0}.actions{display:none}}
-      </style></head><body><main class="receipt"><header class="head"><img src="https://sanggah-keluarga-besar.vercel.app/logo-sanggah.svg" alt="Logo Sanggah"><div class="brand">SANGGAH GEDE PAN RENGEN</div><div class="sub">Satu Keluarga, Satu Tujuan</div><div class="tag">${esc(title)}</div></header><div class="line"><span>Nomor Nota</span><strong>${esc(receiptNo)}</strong></div><div class="line"><span>Tanggal</span><strong>${esc(dateText)}</strong></div><div class="line"><span>Diterima dari</span><strong>${esc(payer)}</strong></div><div class="line"><span>Keterangan</span><strong>${esc(item)}</strong></div>${period ? '<div class="line"><span>Periode</span><strong>' + esc(period) + '</strong></div>' : ''}${note ? '<div class="line"><span>Catatan</span><strong>' + esc(note) + '</strong></div>' : ''}<section class="total"><small>JUMLAH DITERIMA</small><b>${esc(money)}</b></section><div class="foot">Pembayaran telah dicatat dalam administrasi keluarga.<br>Terima kasih atas partisipasi dan punia yang diberikan.</div></main><div class="actions"><button onclick="window.print()">Cetak / Simpan PDF</button><a href="${waUrl}" target="_blank" rel="noopener">Kirim via WhatsApp</a></div></body></html>`);
-    receiptWindow.document.close();
+    const money = rupiah(amount);
+    const message = 'SANGGAH GEDE PAN RENGEN\\n' + title + '\\nNo. Nota: ' + receiptNo + '\\nTanggal: ' + dateText + '\\nDiterima dari: ' + payer + '\\nKeterangan: ' + item + (period ? '\\nPeriode: ' + period : '') + '\\nJumlah: ' + money + (note ? '\\nCatatan: ' + note : '') + '\\nTerima kasih.';
+
+    // Susun nota sebagai gambar bitmap bergaya printer thermal 80 mm.
+    const width = 640;
+    const margin = 48;
+    const contentWidth = width - margin * 2;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const logo = new Image();
+    logo.crossOrigin = 'anonymous';
+    logo.src = 'https://sanggah-keluarga-besar.vercel.app/logo-sanggah.svg';
+    try {
+      if (logo.decode) await logo.decode();
+      else await new Promise((resolve,reject)=>{logo.onload=resolve;logo.onerror=reject;});
+    } catch (_) {
+      // Nota tetap dapat dibuat jika logo gagal dimuat.
+    }
+
+    const measureWrap = (text,font,maxWidth) => {
+      ctx.font = font;
+      const words = String(text || '-').split(/\\s+/);
+      const lines = [];
+      let line = '';
+      words.forEach(word => {
+        const test = line ? line + ' ' + word : word;
+        if (line && ctx.measureText(test).width > maxWidth) {
+          lines.push(line);
+          line = word;
+        } else line = test;
+      });
+      if (line) lines.push(line);
+      return lines;
+    };
+    const rows = [
+      ['NOMOR NOTA',receiptNo],
+      ['TANGGAL',dateText],
+      ['DITERIMA DARI',payer],
+      ['KETERANGAN',item]
+    ];
+    if (period) rows.push(['PERIODE',period]);
+    if (note) rows.push(['CATATAN',note]);
+    let estimated = 360;
+    rows.forEach(([label,value]) => {
+      estimated += 34 + measureWrap(value,'28px Arial',contentWidth).length * 36;
+    });
+    const height = estimated + 170;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0,width,height);
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'center';
+    let y = 56;
+    if (logo.complete && logo.naturalWidth) {
+      const logoSize = 112;
+      ctx.drawImage(logo,(width-logoSize)/2,y,logoSize,logoSize);
+      y += 132;
+    }
+    ctx.font = 'bold 31px Arial';
+    ctx.fillText('SANGGAH GEDE PAN RENGEN',width/2,y);
+    y += 38;
+    ctx.font = '22px Arial';
+    ctx.fillText('BUKTI PEMBAYARAN KELUARGA',width/2,y);
+    y += 32;
+    ctx.setLineDash([8,7]);
+    ctx.beginPath(); ctx.moveTo(margin,y); ctx.lineTo(width-margin,y); ctx.stroke();
+    ctx.setLineDash([]);
+    y += 34;
+    ctx.textAlign = 'left';
+    rows.forEach(([label,value]) => {
+      ctx.font = 'bold 21px Arial';
+      ctx.fillText(label,margin,y);
+      y += 30;
+      ctx.font = '28px Arial';
+      const lines = measureWrap(value,'28px Arial',contentWidth);
+      lines.forEach(line => { ctx.fillText(line,margin,y); y += 36; });
+      y += 12;
+    });
+    ctx.setLineDash([8,7]);
+    ctx.beginPath(); ctx.moveTo(margin,y); ctx.lineTo(width-margin,y); ctx.stroke();
+    ctx.setLineDash([]);
+    y += 42;
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 23px Arial';
+    ctx.fillText('TOTAL DITERIMA',width/2,y);
+    y += 54;
+    ctx.font = 'bold 43px Arial';
+    ctx.fillText(money,width/2,y);
+    y += 48;
+    ctx.font = '22px Arial';
+    ctx.fillText('Pembayaran telah dicatat.',width/2,y);
+    y += 32;
+    ctx.fillText('Terima kasih atas partisipasi Anda.',width/2,y);
+    y += 40;
+    ctx.font = '18px monospace';
+    ctx.fillText('*** SIMPAN NOTA INI SEBAGAI BUKTI ***',width/2,y);
+
+    const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    if (!blob) throw new Error('Gambar nota gagal dibuat.');
+    const file = new File([blob], 'Nota-' + receiptNo + '.png', {type:'image/png'});
+    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+      await navigator.share({files:[file],title:title,text:'Nota pembayaran ' + receiptNo});
+      toast('Pilih WhatsApp pada menu berbagi untuk mengirim gambar nota.');
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      const waUrl = 'https://wa.me/?text=' + encodeURIComponent('Nota ' + receiptNo + ' sudah dibuat. Silakan lampirkan gambar nota yang baru diunduh.');
+      window.open(waUrl,'_blank');
+      toast('Gambar nota diunduh. Lampirkan file PNG tersebut di WhatsApp.');
+    }
   } catch (error) {
-    receiptWindow.close();
+    if (error?.name === 'AbortError') return;
     toast('Nota gagal dibuat: ' + (error?.message || error));
   }
 }
