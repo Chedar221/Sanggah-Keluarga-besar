@@ -1052,32 +1052,6 @@ header.heritage-header.image-banner:after{content:none!important;display:none!im
   #homepageBannerArea{max-width:1500px}
 }
 
-/* KALENDER KEGIATAN KELUARGA */
-.calendar-event-type{display:inline-block;margin-bottom:3px;padding:3px 7px;border-radius:20px;background:#f4edcf;color:#806417;font-size:9px;font-weight:800}
-
-#publicPage>#publicCalendarCard{grid-column:1/-1}
-.calendar-wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(240px,.9fr);gap:16px;align-items:start}
-.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
-.calendar-toolbar strong{font-size:15px;color:#174c2d;text-align:center}
-.calendar-toolbar button{min-width:38px;padding:8px 11px}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.calendar-weekday{text-align:center;padding:7px 0;color:#718078;font-size:10px;font-weight:800}
-.calendar-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:43px;padding:5px 2px;background:#f6f8f3;color:#244332;border:1px solid #e6ece3;border-radius:9px;box-shadow:none;font-size:12px}
-.calendar-day.has-event{background:#edf5e9;border-color:#c8ddc4}
-.calendar-day.selected{background:#145d31;color:#fff;border-color:#145d31}
-.calendar-day.today:not(.selected){outline:2px solid #d0a51b;outline-offset:-2px}
-.calendar-day small{font-size:8px;line-height:1;color:#b18a18}
-.calendar-day.selected small{color:#ffe28a}
-.calendar-day.empty{visibility:hidden}
-.calendar-event-panel{border:1px solid #e4ebe0;border-radius:13px;padding:12px;background:#fbfcf9;min-height:180px}
-.calendar-event-panel h3{margin:0 0 9px;font-size:13px;color:#174c2d}
-.calendar-event-item{padding:9px 0;border-top:1px solid #e8eee5}
-.calendar-event-item:first-of-type{border-top:0}
-.calendar-event-item b{display:block;font-size:12px;color:#203b2c}
-.calendar-event-item span{display:block;margin-top:3px;font-size:11px;color:#718078;overflow-wrap:anywhere}
-.calendar-empty{font-size:12px;color:#718078;padding:10px 0;line-height:1.5}
-@media(max-width:650px){.calendar-wrap{grid-template-columns:1fr}.calendar-day{min-height:40px}.calendar-event-panel{min-height:0}}
-
 
 /* GALERI FOTO DOKUMENTASI KELUARGA */
 .family-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
@@ -1397,6 +1371,14 @@ header.heritage-header.image-banner:after{
     </div>
   </div>
 
+  <div class="card" id="publicAnnouncementsCard">
+    <div class="row">
+      <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a2 2 0 0 0 2 2h2l10 4V5L7 9H5a2 2 0 0 0-2 2Z"/><path d="m7 15 2 5h4l-2-4"/><path d="M20 9a4 4 0 0 1 0 6"/></svg></span> PENGUMUMAN TERBARU</h2>
+      <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
+    </div>
+    <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
+  </div>
+
   <div class="card" id="pipilRotationPublic">
     <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6"/><path d="M18.4 15A7 7 0 0 1 6 18l-2-6"/></svg></span> GILIRAN PIPIL</h2>
     <div id="pipilPublicContent" class="muted">Memuat giliran pipil...</div>
@@ -1406,19 +1388,6 @@ header.heritage-header.image-banner:after{
   <div class="card" id="budaCemengRotationPublic">
     <h2>🔄 GILIRAN NGERAININ BUDA CEMENG</h2>
     <div id="budaCemengPublicContent" class="muted">Memuat giliran Buda Cemeng...</div>
-  </div>
-
-  <div class="card" id="publicCalendarCard">
-    <div class="row" style="margin-bottom:10px"><h2>▦ KALENDER KEGIATAN KELUARGA</h2><button type="button" class="secondary" onclick="renderCalendar('publicCalendar')">Muat ulang</button></div>
-    <div id="publicCalendar" class="muted">Memuat kalender kegiatan...</div>
-  </div>
-
-  <div class="card" id="publicAnnouncementsCard">
-    <div class="row">
-      <h2><span class="gold-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a2 2 0 0 0 2 2h2l10 4V5L7 9H5a2 2 0 0 0-2 2Z"/><path d="m7 15 2 5h4l-2-4"/><path d="M20 9a4 4 0 0 1 0 6"/></svg></span> PENGUMUMAN TERBARU</h2>
-      <button class="secondary" onclick="loadPublicAnnouncements()">Muat ulang</button>
-    </div>
-    <div id="publicAnnouncements" class="muted">Memuat pengumuman...</div>
   </div>
 
   <div class="card" id="publicFinanceCard">
@@ -1927,7 +1896,6 @@ function canDelete(table) {
 const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'], ['aktivasi-push','♧','Aktivasi Notifikasi'],
   ['dashboard','⌂','Beranda'],
   ['giliran-buda-cemeng','🔄','Giliran Buda Cemeng'],
-  ['kalender','▦','Kalender Kegiatan'],
   ['galeri','▧','Foto Dokumentasi'],
   ['kartu-anggota','▣','Kartu Anggota'],
   ['anggota','♙','Anggota'],
@@ -2585,12 +2553,6 @@ function renderView() {
     if (!isPipilOwner()) { v.innerHTML='<div class="card">Pengaturan giliran hanya dapat diakses Agus.</div>'; return; }
     v.innerHTML = '<div class="card"><h2>🔄 GILIRAN NGERAININ BUDA CEMENG</h2><p class="muted">Atur tanggal Buda Cemeng Ukir terakhir yang sudah dilaksanakan. Jadwal berikutnya dihitung otomatis setiap 35 hari. Kelawu dilewati tanpa mengambil giliran anggota.</p><div id="budaCemengAdminContent">Memuat jadwal...</div></div>';
     renderBudaCemengRotation('budaCemengAdminContent', true);
-    return;
-  }
-
-  if (active === 'kalender') {
-    v.innerHTML = '<div class="card"><div class="row"><h2>▦ KALENDER KEGIATAN KELUARGA</h2><button type="button" class="secondary" onclick="renderCalendar(\'calendarView\')">Muat ulang</button></div><p class="muted">Jadwal kegiatan keluarga yang sudah dicatat pengurus.</p><div id="calendarView">Memuat kalender kegiatan...</div></div>';
-    renderCalendar('calendarView');
     return;
   }
 
@@ -4287,81 +4249,10 @@ async function deleteFamilyPhoto(id) {
   await loadFamilyGallery();
 }
 
-/* =====================================
-   KALENDER KEGIATAN KELUARGA
-   Membaca tabel events yang sudah digunakan menu Upacara.
-   Pengunjung hanya menerima kolom publik: judul, tanggal, dan lokasi.
-===================================== */
-let calendarMonthDate = new Date(new Date().getFullYear(),new Date().getMonth(),1);
-let calendarSelectedDate = calendarDateKey(new Date());
-let calendarCachedEvents = [];
-function calendarDateKey(date) {
-  return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
-}
 function calendarFormatDate(value, options={day:'numeric',month:'long',year:'numeric'}) {
   if(!value) return 'Tanggal belum ditentukan';
   const date=new Date(value+'T00:00:00');
   return Number.isNaN(date.getTime())?String(value):date.toLocaleDateString('id-ID',options);
-}
-async function renderCalendar(targetId) {
-  const target=$(targetId);
-  if(!target) return;
-  if(!sb) {
-    target.innerHTML='<div class="calendar-empty">Layanan data belum tersambung. Periksa koneksi lalu muat ulang halaman.</div>';
-    return;
-  }
-  target.innerHTML='<div class="calendar-empty">Memuat jadwal kegiatan...</div>';
-  try {
-    const results=await withRequestTimeout(Promise.all([
-      sb.from('events').select('id,title,event_date,location').not('event_date','is',null).order('event_date',{ascending:true}).limit(500),
-      sb.from('ngayah').select('id,task,event_date').not('event_date','is',null).order('event_date',{ascending:true}).limit(500)
-    ]),12000,'Koneksi kalender terlalu lama. Periksa internet lalu coba muat ulang.');
-    const [eventResult,ngayahResult]=results;
-    if(!eventResult || !ngayahResult || eventResult.error || ngayahResult.error) {
-      target.innerHTML='<div class="calendar-empty">Kalender belum dapat dimuat. Periksa koneksi data kegiatan lalu coba muat ulang.</div>';
-      console.warn('Kalender gagal dimuat:',eventResult?.error||ngayahResult?.error||'Permintaan data melewati batas waktu');
-      return;
-    }
-    const eventRows=(eventResult.data||[]).map(e=>({...e,calendarType:'Kegiatan'}));
-    const ngayahRows=(ngayahResult.data||[]).map(n=>({id:'ngayah-'+n.id,title:n.task,event_date:n.event_date,location:null,calendarType:'Ngayah'}));
-    calendarCachedEvents=[...eventRows,...ngayahRows].sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
-    paintCalendar(targetId);
-  } catch(error) {
-    console.warn('Kalender gagal dimuat:',error);
-    target.innerHTML='<div class="calendar-empty">Kalender gagal dimuat. Periksa koneksi lalu coba lagi.</div>';
-  }
-}
-function paintCalendar(targetId) {
-  const target=$(targetId); if(!target)return;
-  const year=calendarMonthDate.getFullYear(), month=calendarMonthDate.getMonth();
-  const firstDay=new Date(year,month,1), daysInMonth=new Date(year,month+1,0).getDate();
-  const offset=(firstDay.getDay()+6)%7;
-  const monthLabel=firstDay.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-  const monthEvents=calendarCachedEvents.filter(e=>e.event_date && e.event_date.slice(0,7)===year+'-'+String(month+1).padStart(2,'0'));
-  const selectedEvents=monthEvents.filter(e=>e.event_date===calendarSelectedDate);
-  const eventsForPanel=selectedEvents.length?selectedEvents:monthEvents;
-  const panelTitle=selectedEvents.length?'Kegiatan · '+calendarFormatDate(calendarSelectedDate):'Kegiatan bulan ini';
-  const weekdays=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
-  let cells=weekdays.map(day=>'<div class="calendar-weekday">'+day+'</div>').join('');
-  for(let i=0;i<offset;i++) cells+='<div class="calendar-day empty"></div>';
-  const today=calendarDateKey(new Date());
-  for(let day=1;day<=daysInMonth;day++) {
-    const dateKey=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-    const count=monthEvents.filter(e=>e.event_date===dateKey).length;
-    const classes=['calendar-day',count?'has-event':'',dateKey===calendarSelectedDate?'selected':'',dateKey===today?'today':''].filter(Boolean).join(' ');
-    cells+='<button type="button" class="'+classes+'" onclick="selectCalendarDate(\''+dateKey+'\',\''+targetId+'\')"><span>'+day+'</span>'+(count?'<small>● '+count+'</small>':'')+'</button>';
-  }
-  const list=eventsForPanel.length?eventsForPanel.map(e=>'<div class="calendar-event-item"><small class="calendar-event-type">'+esc(e.calendarType||'Kegiatan')+'</small><b>'+esc(e.title||'Kegiatan keluarga')+'</b><span>'+calendarFormatDate(e.event_date)+(e.location?' · '+esc(e.location):'')+'</span></div>').join(''):'<div class="calendar-empty">'+(monthEvents.length?'Tidak ada kegiatan pada tanggal yang dipilih.':'Belum ada kegiatan yang tercatat pada bulan ini.')+'</div>';
-  target.innerHTML='<div class="calendar-wrap"><div><div class="calendar-toolbar"><button type="button" class="secondary" aria-label="Bulan sebelumnya" onclick="changeCalendarMonth(-1,\''+targetId+'\')">‹</button><strong>'+monthLabel+'</strong><button type="button" class="secondary" aria-label="Bulan berikutnya" onclick="changeCalendarMonth(1,\''+targetId+'\')">›</button></div><div class="calendar-grid">'+cells+'</div><div class="muted" style="margin-top:8px;font-size:10px">● Menandakan ada kegiatan. Pilih tanggal untuk melihat detail.</div></div><div class="calendar-event-panel"><h3>'+panelTitle+'</h3>'+list+(canManageGeneral()?'<div style="margin-top:12px"><button type="button" onclick="go(\'upacara\')">＋ Tambah kegiatan</button></div>':'')+'</div></div>';
-}
-function changeCalendarMonth(delta,targetId) {
-  calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()+delta,1);
-  calendarSelectedDate=calendarDateKey(calendarMonthDate);
-  paintCalendar(targetId);
-}
-function selectCalendarDate(dateKey,targetId) {
-  calendarSelectedDate=dateKey;
-  paintCalendar(targetId);
 }
 
 
@@ -4690,7 +4581,6 @@ async function initializeApp() {
     renderBudaCemengRotation('budaCemengPublicContent'),
     loadPublicMembers(),
     loadPublicFinance(),
-    renderCalendar('publicCalendar')
   ]);
 
   const {data,error} = await sb.auth.getSession();
