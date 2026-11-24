@@ -2293,31 +2293,55 @@ async function openPaymentReceipt(kind,id) {
     ctx.font = '18px monospace';
     ctx.fillText('*** SIMPAN NOTA INI SEBAGAI BUKTI ***',width/2,y);
 
-    const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
-    if (!blob) throw new Error('Gambar nota gagal dibuat.');
-    const file = new File([blob], 'Nota-' + receiptNo + '.png', {type:'image/png'});
-    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
-      await navigator.share({files:[file],title:title,text:'Nota pembayaran ' + receiptNo});
-      toast('Pilih WhatsApp pada menu berbagi untuk mengirim gambar nota.');
-    } else {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = file.name;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),60000);
-      const waUrl = 'https://wa.me/?text=' + encodeURIComponent('Nota ' + receiptNo + ' sudah dibuat. Silakan lampirkan gambar nota yang baru diunduh.');
-      window.open(waUrl,'_blank');
-      toast('Gambar nota diunduh. Lampirkan file PNG tersebut di WhatsApp.');
-    }
+    const blob = await new Promise((resolve,reject)=>canvas.toBlob(file=>file?resolve(file):reject(new Error('Gambar nota gagal dibuat.')),'image/png'));
+    const imageUrl = URL.createObjectURL(blob);
+    document.getElementById('receiptPreviewModal')?.remove();
+    const modal = document.createElement('div');
+    modal.id = 'receiptPreviewModal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:14px;';
+    modal.innerHTML = `
+      <div style="width:min(100%,520px);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;padding:14px;text-align:center">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px">
+          <strong>Pratinjau Nota</strong>
+          <button type="button" class="secondary" onclick="closeReceiptPreview()">Tutup</button>
+        </div>
+        <img src="${imageUrl}" alt="Pratinjau nota" style="display:block;width:min(100%,420px);height:auto;margin:0 auto 12px;border:1px solid #ddd">
+        <div class="actions" style="justify-content:center">
+          <button type="button" onclick="printReceiptImage('${imageUrl}','Nota-${receiptNo}.png')">Cetak / Simpan Nota</button>
+          <button type="button" class="secondary" onclick="downloadReceiptImage('${imageUrl}','Nota-${receiptNo}.png')">Unduh Gambar</button>
+        </div>
+        <p class="muted" style="margin:10px 0 0">Nota hanya ditampilkan di sini. Tidak ada pengiriman otomatis ke WhatsApp.</p>
+      </div>`;
+    document.body.appendChild(modal);
   } catch (error) {
     if (error?.name === 'AbortError') return;
     toast('Nota gagal dibuat: ' + (error?.message || error));
   }
 }
 
+function closeReceiptPreview() {
+  const modal = document.getElementById('receiptPreviewModal');
+  if (!modal) return;
+  const image = modal.querySelector('img');
+  if (image?.src?.startsWith('blob:')) URL.revokeObjectURL(image.src);
+  modal.remove();
+}
+
+function printReceiptImage(url,filename) {
+  const win = window.open('', '_blank');
+  if (!win) { toast('Izinkan pop-up browser untuk mencetak nota.'); return; }
+  win.document.write('<!doctype html><html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:16px;text-align:center;font-family:Arial}img{max-width:100%;height:auto}button{padding:10px 18px;margin:10px}@media print{button{display:none}body{padding:0}}</style></head><body><img src="'+url+'" onload="document.getElementById(\'printBtn\').disabled=false"><br><button id="printBtn" disabled onclick="window.print()">Cetak / Simpan PDF</button></body></html>');
+  win.document.close();
+}
+
+function downloadReceiptImage(url,filename) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
 async function editMemberDue(id) {
   if (!canFinance()) { toast('Akses mengedit kewajiban ditolak.'); return; }
   const {data,error} = await sb.from('member_dues').select('*').eq('id',id).single();
@@ -3287,8 +3311,6 @@ function renderPunia() {
         </select>
         <label>Tanggal</label>
         <input type="date" id="puniaDate" required>
-        <label>Nama pemberi punia</label>
-        <input id="puniaDonor" placeholder="Nama anggota / keluarga" required>
         <label>Keterangan</label>
         <input id="puniaDescription" placeholder="Contoh: Punia upacara..." required>
         <label>Jumlah (Rp)</label>
@@ -3316,7 +3338,7 @@ async function addPunia(event) {
   const obj = {
     type: $('puniaType').value,
     transaction_date: $('puniaDate').value,
-    description: 'Dana Punia: ' + ($('puniaDonor').value.trim() ? $('puniaDonor').value.trim() + ' — ' : '') + detail,
+    description: 'Dana Punia: ' + detail,
     amount,
     created_by: session.user.id
   };
