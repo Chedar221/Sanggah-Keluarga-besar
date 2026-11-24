@@ -1507,6 +1507,7 @@ header.heritage-header.image-banner:after{
 
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -4240,7 +4241,7 @@ async function renderMemberCardById(id) {
         <div class="member-card-bottom"><span>KARTU ANGGOTA DIGITAL</span><span>TERDAFTAR DI DATABASE KELUARGA</span></div>
       </article>
       <div class="actions no-print" style="justify-content:center;margin-top:12px">
-        <button type="button" onclick="window.print()">Cetak / Simpan PDF</button>
+        <button type="button" onclick="downloadMemberCardPdf()">Cetak / Simpan PDF</button>
         <button type="button" onclick="shareMemberCardImage()">Kirim Kartu via WhatsApp</button>
         <button type="button" class="secondary" onclick="copyMemberCardLink('${encodeURIComponent(verifyUrl)}')">Salin Link Verifikasi</button>
       </div>
@@ -4249,99 +4250,115 @@ async function renderMemberCardById(id) {
   `;
 }
 
-async function shareMemberCardImage() {
+async function renderMemberCardCanvas() {
   const card = $('memberCardPrint');
-  if (!card) { toast('Kartu anggota belum siap.'); return; }
-  if (typeof html2canvas !== 'function') {
-    toast('Fitur gambar belum termuat. Muat ulang halaman lalu coba lagi.');
-    return;
-  }
+  if (!card) throw new Error('Kartu anggota belum ditampilkan.');
+  if (typeof html2canvas !== 'function') throw new Error('Mesin gambar belum termuat. Muat ulang halaman dan coba lagi.');
 
+  await document.fonts.ready;
+  const images = Array.from(card.querySelectorAll('img'));
+  await Promise.all(images.map(async img => {
+    if (img.complete && img.naturalWidth > 0) {
+      if (typeof img.decode === 'function') await img.decode().catch(() => {});
+      return;
+    }
+    await new Promise((resolve, reject) => {
+      img.addEventListener('load', resolve, {once:true});
+      img.addEventListener('error', () => reject(new Error('Logo atau QR gagal dimuat.')), {once:true});
+    });
+  }));
+
+  const exportCard = card.cloneNode(true);
+  const originalLogo = card.querySelector('.member-card-logo');
+  const logoCanvas = document.createElement('canvas');
+  const logoSize = 512;
+  logoCanvas.width = logoSize;
+  logoCanvas.height = logoSize;
+  const logoContext = logoCanvas.getContext('2d');
+  logoContext.drawImage(originalLogo, 0, 0, logoSize, logoSize);
+  exportCard.querySelector('.member-card-logo').src = logoCanvas.toDataURL('image/png');
+
+  const rect = card.getBoundingClientRect();
+  const exportWidth = Math.max(760, Math.round(rect.width * 2));
+  exportCard.style.cssText += ';position:fixed!important;left:0!important;top:0!important;width:' + rect.width + 'px!important;max-width:none!important;margin:0!important;z-index:-9999!important;transform:none!important;';
+  exportCard.style.width = rect.width + 'px';
+  document.body.appendChild(exportCard);
+  try {
+    const clonedImages = Array.from(exportCard.querySelectorAll('img'));
+    await Promise.all(clonedImages.map(img => typeof img.decode === 'function' ? img.decode() : Promise.resolve()));
+    const canvas = await html2canvas(exportCard, {
+      scale: Math.max(2, Math.min(3, exportWidth / Math.max(1, rect.width))),
+      backgroundColor: '#080909',
+      useCORS: true,
+      allowTaint: false,
+      logging: false,
+      width: rect.width,
+      height: rect.height,
+      windowWidth: Math.max(document.documentElement.clientWidth, Math.ceil(rect.width)),
+      windowHeight: Math.max(document.documentElement.clientHeight, Math.ceil(rect.height))
+    });
+    return canvas;
+  } finally {
+    exportCard.remove();
+  }
+}
+
+async function downloadMemberCardPdf() {
+  const button = Array.from(document.querySelectorAll('#memberCardDisplay button'))
+    .find(el => el.textContent.includes('Cetak / Simpan PDF'));
+  if (button) { button.disabled = true; button.textContent = 'Membuat PDF...'; }
+  try {
+    if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('Fitur PDF belum termuat. Periksa koneksi internet lalu muat ulang.');
+    const canvas = await renderMemberCardCanvas();
+    const image = canvas.toDataURL('image/png', 1);
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:'landscape', unit:'mm', format:[85.6,54], compress:true});
+    pdf.addImage(image, 'PNG', 0, 0, 85.6, 54, undefined, 'FAST');
+    const name = $('memberCardPrint')?.querySelector('.member-card-details h3')?.textContent || 'anggota';
+    const safeName = name.replace(/[^a-z0-9-_ ]/gi, '').trim().replace(/\s+/g, '-').slice(0,50) || 'anggota';
+    pdf.save('Kartu-Anggota-SGPR-' + safeName + '.pdf');
+    toast('PDF kartu anggota berhasil dibuat.');
+  } catch (error) {
+    console.error('Gagal membuat PDF kartu anggota:', error);
+    toast('PDF gagal dibuat: ' + (error.message || 'Coba lagi.'));
+  } finally {
+    if (button) { button.disabled = false; button.textContent = 'Cetak / Simpan PDF'; }
+  }
+}
+
+async function shareMemberCardImage() {
   const button = Array.from(document.querySelectorAll('#memberCardDisplay button'))
     .find(el => el.textContent.includes('Kirim Kartu'));
   if (button) { button.disabled = true; button.textContent = 'Menyiapkan gambar...'; }
-
   try {
-    // Tunggu logo dan QR selesai dimuat agar hasil PNG tidak ada bagian yang kosong.
-    const images = Array.from(card.querySelectorAll('img'));
-    await Promise.all(images.map(img => {
-      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-      return new Promise((resolve, reject) => {
-        img.addEventListener('load', resolve, {once:true});
-        img.addEventListener('error', () => reject(new Error('Logo atau QR gagal dimuat.')), {once:true});
-      });
-    }));
-
-    // Rasterkan logo SVG resmi terlebih dahulu. File logo memakai SVG dengan
-    // gambar WebP tertanam; beberapa renderer html2canvas merusak kombinasi ini.
-    const originalLogo = card.querySelector('.member-card-logo');
-    const logoCanvas = document.createElement('canvas');
-    const logoSize = Math.max(320, (originalLogo.naturalWidth || originalLogo.width || 160) * 2);
-    logoCanvas.width = logoSize;
-    logoCanvas.height = logoSize;
-    const logoContext = logoCanvas.getContext('2d');
-    logoContext.clearRect(0, 0, logoSize, logoSize);
-    logoContext.drawImage(originalLogo, 0, 0, logoSize, logoSize);
-    const logoPng = logoCanvas.toDataURL('image/png');
-
-    // Render salinan kartu agar tampilan asli di halaman tidak berubah.
-    const exportCard = card.cloneNode(true);
-    const exportLogo = exportCard.querySelector('.member-card-logo');
-    exportLogo.src = logoPng;
-    // Tunggu browser selesai mendekode PNG logo baru sebelum html2canvas berjalan.
-    if (typeof exportLogo.decode === 'function') {
-      await exportLogo.decode();
-    } else if (!exportLogo.complete || !exportLogo.naturalWidth) {
-      await new Promise((resolve, reject) => {
-        exportLogo.onload = resolve;
-        exportLogo.onerror = () => reject(new Error('Logo gagal disiapkan untuk gambar kartu.'));
-      });
-    }
-    exportCard.style.position = 'fixed';
-    exportCard.style.left = '-10000px';
-    exportCard.style.top = '0';
-    exportCard.style.width = card.getBoundingClientRect().width + 'px';
-    exportCard.style.margin = '0';
-    document.body.appendChild(exportCard);
-
-    let canvas;
-    try {
-      canvas = await html2canvas(exportCard, {
-        scale: 3,
-        backgroundColor: '#080909',
-        useCORS: true,
-        allowTaint: false,
-        logging: false
-      });
-    } finally {
-      exportCard.remove();
-    }
+    const canvas = await renderMemberCardCanvas();
     const blob = await new Promise((resolve, reject) => {
       canvas.toBlob(file => file ? resolve(file) : reject(new Error('Gambar kartu gagal dibuat.')), 'image/png');
     });
-    const memberName = card.querySelector('.member-card-details h3')?.textContent || 'anggota';
-    const file = new File([blob], 'kartu-anggota-SGPR.png', {type:'image/png'});
+    const memberName = $('memberCardPrint')?.querySelector('.member-card-details h3')?.textContent || 'anggota';
+    const safeName = memberName.replace(/[^a-z0-9-_ ]/gi, '').trim().replace(/\s+/g, '-').slice(0,50) || 'anggota';
+    const file = new File([blob], 'Kartu-Anggota-SGPR-' + safeName + '.png', {type:'image/png'});
     const shareText = 'Kartu Anggota Digital SANGGAH GEDE PAN RENGEN - ' + memberName;
 
     if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
       await navigator.share({files:[file], title:'Kartu Anggota SGPR', text:shareText});
-      toast('Pilih WhatsApp pada menu berbagi untuk mengirim kartu.');
-    } else {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'kartu-anggota-SGPR.png';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 15000);
-      window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank', 'noopener');
-      toast('Gambar kartu diunduh. Lampirkan PNG tersebut di WhatsApp.');
+      toast('Pilih WhatsApp pada menu berbagi untuk mengirim gambar kartu.');
+      return;
     }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank', 'noopener');
+    toast('Gambar kartu tersimpan. Lampirkan gambar tersebut di WhatsApp.');
   } catch (error) {
-    if (error.name === 'AbortError') {
-      toast('Pengiriman dibatalkan.');
-    } else {
+    if (error.name === 'AbortError') toast('Pengiriman dibatalkan.');
+    else {
       console.error('Gagal membagikan kartu anggota:', error);
       toast('Gagal membuat gambar kartu: ' + (error.message || 'Coba lagi.'));
     }
