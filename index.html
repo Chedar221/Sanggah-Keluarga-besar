@@ -1371,6 +1371,11 @@ header.heritage-header.image-banner:after{
     <button class="chat-entry-button" onclick="showRegister()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h3a4.5 4.5 0 0 1 4.5 4.5V20M19 8v6M16 11h6"/></svg> DAFTAR</button>
   </div>
 
+  <div class="quick-access" aria-label="Akses cepat data keluarga dan kas">
+    <button type="button" onclick="openPublicSection('publicMembersCard')">♙ DATA ANGGOTA</button>
+    <button type="button" onclick="openPublicSection('publicTransactionsCard')">▤ RIWAYAT KAS</button>
+  </div>
+
   <div class="card committee-card" id="publicCommitteeCard">
     <h2>👥 SUSUNAN PENGURUS</h2>
     <div class="committee-list">
@@ -1699,6 +1704,13 @@ function connectSupabase() {
 /* =====================================
    LOGIN DAN SESSION
 ===================================== */
+
+function openPublicSection(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  if (section.tagName === 'DETAILS') section.open = true;
+  section.scrollIntoView({behavior:'smooth',block:'start'});
+}
 
 function withRequestTimeout(request, milliseconds, message) {
   let timer;
