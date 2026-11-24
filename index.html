@@ -2057,6 +2057,7 @@ async function loadMemberDues() {
     const statusLabel = row.status === 'lunas' ? 'LUNAS' : (paid > 0 ? 'BELUM LUNAS · CICILAN' : 'BELUM LUNAS');
     const paymentList = (paymentMap[id] || []).map(p=>
       '<div class="row" style="padding:6px 0;border-top:1px solid rgba(180,160,100,.18)"><span>' + esc(memberDueDateLabel(p.paid_at)) + (p.note ? ' · ' + esc(p.note) : '') + '</span><strong>' + rupiah(p.amount) + '</strong>' +
+      '<button type="button" class="secondary" onclick="openPaymentReceipt(\'iuran\',\'' + esc(p.id) + '\')">Nota</button>' +
       (manager ? '<button type="button" class="secondary" onclick="editMemberDuePayment(\'' + esc(p.id) + '\')">Koreksi</button>' : '') +
       '</div>'
     ).join('');
@@ -2146,6 +2147,71 @@ async function recordMemberDuePayment(event,id) {
   if (error) { toast('Pembayaran gagal dicatat: ' + error.message); return; }
   toast('Pembayaran berhasil dicatat dan disinkronkan ke transaksi kas.');
   await loadMemberDues();
+}
+
+async function openPaymentReceipt(kind,id) {
+  const receiptWindow = window.open('', '_blank');
+  if (!receiptWindow) {
+    toast('Izinkan pop-up browser untuk membuka nota pembayaran.');
+    return;
+  }
+  receiptWindow.document.write('<!doctype html><title>Menyiapkan nota...</title><p style="font:16px Arial;padding:24px">Menyiapkan nota pembayaran...</p>');
+  let title = '';
+  let receiptNo = '';
+  let date = '';
+  let payer = '';
+  let item = '';
+  let period = '';
+  let amount = 0;
+  let note = '';
+  try {
+    if (kind === 'iuran') {
+      const {data:p,error:pe} = await sb.from('member_dues_payments')
+        .select('id,obligation_id,amount,paid_at,note').eq('id',id).single();
+      if (pe || !p) throw new Error(pe?.message || 'Pembayaran tidak ditemukan.');
+      const {data:o,error:oe} = await sb.from('member_dues')
+        .select('member_id,description,period_label').eq('id',p.obligation_id).single();
+      if (oe || !o) throw new Error(oe?.message || 'Data kewajiban iuran tidak ditemukan.');
+      const {data:m,error:me} = await sb.from('members')
+        .select('full_name,member_number,family_name').eq('id',o.member_id).single();
+      if (me || !m) throw new Error(me?.message || 'Data anggota tidak ditemukan.');
+      title = 'BUKTI PEMBAYARAN IURAN WAJIB';
+      receiptNo = 'IUR-' + String(p.id).slice(0,8).toUpperCase();
+      date = p.paid_at;
+      payer = m.full_name + (m.member_number ? ' · SGPR ' + String(m.member_number).padStart(4,'0') : '');
+      item = o.description;
+      period = o.period_label;
+      amount = Number(p.amount);
+      note = p.note || '';
+    } else if (kind === 'punia') {
+      const {data:p,error:pe} = await sb.from('transactions')
+        .select('id,type,description,amount,transaction_date').eq('id',id).single();
+      if (pe || !p) throw new Error(pe?.message || 'Transaksi Dana Punia tidak ditemukan.');
+      if (p.type !== 'pemasukan') throw new Error('Nota hanya tersedia untuk penerimaan Dana Punia.');
+      title = 'BUKTI PENERIMAAN DANA PUNIA';
+      receiptNo = 'PN-' + String(p.id).slice(0,8).toUpperCase();
+      date = p.transaction_date;
+      const detail = String(p.description || '').replace(/^Dana Punia:\\s*/i,'');
+      const parts = detail.split(' — ');
+      payer = parts.length > 1 ? parts.shift() : 'Pemberi punia';
+      item = parts.join(' — ') || detail;
+      amount = Number(p.amount);
+    } else {
+      throw new Error('Jenis nota tidak dikenali.');
+    }
+    const money = rupiah(amount);
+    const dateText = date ? new Date(date + 'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
+    const message = 'SANGGAH GEDE PAN RENGEN\\n' + title + '\\nNo. Nota: ' + receiptNo + '\\nTanggal: ' + dateText + '\\nDiterima dari: ' + payer + '\\nKeterangan: ' + item + (period ? '\\nPeriode: ' + period : '') + '\\nJumlah: ' + money + (note ? '\\nCatatan: ' + note : '') + '\\n\\nTerima kasih.';
+    const waUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
+    receiptWindow.document.open();
+    receiptWindow.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} - ${esc(receiptNo)}</title><style>
+      *{box-sizing:border-box}body{margin:0;padding:24px;background:#f1f1ed;color:#20221e;font-family:Arial,sans-serif}.receipt{max-width:620px;margin:20px auto;background:#fff;border:1px solid #c5a45b;border-radius:16px;padding:30px;box-shadow:0 8px 30px #0001}.head{text-align:center;border-bottom:2px solid #b9974b;padding-bottom:18px;margin-bottom:18px}.head img{width:70px;height:70px;object-fit:contain}.brand{font-size:19px;font-weight:800;letter-spacing:1px;color:#1c2a22;margin-top:8px}.sub{font-size:12px;color:#777;margin-top:4px}.tag{display:inline-block;margin-top:18px;padding:8px 14px;border:1px solid #c5a45b;border-radius:30px;color:#755b22;font-size:12px;font-weight:bold}.line{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid #eee;font-size:14px}.line span{color:#777}.line strong{text-align:right}.total{margin-top:18px;padding:18px;background:#f8f4e9;border-radius:12px;text-align:center}.total small{color:#76643c}.total b{display:block;font-size:25px;color:#755b22;margin-top:6px}.foot{text-align:center;color:#777;font-size:12px;margin-top:22px;line-height:1.6}.actions{display:flex;justify-content:center;gap:10px;margin:18px auto;max-width:620px}.actions a,.actions button{border:0;border-radius:9px;padding:12px 16px;background:#173d32;color:#fff;text-decoration:none;font-weight:bold;font-size:14px}.actions a{background:#167b49}@media print{body{padding:0;background:#fff}.receipt{box-shadow:none;margin:0 auto;border-radius:0}.actions{display:none}}
+      </style></head><body><main class="receipt"><header class="head"><img src="/logo-sanggah.svg" alt="Logo Sanggah"><div class="brand">SANGGAH GEDE PAN RENGEN</div><div class="sub">Satu Keluarga, Satu Tujuan</div><div class="tag">${esc(title)}</div></header><div class="line"><span>Nomor Nota</span><strong>${esc(receiptNo)}</strong></div><div class="line"><span>Tanggal</span><strong>${esc(dateText)}</strong></div><div class="line"><span>Diterima dari</span><strong>${esc(payer)}</strong></div><div class="line"><span>Keterangan</span><strong>${esc(item)}</strong></div>${period ? '<div class="line"><span>Periode</span><strong>' + esc(period) + '</strong></div>' : ''}${note ? '<div class="line"><span>Catatan</span><strong>' + esc(note) + '</strong></div>' : ''}<section class="total"><small>JUMLAH DITERIMA</small><b>${esc(money)}</b></section><div class="foot">Pembayaran telah dicatat dalam administrasi keluarga.<br>Terima kasih atas partisipasi dan punia yang diberikan.</div></main><div class="actions"><button onclick="window.print()">Cetak / Simpan PDF</button><a href="${waUrl}" target="_blank" rel="noopener">Kirim via WhatsApp</a></div></body></html>`);
+    receiptWindow.document.close();
+  } catch (error) {
+    receiptWindow.close();
+    toast('Nota gagal dibuat: ' + (error?.message || error));
+  }
 }
 
 async function editMemberDue(id) {
@@ -3117,8 +3183,10 @@ function renderPunia() {
         </select>
         <label>Tanggal</label>
         <input type="date" id="puniaDate" required>
+        <label>Nama pemberi punia</label>
+        <input id="puniaDonor" placeholder="Nama anggota / keluarga" required>
         <label>Keterangan</label>
-        <input id="puniaDescription" placeholder="Contoh: Punia dari keluarga..." required>
+        <input id="puniaDescription" placeholder="Contoh: Punia upacara..." required>
         <label>Jumlah (Rp)</label>
         <input id="puniaAmount" type="number" min="1" required>
         <button type="submit">Simpan Dana Punia</button>
@@ -3144,7 +3212,7 @@ async function addPunia(event) {
   const obj = {
     type: $('puniaType').value,
     transaction_date: $('puniaDate').value,
-    description: 'Dana Punia: ' + detail,
+    description: 'Dana Punia: ' + ($('puniaDonor').value.trim() ? $('puniaDonor').value.trim() + ' — ' : '') + detail,
     amount,
     created_by: session.user.id
   };
@@ -3181,6 +3249,7 @@ async function loadPuniaRows() {
       <b>${esc(row.description.replace(/^Dana Punia:\\s*/,''))}</b>
       <div class="muted">${row.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} · ${esc(row.transaction_date || '')}</div>
       <strong>${rupiah(row.amount)}</strong>
+      ${row.type === 'pemasukan' ? '<div style="margin-top:8px"><button type="button" class="secondary" onclick="openPaymentReceipt(\'punia\',\'' + esc(row.id) + '\')">Buat / Cetak Nota</button></div>' : ''}
     </div>
   `).join('');
 }
