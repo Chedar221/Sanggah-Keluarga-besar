@@ -3961,13 +3961,41 @@ async function shareMemberCardImage() {
       });
     }));
 
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      backgroundColor: '#080909',
-      useCORS: true,
-      allowTaint: false,
-      logging: false
-    });
+    // Rasterkan logo SVG resmi terlebih dahulu. File logo memakai SVG dengan
+    // gambar WebP tertanam; beberapa renderer html2canvas merusak kombinasi ini.
+    const originalLogo = card.querySelector('.member-card-logo');
+    const logoCanvas = document.createElement('canvas');
+    const logoSize = Math.max(320, (originalLogo.naturalWidth || originalLogo.width || 160) * 2);
+    logoCanvas.width = logoSize;
+    logoCanvas.height = logoSize;
+    const logoContext = logoCanvas.getContext('2d');
+    logoContext.clearRect(0, 0, logoSize, logoSize);
+    logoContext.drawImage(originalLogo, 0, 0, logoSize, logoSize);
+    const logoPng = logoCanvas.toDataURL('image/png');
+
+    // Render salinan kartu agar tampilan asli di halaman tidak berubah.
+    const exportCard = card.cloneNode(true);
+    const exportLogo = exportCard.querySelector('.member-card-logo');
+    exportLogo.src = logoPng;
+    exportCard.style.position = 'fixed';
+    exportCard.style.left = '-10000px';
+    exportCard.style.top = '0';
+    exportCard.style.width = card.getBoundingClientRect().width + 'px';
+    exportCard.style.margin = '0';
+    document.body.appendChild(exportCard);
+
+    let canvas;
+    try {
+      canvas = await html2canvas(exportCard, {
+        scale: 3,
+        backgroundColor: '#080909',
+        useCORS: true,
+        allowTaint: false,
+        logging: false
+      });
+    } finally {
+      exportCard.remove();
+    }
     const blob = await new Promise((resolve, reject) => {
       canvas.toBlob(file => file ? resolve(file) : reject(new Error('Gambar kartu gagal dibuat.')), 'image/png');
     });
