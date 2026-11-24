@@ -3820,6 +3820,14 @@ function memberCardCategory(member) {
   return member.member_type || member.member_category || 'Anggota Keluarga';
 }
 
+async function getSequentialMemberCardNumber(memberId) {
+  // Nomor mengikuti urutan pendaftaran awal (created_at), lalu UUID sebagai penentu jika waktunya sama.
+  const {data,error} = await sb.from('members').select('id').order('created_at',{ascending:true,nullsFirst:false}).order('id',{ascending:true}).limit(1000);
+  if (error || !data) return null;
+  const index = data.findIndex(row => row.id === memberId);
+  return index < 0 ? null : index + 1;
+}
+
 async function renderMemberCardPage() {
   const v = $('view');
   if (!v || !sb) return;
@@ -3890,7 +3898,9 @@ async function renderMemberCardById(id) {
     return;
   }
 
-  const cardCode = 'SGPR-' + String(member.id).replace(/-/g,'').slice(0,10).toUpperCase();
+  const cardNumber = await getSequentialMemberCardNumber(member.id);
+  if (!cardNumber) { target.innerHTML = '<p class="muted">Nomor anggota belum dapat ditentukan. Coba muat ulang halaman.</p>'; return; }
+  const cardCode = 'SGPR ' + String(cardNumber).padStart(4,'0');
   const verifyUrl = location.origin + '/?verifikasi-kartu=' + encodeURIComponent(member.id);
   const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=4&data=' + encodeURIComponent(verifyUrl);
   const familyLabel = member.family_name || member.relation || 'Keluarga Besar Sanggah Gede Pan Rengen';
