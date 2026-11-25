@@ -53,8 +53,8 @@ main{max-width:none!important;width:100%!important;margin:0!important;padding:18
  #app .nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  #app .nav button{font-size:10px!important}
 }
-/* Gold page canvas only — dashboard cards remain dark. */
-body{background:linear-gradient(135deg,#9c7a32 0%,#c4a454 48%,#8e6e2c 100%)!important}
+/* Gold canvas matched to the original header ornament gold; cards remain dark. */
+body{background:linear-gradient(135deg,#8f6b2b 0%,#c89b4b 42%,#e1bd43 72%,#a77c2d 100%)!important}
 main{background:transparent!important}
 #app{background:transparent!important}
 #app>.card:first-child{background:linear-gradient(145deg,#111111,#090909)!important}
