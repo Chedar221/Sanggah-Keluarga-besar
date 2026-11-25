@@ -1329,6 +1329,26 @@ header.heritage-header.image-banner:after{
 }
 
 
+
+/* STRUKTUR PENGURUS KELUARGA BESAR */
+.committee-card{background:linear-gradient(145deg,#f7f4eb,#fff);border:1px solid #dfd2ad}
+.committee-card h2{text-align:center;color:#174b3b;line-height:1.45;letter-spacing:.5px}
+.committee-structure{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;max-width:760px;margin:18px auto 4px;position:relative}
+.committee-person{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border:1px solid #e6dcc4;border-radius:17px;background:linear-gradient(160deg,#fff,#fbf8ef);box-shadow:0 5px 16px #263b2b0b;text-align:center;min-width:0}
+.committee-person:first-child{grid-column:1/-1;width:min(100%,300px);justify-self:center;border:1px solid #c9b77f;background:linear-gradient(145deg,#fffdf5,#f2ead4)}
+.committee-person:first-child:after{content:"";position:absolute;top:100%;height:19px;border-left:1px solid #b99d5b}
+.committee-person:nth-child(2),.committee-person:nth-child(3){margin-top:18px}
+.committee-person img,.committee-avatar{width:92px;height:92px;border-radius:50%;object-fit:cover;border:3px solid #e5d5a8;background:#eee9dc}
+.committee-person:first-child img,.committee-person:first-child .committee-avatar{width:112px;height:112px}
+.committee-avatar{display:grid;place-items:center;color:#7c765f;font-size:34px}
+.committee-person .position{font-size:11px;font-weight:800;letter-spacing:1.1px;color:#8a7134}
+.committee-person strong{font-size:14px;color:#233e32;overflow-wrap:anywhere}
+.committee-manager-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:start;padding:15px 0;border-top:1px solid var(--line)}
+.committee-manager-preview{width:100px;height:100px;border-radius:14px;object-fit:cover;background:#f0ede5;border:1px solid var(--line)}
+.committee-manager-placeholder{display:grid;place-items:center;color:var(--muted);font-size:30px}
+.committee-manager-fields{display:grid;gap:8px;min-width:0}
+.committee-manager-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:560px){.committee-structure{gap:14px 9px}.committee-person{padding:12px 8px}.committee-person img,.committee-avatar{width:76px;height:76px}.committee-person:first-child img,.committee-person:first-child .committee-avatar{width:96px;height:96px}.committee-manager-row{grid-template-columns:76px minmax(0,1fr);gap:10px}.committee-manager-preview{width:72px;height:72px}}
 </style>
 </head>
 <body>
@@ -1363,11 +1383,9 @@ header.heritage-header.image-banner:after{
   </div>
 
   <div class="card committee-card" id="publicCommitteeCard">
-    <h2>👥 SUSUNAN PENGURUS</h2>
-    <div class="committee-list">
-      <div class="committee-row"><span>KETUA</span><strong>NENGAH DARSANA</strong></div>
-      <div class="committee-row"><span>SEKRETARIS</span><strong>WAYAN NUSADA</strong></div>
-      <div class="committee-row"><span>BENDAHARA</span><strong>WAYAN SUDIARTA</strong></div>
+    <h2>♙ PENGURUS<br>SANGGAH GEDE PAN RENGEN</h2>
+    <div id="publicCommitteeMembers" class="committee-structure">
+      <div class="muted">Memuat data pengurus...</div>
     </div>
   </div>
 
@@ -1692,6 +1710,7 @@ function connectSupabase() {
   registerFamilyServiceWorker();
   $('setup').classList.add('hidden');
   loadHomepageBanners();
+  loadPublicCommittee();
   return true;
 }
 
@@ -1895,6 +1914,7 @@ function canDelete(table) {
 
 const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluarga'], ['banner','▧','Banner Beranda'], ['notifikasi','♧','Notifikasi'], ['aktivasi-push','♧','Aktivasi Notifikasi'],
   ['dashboard','⌂','Beranda'],
+  ['pengurus','♙','Pengurus'],
   ['giliran-buda-cemeng','🔄','Giliran Buda Cemeng'],
   ['galeri','▧','Foto Dokumentasi'],
   ['kartu-anggota','▣','Kartu Anggota'],
@@ -1908,7 +1928,7 @@ const pages = [  ['pengumuman','▤','Pengumuman'], ['pesan','✉','Pesan Keluar
 ];
 
 function renderNav() {
-  $('nav').innerHTML = pages.filter(p => ((p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()) && (p[0] !== 'giliran-buda-cemeng' || isPipilOwner())).map(p => `
+  $('nav').innerHTML = pages.filter(p => ((p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()) && (p[0] !== 'giliran-buda-cemeng' || isPipilOwner()) && (p[0] !== 'pengurus' || canManageGeneral())).map(p => `
     <button
       class="${active === p[0] ? 'active' : ''}"
       onclick="go('${p[0]}')">
@@ -2529,6 +2549,11 @@ async function editMemberDuePayment(id) {
 
 function renderView() {
   const v = $('view');
+
+  if (active === 'pengurus') {
+    if (!canManageGeneral()) { v.innerHTML='<div class="card">Akses pengelolaan pengurus hanya untuk pengurus berwenang.</div>'; return; }
+    renderCommitteeManager(); return;
+  }
 
   if (active === 'notifikasi') {
     renderNotificationCenter(); return;
@@ -4902,6 +4927,78 @@ async function loadRows(table) {
 // ==========================================
 
 initializeApp();
+
+/* PENGELOLAAN PENGURUS INTI SANGGAH GEDE PAN RENGEN */
+const COMMITTEE_POSITIONS = [
+  {key:'ketua',label:'KETUA'},
+  {key:'sekretaris',label:'SEKRETARIS'},
+  {key:'bendahara',label:'BENDAHARA'}
+];
+function committeePhotoUrl(path){
+  if(!path || !sb) return '';
+  return sb.storage.from('committee-portraits').getPublicUrl(path).data.publicUrl;
+}
+async function loadPublicCommittee(){
+  const box=$('publicCommitteeMembers');
+  if(!box || !sb)return;
+  box.innerHTML='<div class="muted">Memuat data pengurus...</div>';
+  const {data,error}=await sb.from('committee_members').select('position,full_name,photo_path');
+  if(error){box.innerHTML='<div class="muted">Data pengurus belum dapat dimuat. <button type="button" class="secondary" onclick="loadPublicCommittee()">Coba lagi</button></div>';console.warn('Committee load:',error);return;}
+  const rows=COMMITTEE_POSITIONS.map(p=>({...p,...((data||[]).find(x=>x.position===p.key)||{})}));
+  box.innerHTML=rows.map(item=>{
+    const url=committeePhotoUrl(item.photo_path);
+    const portrait=url?'<img src="'+esc(url)+'" alt="Foto '+esc(item.label)+'" loading="lazy">':'<div class="committee-avatar" aria-hidden="true">♙</div>';
+    return '<article class="committee-person">'+portrait+'<span class="position">'+esc(item.label)+'</span><strong>'+(item.full_name?esc(item.full_name):'Belum diisi')+'</strong></article>';
+  }).join('');
+}
+async function renderCommitteeManager(){
+  const v=$('view');
+  v.innerHTML='<div class="card"><div class="row"><div><h2>♙ PENGURUS SANGGAH GEDE PAN RENGEN</h2><p class="muted">Kelola nama dan foto Ketua, Sekretaris, serta Bendahara. Perubahan akan tampil di halaman utama.</p></div><button type="button" class="secondary" onclick="loadCommitteeManager()">Muat ulang</button></div><div id="committeeManagerRows" class="muted">Memuat data pengurus...</div></div>';
+  await loadCommitteeManager();
+}
+async function loadCommitteeManager(){
+  const box=$('committeeManagerRows');if(!box||!sb)return;
+  box.innerHTML='<div class="muted">Memuat data pengurus...</div>';
+  const {data,error}=await sb.from('committee_members').select('position,full_name,photo_path');
+  if(error){box.textContent='Gagal memuat data pengurus: '+error.message;return;}
+  const rows=COMMITTEE_POSITIONS.map(p=>({...p,...((data||[]).find(x=>x.position===p.key)||{})}));
+  box.innerHTML=rows.map(item=>{
+    const url=committeePhotoUrl(item.photo_path);
+    const preview=url?'<img class="committee-manager-preview" src="'+esc(url)+'" alt="Foto '+esc(item.label)+'">':'<div class="committee-manager-preview committee-manager-placeholder">♙</div>';
+    return '<form class="committee-manager-row" onsubmit="saveCommitteeMember(event,\''+item.key+'\')">'+preview+'<div class="committee-manager-fields"><strong>'+esc(item.label)+'</strong><label for="committeeName_'+item.key+'">Nama pengurus</label><input id="committeeName_'+item.key+'" type="text" maxlength="100" value="'+esc(item.full_name||'')+'" placeholder="Masukkan nama '+esc(item.label.toLowerCase())+'"><label for="committeePhoto_'+item.key+'">Foto profil (JPG, PNG, WEBP · maks. 5 MB)</label><input id="committeePhoto_'+item.key+'" type="file" accept="image/jpeg,image/png,image/webp"><div class="committee-manager-actions"><button type="submit">Simpan perubahan</button><button type="button" class="danger" onclick="clearCommitteeMember(\''+item.key+'\')">Hapus data</button></div></div></form>';
+  }).join('');
+}
+async function saveCommitteeMember(event,position){
+  event.preventDefault();if(!canManageGeneral()||!session?.user?.id){toast('Akses pengelolaan pengurus ditolak.');return;}
+  const name=$('committeeName_'+position)?.value.trim()||null;
+  const file=$('committeePhoto_'+position)?.files?.[0]||null;
+  if(name && name.length<2){toast('Nama pengurus minimal 2 karakter.');return;}
+  if(!name && !file){toast('Isi nama atau pilih foto sebelum menyimpan. Untuk mengosongkan data gunakan tombol Hapus data.');return;}
+  if(file&&(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)){toast('Gunakan JPG, PNG, atau WEBP maksimal 5 MB.');return;}
+  const submit=event.submitter;if(submit){submit.disabled=true;submit.textContent='Menyimpan...';}
+  const {data:old}=await sb.from('committee_members').select('photo_path').eq('position',position).maybeSingle();
+  let newPath=old?.photo_path||null;
+  if(file){
+    const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+    newPath=position+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,10)+'.'+ext;
+    const upload=await sb.storage.from('committee-portraits').upload(newPath,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+    if(upload.error){if(submit){submit.disabled=false;submit.textContent='Simpan perubahan';}toast('Foto gagal diunggah: '+upload.error.message);return;}
+  }
+  const saved=await sb.from('committee_members').upsert({position,full_name:name,photo_path:newPath,updated_by:session.user.id,updated_at:new Date().toISOString()},{onConflict:'position'});
+  if(saved.error){if(file&&newPath)await sb.storage.from('committee-portraits').remove([newPath]);if(submit){submit.disabled=false;submit.textContent='Simpan perubahan';}toast('Data pengurus gagal disimpan: '+saved.error.message);return;}
+  if(file&&old?.photo_path&&old.photo_path!==newPath)await sb.storage.from('committee-portraits').remove([old.photo_path]);
+  toast('Data '+position+' berhasil diperbarui.');await loadCommitteeManager();await loadPublicCommittee();
+}
+async function clearCommitteeMember(position){
+  if(!canManageGeneral()){toast('Akses menghapus pengurus ditolak.');return;}
+  const label=(COMMITTEE_POSITIONS.find(p=>p.key===position)||{}).label||position.toUpperCase();
+  if(!confirm('Hapus nama dan foto '+label+' dari struktur pengurus?'))return;
+  const {data:old}=await sb.from('committee_members').select('photo_path').eq('position',position).maybeSingle();
+  const {error}=await sb.from('committee_members').upsert({position,full_name:null,photo_path:null,updated_by:session?.user?.id||null,updated_at:new Date().toISOString()},{onConflict:'position'});
+  if(error){toast('Data gagal dihapus: '+error.message);return;}
+  if(old?.photo_path){const removed=await sb.storage.from('committee-portraits').remove([old.photo_path]);if(removed.error)console.warn('Foto pengurus lama belum terhapus dari storage:',removed.error);}
+  toast('Data '+label+' berhasil dikosongkan.');await loadCommitteeManager();await loadPublicCommittee();
+}
 </script>
 
 </body>
