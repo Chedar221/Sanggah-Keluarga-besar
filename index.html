@@ -1597,13 +1597,6 @@ input::placeholder,textarea::placeholder{color:#888888!important}
 </section>
 
 <section id="app" class="hidden">
-  <div id="appLanding" class="card app-landing">
-    <div class="welcome-kicker">SANGGAH GEDE PAN RENGEN</div>
-    <h2>Area Keluarga</h2>
-    <p class="muted">Selamat datang. Pilih tombol di bawah untuk membuka ruang administrasi keluarga.</p>
-    <button type="button" onclick="openAdminArea()">Buka Area Admin</button>
-  </div>
-
   <div id="adminWorkspace" class="hidden">
     <div class="card" id="appAdminWelcome">
       <div class="row">
@@ -1617,7 +1610,6 @@ input::placeholder,textarea::placeholder{color:#888888!important}
           <button class="secondary" onclick="signOut()">Keluar</button>
         </div>
       </div>
-      <div class="actions"><button type="button" class="secondary" onclick="returnAppHome()">Kembali ke Halaman Utama</button></div>
     </div>
     <div class="quick-access hidden" id="appAdminQuickAccess" aria-label="Akses cepat admin">
       <button type="button" onclick="go('anggota')">♙ Data Anggota</button>
@@ -1761,7 +1753,6 @@ function roleName(role) {
 
 function showPublic() {
   $('siteHeritageHeader')?.classList.remove('hidden');
-  $('appLanding')?.classList.remove('hidden');
   $('adminWorkspace')?.classList.add('hidden');
   $('publicPage').classList.remove('hidden');
   $('login').classList.add('hidden');
@@ -2026,8 +2017,7 @@ async function loadProfile() {
   const showAdminControls = ['ketua','wakil','sekretaris','bendahara','koordinator'].includes(data.role);
   // Halaman utama setelah login dibuat ringkas; seluruh navigasi dan data berada di Area Admin.
   $('siteHeritageHeader')?.classList.add('hidden');
-  $('appLanding')?.classList.remove('hidden');
-  $('adminWorkspace')?.classList.add('hidden');
+  $('adminWorkspace')?.classList.remove('hidden');
   $('appAdminWelcome')?.classList.remove('hidden');
   $('appAdminQuickAccess')?.classList.toggle('hidden', !showAdminControls);
 
