@@ -1349,6 +1349,64 @@ header.heritage-header.image-banner:after{
 .committee-manager-fields{display:grid;gap:8px;min-width:0}
 .committee-manager-actions{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:560px){.committee-structure{gap:14px 9px}.committee-person{padding:12px 8px}.committee-person img,.committee-avatar{width:76px;height:76px}.committee-person:first-child img,.committee-person:first-child .committee-avatar{width:96px;height:96px}.committee-manager-row{grid-template-columns:76px minmax(0,1fr);gap:10px}.committee-manager-preview{width:72px;height:72px}}
+
+/* DESAIN FINAL PENGURUS — PUTIH & GOLD, COMPACT */
+.committee-card{
+  width:100%;max-width:none;margin:8px auto 12px;padding:12px 10px;
+  background:#fff!important;border:1px solid #bd9b4e!important;
+  border-radius:10px!important;box-shadow:none!important;color:#80652e;
+}
+.committee-card h2{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  margin:0 0 8px;text-align:center;color:#b08d3c!important;
+  line-height:1.2;letter-spacing:.2px;
+}
+.committee-title-main{font-size:19px;font-weight:800;letter-spacing:.7px}
+.committee-title-sub{font-size:11px;font-weight:500;letter-spacing:.15px;color:#967b43}
+.committee-structure{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px 8px;
+  width:100%;max-width:560px;margin:8px auto 0;position:relative;
+}
+.committee-person{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  min-width:0;padding:7px 6px;border:0;border-radius:0;
+  background:transparent;box-shadow:none;text-align:center;
+}
+.committee-person:first-child{
+  grid-column:1/-1;width:min(100%,210px);justify-self:center;
+  padding:5px 6px 7px;background:transparent;border:0;
+}
+.committee-person:first-child:after{height:11px;border-color:#bd9b4e}
+.committee-person:nth-child(2),.committee-person:nth-child(3){margin-top:10px}
+.committee-person img,.committee-avatar{
+  width:48px;height:48px;border-radius:50%;object-fit:cover;
+  border:2px solid #bd9b4e;background:#faf8f2;
+}
+.committee-person:first-child img,.committee-person:first-child .committee-avatar{width:60px;height:60px}
+.committee-avatar{display:grid;place-items:center;color:#b08d3c;font-size:22px}
+.committee-person .position{
+  display:block;width:100%;padding:4px 3px;border:1px solid #bd9b4e;
+  border-radius:4px 4px 0 0;background:#bd9b4e;color:#fff;
+  font-size:9px;font-weight:800;letter-spacing:.55px;line-height:1.2;
+}
+.committee-person strong{
+  display:block;width:100%;padding:4px 3px;border:1px solid #bd9b4e;
+  border-top:0;border-radius:0 0 4px 4px;background:#fff;
+  color:#80652e;font-size:10px;line-height:1.25;overflow-wrap:anywhere;
+}
+@media(max-width:560px){
+  .committee-card{padding:10px 8px}
+  .committee-title-main{font-size:18px}
+  .committee-title-sub{font-size:10px}
+  .committee-structure{gap:8px 7px}
+  .committee-person{padding:5px 3px}
+  .committee-person img,.committee-avatar{width:44px;height:44px}
+  .committee-person:first-child img,.committee-person:first-child .committee-avatar{width:56px;height:56px}
+  .committee-person:first-child:after{height:9px}
+  .committee-person:nth-child(2),.committee-person:nth-child(3){margin-top:8px}
+  .committee-person .position,.committee-person strong{font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -1383,7 +1441,7 @@ header.heritage-header.image-banner:after{
   </div>
 
   <div class="card committee-card" id="publicCommitteeCard">
-    <h2>♙ PENGURUS<br>SANGGAH GEDE PAN RENGEN</h2>
+    <h2><span class="committee-title-main">PENGURUS</span><span class="committee-title-sub">Sanggah Gede Pan Rengen</span></h2>
     <div id="publicCommitteeMembers" class="committee-structure">
       <div class="muted">Memuat data pengurus...</div>
     </div>
