@@ -1487,7 +1487,7 @@ input::placeholder,textarea::placeholder{color:#888888!important}
 </head>
 <body>
 
-<header class="heritage-header image-banner">
+<header class="heritage-header image-banner" id="siteHeritageHeader">
   <img class="site-header-banner" src="20261123_142033.png" alt="SANGGAH GEDE PAN RENGEN">
 </header>
 
@@ -1749,6 +1749,7 @@ function roleName(role) {
 }
 
 function showPublic() {
+  $('siteHeritageHeader')?.classList.remove('hidden');
   $('publicPage').classList.remove('hidden');
   $('login').classList.add('hidden');
   $('register').classList.add('hidden');
@@ -2010,6 +2011,8 @@ async function loadProfile() {
 
   // Informasi akun dan akses cepat hanya ditampilkan untuk akun pengurus/admin.
   const showAdminControls = ['ketua','wakil','sekretaris','bendahara','koordinator'].includes(data.role);
+  // Header logo dan judul tetap tampil di halaman publik, tetapi disembunyikan pada dashboard anggota.
+  $('siteHeritageHeader')?.classList.toggle('hidden', !showAdminControls);
   $('appAdminWelcome')?.classList.toggle('hidden', !showAdminControls);
   $('appAdminQuickAccess')?.classList.toggle('hidden', !showAdminControls);
 
