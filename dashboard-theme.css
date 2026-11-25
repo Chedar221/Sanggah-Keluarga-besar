@@ -53,8 +53,14 @@ main{max-width:none!important;width:100%!important;margin:0!important;padding:18
  #app .nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  #app .nav button{font-size:10px!important}
 }
-/* Gold canvas matched to the original header ornament gold; cards remain dark. */
-body{background:linear-gradient(135deg,#8f6b2b 0%,#c89b4b 42%,#e1bd43 72%,#a77c2d 100%)!important}
+/* Rich metallic-gold canvas based on the user's gold-bar reference; cards remain dark. */
+body{
+ background:
+  radial-gradient(ellipse at 18% 8%,rgba(255,246,190,.92) 0%,rgba(255,226,125,.42) 24%,transparent 48%),
+  radial-gradient(ellipse at 88% 92%,rgba(151,70,12,.18) 0%,transparent 42%),
+  linear-gradient(128deg,#fff0a6 0%,#f5d46a 17%,#d99828 36%,#fbe78c 52%,#c27a1b 69%,#f7dc79 84%,#a95f12 100%)!important;
+ background-attachment:fixed!important;
+}
 main{background:transparent!important}
 #app{background:transparent!important}
 #app>.card:first-child{background:linear-gradient(145deg,#111111,#090909)!important}
