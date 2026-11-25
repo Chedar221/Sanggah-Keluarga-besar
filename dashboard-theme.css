@@ -106,3 +106,25 @@ input::placeholder,textarea::placeholder,
 .public-chat-compose textarea::placeholder{
  color:#555555!important;opacity:.75!important;
 }
+
+/* Screenshot refinements: readable committee names and gold quick-access surround. */
+#publicCommitteeCard .committee-person strong{
+ color:#171717!important;
+ -webkit-text-fill-color:#171717!important;
+ background:#ffffff!important;
+ border:1px solid #c9a64d!important;
+ border-radius:5px!important;
+}
+#publicCommitteeCard .committee-person .position{
+ color:#ffffff!important;
+ -webkit-text-fill-color:#ffffff!important;
+ background:linear-gradient(90deg,#b88724,#e4c45e,#b88724)!important;
+}
+#app .quick-access,.quick-access{
+ background:linear-gradient(120deg,#fff0a6 0%,#f5d46a 28%,#d99828 55%,#fbe78c 76%,#c27a1b 100%)!important;
+ border:1px solid #e3c66c!important;
+}
+#app .quick-access button,.quick-access button{
+ background:#101010!important;color:#ffffff!important;
+ border:1px solid #cba64b!important;
+}
