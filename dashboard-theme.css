@@ -184,3 +184,14 @@ input::placeholder,textarea::placeholder,
  color:#262626!important;
  -webkit-text-fill-color:#262626!important;
 }
+
+/* Header banner must scroll naturally with the document, never stay pinned. */
+body>header.heritage-header.image-banner,
+header.heritage-header.image-banner{
+ position:static!important;
+ top:auto!important;
+ bottom:auto!important;
+ inset:auto!important;
+ transform:none!important;
+ z-index:auto!important;
+}
