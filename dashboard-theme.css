@@ -225,3 +225,43 @@ header.heritage-header.image-banner{
   -webkit-text-fill-color:#ffffff!important;
   border:1px solid #c9a64d!important;
 }
+
+
+/* Match Giliran Buda Cemeng panel to the black-and-white Giliran Pipil theme. */
+#budaCemengRotationPublic,
+#budaCemengRotationPublic .buda-cemeng-next,
+#budaCemengRotationPublic .buda-cemeng-row,
+#budaCemengAdminContent .buda-cemeng-next,
+#budaCemengAdminContent .buda-cemeng-row{
+  background:#111111!important;
+  border:1px solid #4a4028!important;
+  color:#ffffff!important;
+  box-shadow:none!important;
+}
+#budaCemengRotationPublic,
+#budaCemengRotationPublic *,
+#budaCemengAdminContent,
+#budaCemengAdminContent *,
+#budaCemengRotationPublic .buda-cemeng-next *,
+#budaCemengRotationPublic .buda-cemeng-row *,
+#budaCemengAdminContent .buda-cemeng-next *,
+#budaCemengAdminContent .buda-cemeng-row *{
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+}
+#budaCemengRotationPublic h2,
+#budaCemengRotationPublic > h2{
+  color:#e1bd43!important;
+  -webkit-text-fill-color:#e1bd43!important;
+}
+#budaCemengRotationPublic .buda-cemeng-next strong,
+#budaCemengAdminContent .buda-cemeng-next strong{
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+}
+#budaCemengRotationPublic input,
+#budaCemengAdminContent input{
+  background:#ffffff!important;
+  color:#171717!important;
+  -webkit-text-fill-color:#171717!important;
+}
