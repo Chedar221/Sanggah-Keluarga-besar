@@ -76,3 +76,33 @@ body,body *,#app,#app *,#view,#view *,#publicPage,#publicPage *{
  color:#ffffff!important;opacity:.72!important;
 }
 #view svg,#app svg{color:#ffffff}
+
+/* Black text on light/white surfaces; dark dashboard panels keep white text. */
+.notification-card,.notification-card *,
+.committee-card,.committee-card *,
+.committee-row,.committee-row *,
+.tile,.tile *,
+.modal-card,.modal-card *,
+.pipil-modal-card,.pipil-modal-card *,
+.public-data-modal-card,.public-data-modal-card *,
+.public-chat-card,.public-chat-card *,
+.welcome-card,.welcome-card *,
+.buda-cemeng-next,.buda-cemeng-next *,
+.buda-cemeng-row,.buda-cemeng-row *,
+#publicAnnouncementsCard,#publicAnnouncementsCard *,
+#publicFinanceCard,#publicFinanceCard *,
+#publicMembersCard,#publicMembersCard *,
+#publicTransactionsCard,#publicTransactionsCard *,
+#pipilRotationPublic,#pipilRotationPublic *,
+#budaCemengRotationPublic,#budaCemengRotationPublic *{
+ color:#171717!important;
+}
+input,select,textarea,
+.public-chat-compose input,.public-chat-compose textarea{
+ color:#171717!important;
+}
+input::placeholder,textarea::placeholder,
+.public-chat-compose input::placeholder,
+.public-chat-compose textarea::placeholder{
+ color:#555555!important;opacity:.75!important;
+}
