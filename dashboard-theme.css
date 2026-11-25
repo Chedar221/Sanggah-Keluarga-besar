@@ -66,3 +66,13 @@ main{background:transparent!important}
 #app>.card:first-child{background:linear-gradient(145deg,#111111,#090909)!important}
 #app .nav{background:linear-gradient(180deg,#080808,#111111)!important}
 #view .card,#app .card{background:linear-gradient(145deg,#141414,#0b0b0b)!important}
+
+/* User-requested typography override: all interface text white. */
+body,body *,#app,#app *,#view,#view *,#publicPage,#publicPage *{
+ color:#ffffff!important;
+}
+#view input::placeholder,#view textarea::placeholder,
+#app input::placeholder,#app textarea::placeholder{
+ color:#ffffff!important;opacity:.72!important;
+}
+#view svg,#app svg{color:#ffffff}
