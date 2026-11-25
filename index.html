@@ -1597,24 +1597,35 @@ input::placeholder,textarea::placeholder{color:#888888!important}
 </section>
 
 <section id="app" class="hidden">
-  <div class="card" id="appAdminWelcome">
+  <div id="appLanding" class="card app-landing">
+    <div class="welcome-kicker">SANGGAH GEDE PAN RENGEN</div>
+    <h2>Area Keluarga</h2>
+    <p class="muted">Selamat datang. Pilih tombol di bawah untuk membuka ruang administrasi keluarga.</p>
+    <button type="button" onclick="openAdminArea()">Buka Area Admin</button>
+  </div>
 
-    <div class="row">
-      <div>
-        <div class="muted">Selamat datang</div>
-        <b id="userName">Pengguna</b>
-        <div class="muted" id="userRole">Anggota keluarga</div>
+  <div id="adminWorkspace" class="hidden">
+    <div class="card" id="appAdminWelcome">
+      <div class="row">
+        <div>
+          <div class="muted">Selamat datang</div>
+          <b id="userName">Pengguna</b>
+          <div class="muted" id="userRole">Anggota keluarga</div>
+        </div>
+        <div class="app-header-actions">
+          <button class="secondary notification-bell" id="notificationBell" onclick="go('notifikasi')" type="button">♧ NOTIFIKASI <span id="notificationBadge" class="notification-count hidden">0</span></button>
+          <button class="secondary" onclick="signOut()">Keluar</button>
+        </div>
       </div>
-      <div class="app-header-actions"><button class="secondary notification-bell" id="notificationBell" onclick="go('notifikasi')" type="button">♧ NOTIFIKASI <span id="notificationBadge" class="notification-count hidden">0</span></button><button class="secondary" onclick="signOut()">Keluar</button></div>
+      <div class="actions"><button type="button" class="secondary" onclick="returnAppHome()">Kembali ke Halaman Utama</button></div>
     </div>
+    <div class="quick-access hidden" id="appAdminQuickAccess" aria-label="Akses cepat admin">
+      <button type="button" onclick="go('anggota')">♙ Data Anggota</button>
+      <button type="button" onclick="go('riwayat-kas')">▤ Riwayat Kas</button>
+    </div>
+    <div class="nav" id="nav"></div>
+    <div id="view"></div>
   </div>
-
-  <div class="quick-access hidden" id="appAdminQuickAccess" aria-label="Akses cepat admin">
-    <button type="button" onclick="go('anggota')">♙ Data Anggota</button>
-    <button type="button" onclick="go('riwayat-kas')">▤ Riwayat Kas</button>
-  </div>
-  <div class="nav" id="nav"></div>
-  <div id="view"></div>
 </section>
 
 <section id="setup" class="card hidden">
@@ -1750,6 +1761,8 @@ function roleName(role) {
 
 function showPublic() {
   $('siteHeritageHeader')?.classList.remove('hidden');
+  $('appLanding')?.classList.remove('hidden');
+  $('adminWorkspace')?.classList.add('hidden');
   $('publicPage').classList.remove('hidden');
   $('login').classList.add('hidden');
   $('register').classList.add('hidden');
@@ -2011,15 +2024,19 @@ async function loadProfile() {
 
   // Informasi akun dan akses cepat hanya ditampilkan untuk akun pengurus/admin.
   const showAdminControls = ['ketua','wakil','sekretaris','bendahara','koordinator'].includes(data.role);
-  // Header logo dan judul tetap tampil di halaman publik, tetapi disembunyikan pada dashboard anggota.
-  $('siteHeritageHeader')?.classList.toggle('hidden', !showAdminControls);
-  $('appAdminWelcome')?.classList.toggle('hidden', !showAdminControls);
+  // Halaman utama setelah login dibuat ringkas; seluruh navigasi dan data berada di Area Admin.
+  $('siteHeritageHeader')?.classList.add('hidden');
+  $('appLanding')?.classList.remove('hidden');
+  $('adminWorkspace')?.classList.add('hidden');
+  $('appAdminWelcome')?.classList.remove('hidden');
   $('appAdminQuickAccess')?.classList.toggle('hidden', !showAdminControls);
 
   active = pendingChatEntry ? 'chat' : 'dashboard';
+  const openWorkspaceAfterLogin = pendingChatEntry;
   pendingChatEntry = false;
   renderNav();
   renderView();
+  if (openWorkspaceAfterLogin) openAdminArea();
   await refreshNotificationBadge();
   subscribeFamilyNotifications();
 }
@@ -2085,6 +2102,19 @@ function renderNav() {
       ${p[1]} ${p[2]}
     </button>
   `).join('');
+}
+
+function openAdminArea() {
+  $('appLanding')?.classList.add('hidden');
+  $('adminWorkspace')?.classList.remove('hidden');
+  $('siteHeritageHeader')?.classList.add('hidden');
+  renderNav();
+  renderView();
+}
+
+function returnAppHome() {
+  $('adminWorkspace')?.classList.add('hidden');
+  $('appLanding')?.classList.remove('hidden');
 }
 
 function go(page) {
