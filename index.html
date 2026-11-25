@@ -5086,7 +5086,6 @@ async function loadRows(table) {
 // AKHIR BAGIAN 3
 // ==========================================
 
-initializeApp();
 
 /* PENGELOLAAN PENGURUS INTI SANGGAH GEDE PAN RENGEN */
 const COMMITTEE_POSITIONS = [
@@ -5166,6 +5165,33 @@ async function clearCommitteeMember(position){
   if(old?.photo_path){const removed=await sb.storage.from('committee-portraits').remove([old.photo_path]);if(removed.error)console.warn('Foto pengurus lama belum terhapus dari storage:',removed.error);}
   toast('Data '+label+' berhasil dikosongkan.');await loadCommitteeManager();await loadPublicCommittee();
 }
+
+/* Mulai aplikasi setelah seluruh konstanta dan fungsi siap */
+window.addEventListener('error', function(event) {
+  console.error('Kesalahan JavaScript halaman:', event.error || event.message);
+  const message = 'Terjadi kesalahan pada halaman. Muat ulang halaman; detail: ' + String(event.message || 'JavaScript error').slice(0,140);
+  ['publicCommitteeMembers','publicAnnouncements','pipilPublicContent','budaCemengPublicContent'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el && /Memuat/.test(el.textContent || '')) el.textContent = message;
+  });
+});
+window.addEventListener('unhandledrejection', function(event) {
+  console.error('Proses data halaman gagal:', event.reason);
+  const reason = event.reason && event.reason.message ? event.reason.message : 'Proses data gagal';
+  const message = 'Proses pemuatan halaman mengalami kendala: ' + String(reason).slice(0,140);
+  ['publicCommitteeMembers','publicAnnouncements','pipilPublicContent','budaCemengPublicContent'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el && /Memuat/.test(el.textContent || '')) el.textContent = message;
+  });
+});
+initializeApp().catch(function(error) {
+  console.error('Inisialisasi website gagal:', error);
+  const message = 'Website gagal memulai layanan data: ' + String(error && error.message || error).slice(0,140);
+  ['publicCommitteeMembers','publicAnnouncements','pipilPublicContent','budaCemengPublicContent'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el && /Memuat/.test(el.textContent || '')) el.textContent = message;
+  });
+});
 </script>
 
 </body>
