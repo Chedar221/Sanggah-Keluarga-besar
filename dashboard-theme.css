@@ -154,3 +154,33 @@ input::placeholder,textarea::placeholder,
  -webkit-text-fill-color:#e1bd43!important;
  text-shadow:0 1px 2px rgba(0,0,0,.48);
 }
+
+/* Financial summary cards: muted income/expense/balance backgrounds. */
+#publicFinanceCard .grid>div:nth-child(1),
+#view .grid>div:has(#totalIn),
+#cashHistorySummary>div:nth-child(1){
+ background:#dcebdc!important;
+ border:1px solid #bfd8c0!important;
+}
+#publicFinanceCard .grid>div:nth-child(2),
+#view .grid>div:has(#totalOut),
+#cashHistorySummary>div:nth-child(2){
+ background:#f5edcf!important;
+ border:1px solid #e7dcae!important;
+}
+#publicFinanceCard .grid>div:nth-child(3),
+#view .grid>div:has(#totalBalance),
+#cashHistorySummary>div:nth-child(3){
+ background:#f0dada!important;
+ border:1px solid #e2bebe!important;
+}
+#publicFinanceCard .grid>div:nth-child(1) *,
+#publicFinanceCard .grid>div:nth-child(2) *,
+#publicFinanceCard .grid>div:nth-child(3) *,
+#view .grid>div:has(#totalIn) *,
+#view .grid>div:has(#totalOut) *,
+#view .grid>div:has(#totalBalance) *,
+#cashHistorySummary>div *{
+ color:#262626!important;
+ -webkit-text-fill-color:#262626!important;
+}
