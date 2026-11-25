@@ -137,3 +137,20 @@ input::placeholder,textarea::placeholder,
  -webkit-text-fill-color:#e1bd43!important;
  text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
+
+/* Unified metallic-gold style for all main section titles. */
+#publicPage > .card > h2,
+#publicPage > details > summary,
+#publicPage .committee-card > h2,
+#pipilRotationPublic > h2,
+#budaCemengRotationPublic > h2,
+#publicFinanceCard > h2,
+#publicAnnouncementsCard > h2,
+#publicMembersCard > h2,
+#publicTransactionsCard > h2,
+#publicPage > .card > h2 *,
+#publicPage .committee-card > h2 *{
+ color:#e1bd43!important;
+ -webkit-text-fill-color:#e1bd43!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.48);
+}
