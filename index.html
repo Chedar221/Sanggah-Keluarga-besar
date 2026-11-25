@@ -1827,6 +1827,13 @@ function connectSupabase() {
 
   if (!url || !key || !window.supabase) {
     showPublic();
+    const messages = [
+      ['publicCommitteeMembers','Koneksi database belum siap. Muat ulang halaman untuk mencoba lagi.'],
+      ['publicAnnouncements','Layanan database belum tersambung. Muat ulang halaman untuk mencoba lagi.'],
+      ['pipilPublicContent','Layanan database belum tersambung. Muat ulang halaman untuk mencoba lagi.'],
+      ['budaCemengPublicContent','Layanan database belum tersambung. Muat ulang halaman untuk mencoba lagi.']
+    ];
+    messages.forEach(([id,message])=>{const el=$(id);if(el)el.textContent=message;});
     return false;
   }
 
@@ -3367,9 +3374,11 @@ async function renderBudaCemengRotation(targetId, showAdminControls=false) {
   if(!target)return;
   if(!sb){target.textContent='Layanan data belum tersambung.';return;}
   target.textContent='Memuat giliran Buda Cemeng...';
-  const {data,error}=await sb.from('buda_cemeng_rotation').select('last_ukir_date').eq('id',1).maybeSingle();
-  if(error||!data){target.textContent='Jadwal belum dapat dimuat. Periksa koneksi database.';console.warn('Buda Cemeng:',error?.message);return;}
-  const schedule=getBudaCemengSchedule(data.last_ukir_date,localIsoDate());
+  try {
+    const result=await withRequestTimeout(sb.from('buda_cemeng_rotation').select('last_ukir_date').eq('id',1).maybeSingle(),12000,'Koneksi Buda Cemeng terlalu lama. Periksa internet lalu coba muat ulang.');
+    const {data,error}=result||{};
+    if(error||!data){target.textContent='Jadwal Buda Cemeng belum dapat dimuat. Periksa koneksi lalu coba muat ulang.';console.warn('Buda Cemeng:',error?.message);return;}
+    const schedule=getBudaCemengSchedule(data.last_ukir_date,localIsoDate());
   if(!schedule.length){target.textContent='Jadwal belum tersedia.';return;}
   const next=schedule[0];
   let html='<div class="buda-cemeng-next"><div class="muted">GILIRAN BERIKUTNYA · '+esc(budaCemengDateLabel(next.date))+'</div><strong>Buda Cemeng '+esc(next.name)+'</strong><div style="margin-top:7px">Yang bertugas: <b>'+esc(next.person)+'</b></div></div>';
@@ -3379,7 +3388,11 @@ async function renderBudaCemengRotation(targetId, showAdminControls=false) {
   if(showAdminControls && isPipilOwner()){
     html+='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><label for="budaCemengAnchorDate">Tanggal Buda Cemeng Ukir terakhir (sudah dilaksanakan)</label><input id="budaCemengAnchorDate" type="date" value="'+esc(data.last_ukir_date)+'"><button type="button" onclick="saveBudaCemengAnchorDate()">Simpan Tanggal Acuan</button><p class="muted" style="font-size:11px">Pengaturan ini terpisah dari Giliran Pipil. Hanya akun Agus yang dapat mengubahnya.</p></div>';
   }
-  target.innerHTML=html;
+    target.innerHTML=html;
+  } catch(error) {
+    target.textContent='Jadwal Buda Cemeng gagal dimuat. Periksa koneksi lalu coba lagi.';
+    console.warn('Buda Cemeng gagal dimuat:',error);
+  }
 }
 async function saveBudaCemengAnchorDate(){
   if(!isPipilOwner()){toast('Hanya Agus yang dapat mengubah pengaturan ini.');return;}
@@ -3547,11 +3560,18 @@ async function loadPublicMembers() {
 
   list.textContent = 'Memuat daftar anggota...';
 
-  const { data, error } = await sb
-    .from('members')
-    .select('full_name')
-    .order('full_name', { ascending: true })
-    .limit(300);
+  let result;
+  try {
+    result = await withRequestTimeout(
+      sb.from('members').select('full_name').order('full_name', { ascending: true }).limit(300),
+      12000,
+      'Koneksi daftar anggota terlalu lama. Periksa internet lalu coba lagi.'
+    );
+  } catch(error) {
+    list.textContent='Daftar anggota gagal dimuat. Periksa koneksi lalu coba lagi.';
+    return;
+  }
+  const {data,error}=result||{};
 
   if (error) {
     list.textContent = 'Gagal memuat anggota: ' + error.message;
@@ -3591,11 +3611,18 @@ async function loadPublicFinance() {
   let hasMore = true;
 
   while (hasMore) {
-    const {data,error} = await sb
-      .from('public_transactions')
-      .select('id,type,description,amount,transaction_date,created_at')
-      .order('transaction_date',{ascending:false})
-      .range(publicOffset,publicOffset + 499);
+    let result;
+    try {
+      result = await withRequestTimeout(
+        sb.from('public_transactions').select('id,type,description,amount,transaction_date,created_at').order('transaction_date',{ascending:false}).range(publicOffset,publicOffset + 499),
+        12000,
+        'Koneksi laporan keuangan terlalu lama. Periksa internet lalu coba lagi.'
+      );
+    } catch(error) {
+      status.textContent='Laporan keuangan gagal dimuat. Periksa koneksi lalu coba lagi.';
+      return;
+    }
+    const {data,error}=result||{};
 
     if (error) {
       status.textContent = 'Gagal memuat laporan keuangan: ' + error.message;
@@ -5075,7 +5102,14 @@ async function loadPublicCommittee(){
   const box=$('publicCommitteeMembers');
   if(!box || !sb)return;
   box.innerHTML='<div class="muted">Memuat data pengurus...</div>';
-  const {data,error}=await sb.from('committee_members').select('position,full_name,photo_path');
+  let result;
+  try {
+    result=await withRequestTimeout(sb.from('committee_members').select('position,full_name,photo_path'),12000,'Koneksi data pengurus terlalu lama. Periksa internet lalu coba lagi.');
+  } catch(error) {
+    box.innerHTML='<div class="muted">Koneksi data pengurus terlalu lama. <button type="button" class="secondary" onclick="loadPublicCommittee()">Coba lagi</button></div>';
+    return;
+  }
+  const {data,error}=result||{};
   if(error){box.innerHTML='<div class="muted">Data pengurus belum dapat dimuat. <button type="button" class="secondary" onclick="loadPublicCommittee()">Coba lagi</button></div>';console.warn('Committee load:',error);return;}
   const rows=COMMITTEE_POSITIONS.map(p=>({...p,...((data||[]).find(x=>x.position===p.key)||{})}));
   box.innerHTML=rows.map(item=>{
