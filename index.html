@@ -1407,6 +1407,72 @@ header.heritage-header.image-banner:after{
   .committee-person .position,.committee-person strong{font-size:9px}
 }
 
+
+  /* TEMA KONSISTEN HITAM • PUTIH • GOLD UNTUK SELURUH WEBSITE */ :root{   --green:#111111!important;   --green2:#242424!important;   --gold:#b9943e!important;   --cream:#ffffff!important;   --ink:#171717!important;   --muted:#666666!important;   --line:#dedede!important;   --red:#111111!important; } body,main{background:#ffffff!important;color:#171717!important} header:not(.image-banner),.site-footer{   background:linear-gradient(135deg,#050505 0%,#171717 55%,#292929 100%)!important;   color:#ffffff!important;border-color:#b9943e!important; } header h1,header .welcome,header .header-kicker,.site-footer strong, .site-footer .footer-ornament{color:#e2c477!important} header p,header .sub,.site-footer em,.site-footer span{color:#f2f2f2!important} .card,.modal-card,.committee-card,.notification-card, .public-data-modal-card,.public-chat-card,.pipil-modal-card{   background:#ffffff!important;color:#171717!important;   border:1px solid #d8c18a!important; } .card h2,.committee-card h2,.committee-row strong, .committee-row span,.public-link,.tile span{color:#171717!important} .welcome-card,.buda-cemeng-next,.buda-cemeng-row, #pipilRotationPublic,#publicAnnouncementsCard, #publicFinanceCard,.quick-access,.record-item,.notification-card.unread{   background:#ffffff!important;color:#171717!important;   border-color:#d8c18a!important; } .buda-cemeng-next strong,.buda-cemeng-row b, #publicAnnouncementsCard h2,#pipilRotationPublic h2, #publicFinanceCard .stat,.gold-heading-icon{color:#a9822f!important} .committee-row,.committee-card .committee-row, #publicFinanceCard .grid>div,#publicFinanceCard .grid>div:last-child{   background:#f7f7f7!important;border-color:#d8c18a!important; } button,.homepage-action-buttons .chat-entry-button, .public-chat-compose-row button{   background:linear-gradient(135deg,#111111,#303030)!important;   color:#e2c477!important;border:1px solid #b9943e!important; } button.secondary,.nav button,.chat-room,.pipil-modal-close{   background:#ffffff!important;color:#171717!important;   border:1px solid #c9ad68!important; } .nav button.active,.chat-room.active,.pipil-number-button.current{   background:#171717!important;color:#e2c477!important;border-color:#b9943e!important; } button.danger,.public-chat-delete,.cash-out,.cash-in, .notification-count{background:#171717!important;color:#e2c477!important} input,select,textarea,.public-chat-compose input,.public-chat-compose textarea{   background:#ffffff!important;color:#171717!important;border-color:#c9ad68!important; } input:focus,select:focus,textarea:focus, .public-chat-compose input:focus,.public-chat-compose textarea:focus{   border-color:#a9822f!important;box-shadow:0 0 0 2px #b9943e22!important; } .pill,.badge,.status-badge,.notification-category{   background:#f4f0e6!important;color:#8b6b27!important;border-color:#d8c18a!important; } .public-chat-head,.public-data-modal-head{   background:#111111!important;color:#ffffff!important;border-bottom:1px solid #b9943e!important; } .public-chat-head p,.public-data-modal-head p{color:#eeeeee!important} .public-chat-notice,.public-chat-messages,.chat-messages, .pipil-modal-frame,.pipil-modal-empty{   background:#f7f7f7!important;color:#171717!important;border-color:#dedede!important; } .public-chat-bubble,.chat-bubble,.chat-room,.cash-history-item{   background:#ffffff!important;color:#171717!important;border-color:#dedede!important; } .public-chat-bubble strong,.public-chat-bubble p,.chat-bubble strong, .chat-bubble p,.cash-history-amount{color:#171717!important} .public-chat-bubble time,.public-chat-empty,.public-chat-foot, .public-chat-notice,.pipil-modal-note{color:#666666!important} .public-chat-compose{background:#ffffff!important;border-color:#d8c18a!important} .site-footer{border-top:3px solid #b9943e!important} #toast{background:#171717!important;color:#e2c477!important;border:1px solid #b9943e!important}  
+/* TEMA FINAL HITAM • PUTIH • GOLD — override warna saja, tanpa mengubah layout/fungsi */
+:root{
+  --green:#111111!important;--green2:#292929!important;--gold:#bd9848!important;
+  --cream:#ffffff!important;--ink:#171717!important;--muted:#666666!important;
+  --line:#d9c89f!important;--red:#8b2929!important;
+}
+html,body{background:#ffffff!important;color:#171717!important}
+body{background:#ffffff!important}
+main{background:transparent!important}
+.card,.tile,.record-item,.notification-card,.public-chat-card,.public-data-modal-card,
+.pipil-modal-card,.committee-card{
+  background:#ffffff!important;color:#171717!important;
+  border-color:#c5a45b!important;box-shadow:0 3px 14px #0000000d!important;
+}
+.card h2,.card h3,.welcome-card h2,.committee-card h2,
+.committee-person strong,.committee-row strong{color:#171717!important}
+.muted,footer{color:#666666!important}
+header{background:#111111!important;color:#ffffff!important}
+header h1,header .welcome{color:#e2c477!important}
+header p,header .sub{color:#f2ead8!important}
+button,.actions button,.homepage-action-buttons .chat-entry-button{
+  background:#111111!important;color:#f0d78f!important;
+  border:1px solid #bd9848!important;box-shadow:none!important;
+}
+button.secondary,.nav button,.chat-room,.pipil-modal-close{
+  background:#ffffff!important;color:#171717!important;
+  border:1px solid #bd9848!important;box-shadow:none!important;
+}
+button.danger{background:#ffffff!important;color:#8b2929!important;border:1px solid #c99b9b!important}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid #bd9848!important;outline-offset:2px
+}
+.nav button.active,.chat-room.active{
+  background:#111111!important;color:#f0d78f!important;border-color:#bd9848!important
+}
+input,select,textarea,.public-chat-compose input,.public-chat-compose textarea{
+  background:#ffffff!important;color:#171717!important;border-color:#c5a45b!important
+}
+input::placeholder,textarea::placeholder{color:#888888!important}
+.pill,.pipil-number-button{background:#f7f3e9!important;color:#765b22!important;border:1px solid #c5a45b!important}
+.tile span,.public-link,.gold-heading-icon,.compact-details summary:after{color:#a17c2d!important}
+.welcome-card{background:#ffffff!important;border:1px solid #c5a45b!important}
+.welcome-card .welcome-kicker,.committee-title-sub,.committee-person .position{color:#98752c!important}
+.public-chat-head,.public-data-modal-head{background:#111111!important;color:#f0d78f!important}
+.public-chat-head h2,.public-data-modal-head h2{color:#f0d78f!important}
+.public-chat-head p,.public-data-modal-head p{color:#f2ead8!important}
+.public-chat-messages,.chat-messages{background:#fafafa!important}
+.public-chat-bubble,.chat-bubble{background:#ffffff!important;color:#171717!important;border-color:#d9c89f!important}
+.public-chat-bubble strong{color:#8b6a28!important}
+.chat-bubble.mine{background:#f7f3e9!important;border-color:#c5a45b!important}
+.public-chat-compose,.public-data-modal-content{background:#ffffff!important}
+.public-chat-compose-row button{background:#111111!important;color:#f0d78f!important}
+#toast{background:#111111!important;color:#f0d78f!important;border:1px solid #bd9848!important}
+.quick-access{background:#ffffffed!important;border-color:#c5a45b!important}
+.committee-card{background:#ffffff!important;border:1px solid #bd9848!important}
+.committee-person .position{background:#bd9848!important;color:#ffffff!important;border-color:#bd9848!important}
+.committee-person strong{background:#ffffff!important;color:#765b22!important;border-color:#bd9848!important}
+.committee-person img,.committee-avatar{border-color:#bd9848!important}
+.committee-row{background:#ffffff!important;border-color:#d9c89f!important}
+.site-footer{background:#111111!important;color:#f2ead8!important;border-top:3px solid #bd9848!important}
+.site-footer strong,.site-footer em{color:#f0d78f!important}
+.site-footer span{color:#f2ead8!important}
+
+
 </style>
 </head>
 <body>
@@ -2542,71 +2608,7 @@ function closeReceiptPreview() {
 function printReceiptImage(url,filename) {
   const win = window.open('', '_blank');
   if (!win) { toast('Izinkan pop-up browser untuk mencetak nota.'); return; }
-  win.document.write('<!doctype html><html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:16px;text-align:center;font-family:Arial}img{max-width:100%;height:auto}button{padding:10px 18px;margin:10px}@media print{button{display:none}body{padding:0}}  /* TEMA KONSISTEN HITAM • PUTIH • GOLD UNTUK SELURUH WEBSITE */ :root{   --green:#111111!important;   --green2:#242424!important;   --gold:#b9943e!important;   --cream:#ffffff!important;   --ink:#171717!important;   --muted:#666666!important;   --line:#dedede!important;   --red:#111111!important; } body,main{background:#ffffff!important;color:#171717!important} header:not(.image-banner),.site-footer{   background:linear-gradient(135deg,#050505 0%,#171717 55%,#292929 100%)!important;   color:#ffffff!important;border-color:#b9943e!important; } header h1,header .welcome,header .header-kicker,.site-footer strong, .site-footer .footer-ornament{color:#e2c477!important} header p,header .sub,.site-footer em,.site-footer span{color:#f2f2f2!important} .card,.modal-card,.committee-card,.notification-card, .public-data-modal-card,.public-chat-card,.pipil-modal-card{   background:#ffffff!important;color:#171717!important;   border:1px solid #d8c18a!important; } .card h2,.committee-card h2,.committee-row strong, .committee-row span,.public-link,.tile span{color:#171717!important} .welcome-card,.buda-cemeng-next,.buda-cemeng-row, #pipilRotationPublic,#publicAnnouncementsCard, #publicFinanceCard,.quick-access,.record-item,.notification-card.unread{   background:#ffffff!important;color:#171717!important;   border-color:#d8c18a!important; } .buda-cemeng-next strong,.buda-cemeng-row b, #publicAnnouncementsCard h2,#pipilRotationPublic h2, #publicFinanceCard .stat,.gold-heading-icon{color:#a9822f!important} .committee-row,.committee-card .committee-row, #publicFinanceCard .grid>div,#publicFinanceCard .grid>div:last-child{   background:#f7f7f7!important;border-color:#d8c18a!important; } button,.homepage-action-buttons .chat-entry-button, .public-chat-compose-row button{   background:linear-gradient(135deg,#111111,#303030)!important;   color:#e2c477!important;border:1px solid #b9943e!important; } button.secondary,.nav button,.chat-room,.pipil-modal-close{   background:#ffffff!important;color:#171717!important;   border:1px solid #c9ad68!important; } .nav button.active,.chat-room.active,.pipil-number-button.current{   background:#171717!important;color:#e2c477!important;border-color:#b9943e!important; } button.danger,.public-chat-delete,.cash-out,.cash-in, .notification-count{background:#171717!important;color:#e2c477!important} input,select,textarea,.public-chat-compose input,.public-chat-compose textarea{   background:#ffffff!important;color:#171717!important;border-color:#c9ad68!important; } input:focus,select:focus,textarea:focus, .public-chat-compose input:focus,.public-chat-compose textarea:focus{   border-color:#a9822f!important;box-shadow:0 0 0 2px #b9943e22!important; } .pill,.badge,.status-badge,.notification-category{   background:#f4f0e6!important;color:#8b6b27!important;border-color:#d8c18a!important; } .public-chat-head,.public-data-modal-head{   background:#111111!important;color:#ffffff!important;border-bottom:1px solid #b9943e!important; } .public-chat-head p,.public-data-modal-head p{color:#eeeeee!important} .public-chat-notice,.public-chat-messages,.chat-messages, .pipil-modal-frame,.pipil-modal-empty{   background:#f7f7f7!important;color:#171717!important;border-color:#dedede!important; } .public-chat-bubble,.chat-bubble,.chat-room,.cash-history-item{   background:#ffffff!important;color:#171717!important;border-color:#dedede!important; } .public-chat-bubble strong,.public-chat-bubble p,.chat-bubble strong, .chat-bubble p,.cash-history-amount{color:#171717!important} .public-chat-bubble time,.public-chat-empty,.public-chat-foot, .public-chat-notice,.pipil-modal-note{color:#666666!important} .public-chat-compose{background:#ffffff!important;border-color:#d8c18a!important} .site-footer{border-top:3px solid #b9943e!important} #toast{background:#171717!important;color:#e2c477!important;border:1px solid #b9943e!important}  
-/* TEMA FINAL HITAM • PUTIH • GOLD — override warna saja, tanpa mengubah layout/fungsi */
-:root{
-  --green:#111111!important;--green2:#292929!important;--gold:#bd9848!important;
-  --cream:#ffffff!important;--ink:#171717!important;--muted:#666666!important;
-  --line:#d9c89f!important;--red:#8b2929!important;
-}
-html,body{background:#ffffff!important;color:#171717!important}
-body{background:#ffffff!important}
-main{background:transparent!important}
-.card,.tile,.record-item,.notification-card,.public-chat-card,.public-data-modal-card,
-.pipil-modal-card,.committee-card{
-  background:#ffffff!important;color:#171717!important;
-  border-color:#c5a45b!important;box-shadow:0 3px 14px #0000000d!important;
-}
-.card h2,.card h3,.welcome-card h2,.committee-card h2,
-.committee-person strong,.committee-row strong{color:#171717!important}
-.muted,footer{color:#666666!important}
-header{background:#111111!important;color:#ffffff!important}
-header h1,header .welcome{color:#e2c477!important}
-header p,header .sub{color:#f2ead8!important}
-button,.actions button,.homepage-action-buttons .chat-entry-button{
-  background:#111111!important;color:#f0d78f!important;
-  border:1px solid #bd9848!important;box-shadow:none!important;
-}
-button.secondary,.nav button,.chat-room,.pipil-modal-close{
-  background:#ffffff!important;color:#171717!important;
-  border:1px solid #bd9848!important;box-shadow:none!important;
-}
-button.danger{background:#ffffff!important;color:#8b2929!important;border:1px solid #c99b9b!important}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
-  outline:2px solid #bd9848!important;outline-offset:2px
-}
-.nav button.active,.chat-room.active{
-  background:#111111!important;color:#f0d78f!important;border-color:#bd9848!important
-}
-input,select,textarea,.public-chat-compose input,.public-chat-compose textarea{
-  background:#ffffff!important;color:#171717!important;border-color:#c5a45b!important
-}
-input::placeholder,textarea::placeholder{color:#888888!important}
-.pill,.pipil-number-button{background:#f7f3e9!important;color:#765b22!important;border:1px solid #c5a45b!important}
-.tile span,.public-link,.gold-heading-icon,.compact-details summary:after{color:#a17c2d!important}
-.welcome-card{background:#ffffff!important;border:1px solid #c5a45b!important}
-.welcome-card .welcome-kicker,.committee-title-sub,.committee-person .position{color:#98752c!important}
-.public-chat-head,.public-data-modal-head{background:#111111!important;color:#f0d78f!important}
-.public-chat-head h2,.public-data-modal-head h2{color:#f0d78f!important}
-.public-chat-head p,.public-data-modal-head p{color:#f2ead8!important}
-.public-chat-messages,.chat-messages{background:#fafafa!important}
-.public-chat-bubble,.chat-bubble{background:#ffffff!important;color:#171717!important;border-color:#d9c89f!important}
-.public-chat-bubble strong{color:#8b6a28!important}
-.chat-bubble.mine{background:#f7f3e9!important;border-color:#c5a45b!important}
-.public-chat-compose,.public-data-modal-content{background:#ffffff!important}
-.public-chat-compose-row button{background:#111111!important;color:#f0d78f!important}
-#toast{background:#111111!important;color:#f0d78f!important;border:1px solid #bd9848!important}
-.quick-access{background:#ffffffed!important;border-color:#c5a45b!important}
-.committee-card{background:#ffffff!important;border:1px solid #bd9848!important}
-.committee-person .position{background:#bd9848!important;color:#ffffff!important;border-color:#bd9848!important}
-.committee-person strong{background:#ffffff!important;color:#765b22!important;border-color:#bd9848!important}
-.committee-person img,.committee-avatar{border-color:#bd9848!important}
-.committee-row{background:#ffffff!important;border-color:#d9c89f!important}
-.site-footer{background:#111111!important;color:#f2ead8!important;border-top:3px solid #bd9848!important}
-.site-footer strong,.site-footer em{color:#f0d78f!important}
-.site-footer span{color:#f2ead8!important}
-
-</style></head><body><img src="'+url+'" onload="document.getElementById(\'printBtn\').disabled=false"><br><button id="printBtn" disabled onclick="window.print()">Cetak / Simpan PDF</button></body></html>');
+  win.document.write('<!doctype html><html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:16px;text-align:center;font-family:Arial}img{max-width:100%;height:auto}button{padding:10px 18px;margin:10px}@media print{button{display:none}body{padding:0}}</style></head><body><img src="'+url+'" onload="document.getElementById(\'printBtn\').disabled=false"><br><button id="printBtn" disabled onclick="window.print()">Cetak / Simpan PDF</button></body></html>');
   win.document.close();
 }
 
