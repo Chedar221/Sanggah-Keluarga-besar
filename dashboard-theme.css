@@ -195,3 +195,33 @@ header.heritage-header.image-banner{
  transform:none!important;
  z-index:auto!important;
 }
+
+
+/* Contrast correction: dark announcement and Pipil panels use white typography. */
+#publicAnnouncementsCard,
+#publicAnnouncementsCard *,
+#pipilRotationPublic,
+#pipilRotationPublic *{
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+}
+#publicAnnouncementsCard .listitem,
+#pipilRotationPublic #pipilPublicContent>div:last-child>div{
+  background:#151515!important;
+  border:1px solid #4a4028!important;
+  color:#ffffff!important;
+}
+#publicAnnouncementsCard .muted,
+#publicAnnouncementsCard .listitem .muted,
+#pipilRotationPublic .muted{
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+  opacity:1!important;
+}
+#pipilRotationPublic .pipil-number-button,
+#pipilRotationPublic button.pipil-number-button{
+  background:#242424!important;
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+  border:1px solid #c9a64d!important;
+}
