@@ -1597,7 +1597,8 @@ input::placeholder,textarea::placeholder{color:#888888!important}
 </section>
 
 <section id="app" class="hidden">
-  <div class="card">
+  <div class="card" id="appAdminWelcome">
+
     <div class="row">
       <div>
         <div class="muted">Selamat datang</div>
@@ -1608,7 +1609,7 @@ input::placeholder,textarea::placeholder{color:#888888!important}
     </div>
   </div>
 
-  <div class="quick-access" aria-label="Akses cepat">
+  <div class="quick-access hidden" id="appAdminQuickAccess" aria-label="Akses cepat admin">
     <button type="button" onclick="go('anggota')">♙ Data Anggota</button>
     <button type="button" onclick="go('riwayat-kas')">▤ Riwayat Kas</button>
   </div>
@@ -2006,6 +2007,11 @@ async function loadProfile() {
 
   $('userName').textContent = data.full_name || session.user.email;
   $('userRole').textContent = roleName(data.role);
+
+  // Informasi akun dan akses cepat hanya ditampilkan untuk akun pengurus/admin.
+  const showAdminControls = ['ketua','wakil','sekretaris','bendahara','koordinator'].includes(data.role);
+  $('appAdminWelcome')?.classList.toggle('hidden', !showAdminControls);
+  $('appAdminQuickAccess')?.classList.toggle('hidden', !showAdminControls);
 
   active = pendingChatEntry ? 'chat' : 'dashboard';
   pendingChatEntry = false;
