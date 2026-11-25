@@ -1,0 +1,197 @@
+/* SANGGAH GEDE PAN RENGEN — dashboard visual layer only.
+   Intentionally CSS-only: no database, auth, data, or application handlers changed. */
+:root{
+  --sgpr-bg:#000000;--sgpr-panel:#101010;--sgpr-panel-2:#181818;
+  --sgpr-line:#26354d;--sgpr-text:#eef4ff;--sgpr-muted:#9aa9c0;
+  --sgpr-teal:#18d8ca;--sgpr-purple:#9257f5;--sgpr-gold:#e0b84f;
+}
+body{background:radial-gradient(ellipse at 72% 0%,#14213a 0%,#000000 48%,#000000 100%)!important;color:var(--sgpr-text)!important}
+main{max-width:none!important;width:100%!important;margin:0!important;padding:18px!important}
+#app{max-width:1600px!important;margin:0 auto!important;display:grid;grid-template-columns:258px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);gap:14px;align-items:start}
+#app>.card:first-child{grid-column:2;grid-row:1;background:linear-gradient(135deg,#101010,#090909)!important;border:1px solid var(--sgpr-line)!important;border-left:1px solid var(--sgpr-line)!important;border-radius:16px!important;padding:18px 22px!important;box-shadow:0 10px 30px #0005!important;color:var(--sgpr-text)!important}
+#app>.card:first-child .muted,#app>.card:first-child b{color:var(--sgpr-text)!important}
+#app .quick-access{grid-column:2;grid-row:2;position:static!important;background:transparent!important;border:0!important;padding:0!important;margin:0!important;backdrop-filter:none!important;grid-template-columns:repeat(2,minmax(0,180px));justify-content:start}
+#app .quick-access button{background:linear-gradient(145deg,#202020,#101010)!important;border:1px solid var(--sgpr-line)!important;color:var(--sgpr-text)!important;border-radius:13px!important;min-height:48px;box-shadow:0 5px 15px #0003!important}
+#app .nav{grid-column:1;grid-row:1 / span 3;display:flex;flex-direction:column;align-items:stretch;gap:7px!important;overflow:visible!important;min-width:0;padding:14px!important;background:linear-gradient(180deg,#050505,#090909)!important;border:1px solid #1d2b42;border-radius:19px;box-shadow:0 12px 35px #0006;min-height:calc(100vh - 36px)}
+#app .nav:before{content:"SANGGAH GEDE\A PAN RENGEN";white-space:pre;display:block;min-height:66px;padding:7px 0 10px 65px;background-image:url('/logo-sanggah.svg?v=3');background-repeat:no-repeat;background-position:left center;background-size:54px 54px;color:var(--sgpr-gold);font-size:14px;font-weight:800;line-height:1.35;letter-spacing:.04em;border-bottom:1px solid var(--sgpr-line);margin-bottom:8px}
+#app .nav button{width:100%;text-align:left;white-space:normal!important;min-height:44px;padding:11px 13px!important;border:1px solid transparent!important;border-radius:11px!important;background:transparent!important;color:#b9c5d8!important;font-size:13px!important;font-weight:600;box-shadow:none!important}
+#app .nav button:hover{background:#202020!important;border-color:#2b405b!important;color:#fff!important}
+#app .nav button.active{background:linear-gradient(100deg,#0b555a,#202020)!important;border:1px solid #13bcb4!important;color:#f5ffff!important;box-shadow:0 0 16px #16cfc433!important}
+#view{grid-column:2;grid-row:3;min-width:0;color:var(--sgpr-text)}
+#view .card,#app .card{background:linear-gradient(145deg,#121212,#0c0c0c)!important;border:1px solid var(--sgpr-line)!important;color:var(--sgpr-text)!important;box-shadow:0 8px 24px #0003!important}
+#view h2,#view h3,#view h4,#view b,#view strong{color:#f1f5ff}
+#view .muted,#app .muted{color:var(--sgpr-muted)!important}
+#view .pill{background:#123b42!important;color:#6ff5e7!important;border:1px solid #176b70}
+#view .listitem,#view .record-item,#view .cash-history-item{background:#151515!important;border-color:#293951!important;color:var(--sgpr-text)!important}
+#view input,#view select,#view textarea,#app input,#app select,#app textarea{background:#080808!important;color:#edf4ff!important;border:1px solid #34445e!important}
+#view input::placeholder,#view textarea::placeholder{color:#8190a8}
+#app button,#view button{transition:background .18s ease,border-color .18s ease,transform .18s ease}
+#view button:not(.secondary):not(.danger),#app button:not(.secondary):not(.danger){background:linear-gradient(135deg,#087f80,#125e70)!important;color:#fff!important;border:1px solid #1b999b!important}
+#view button.secondary,#app button.secondary{background:#242424!important;color:#dce8f8!important;border:1px solid #34445e!important}
+#view button.danger{background:#56232d!important;color:#ffe8eb!important;border:1px solid #8e3949!important}
+#toast{background:#102b3a!important;color:#fff!important;border:1px solid #1c7778;box-shadow:0 8px 24px #0008}
+#publicPage .card{background:#101010!important;border-color:var(--sgpr-line)!important;color:var(--sgpr-text)!important}
+#publicPage .muted{color:var(--sgpr-muted)!important}
+@media(max-width:900px){
+ main{padding:12px!important}
+ #app{grid-template-columns:210px minmax(0,1fr);gap:10px}
+ #app .nav{padding:10px!important}
+ #app .nav:before{font-size:12px;padding-left:58px;background-size:48px 48px}
+}
+@media(max-width:680px){
+ main{padding:10px!important}
+ #app{display:flex!important;flex-direction:column!important;gap:10px!important}
+ #app>.card:first-child{order:0;width:100%;padding:14px!important}
+ #app .nav{order:1;width:100%;min-height:0;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important;padding:10px!important}
+ #app .nav:before{grid-column:1/-1;min-height:56px;background-size:44px 44px;padding-left:54px}
+ #app .nav button{min-height:42px!important;padding:9px 8px!important;font-size:11px!important;text-align:left}
+ #app .quick-access{order:2;width:100%;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #view{order:3;width:100%}
+ #view .card{padding:14px!important}
+}
+@media(max-width:360px){
+ #app .nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #app .nav button{font-size:10px!important}
+}
+/* Rich metallic-gold canvas based on the user's gold-bar reference; cards remain dark. */
+body{
+ background:
+  radial-gradient(ellipse at 18% 8%,rgba(255,246,190,.92) 0%,rgba(255,226,125,.42) 24%,transparent 48%),
+  radial-gradient(ellipse at 88% 92%,rgba(151,70,12,.18) 0%,transparent 42%),
+  linear-gradient(128deg,#fff0a6 0%,#f5d46a 17%,#d99828 36%,#fbe78c 52%,#c27a1b 69%,#f7dc79 84%,#a95f12 100%)!important;
+ background-attachment:fixed!important;
+}
+main{background:transparent!important}
+#app{background:transparent!important}
+#app>.card:first-child{background:linear-gradient(145deg,#111111,#090909)!important}
+#app .nav{background:linear-gradient(180deg,#080808,#111111)!important}
+#view .card,#app .card{background:linear-gradient(145deg,#141414,#0b0b0b)!important}
+
+/* User-requested typography override: all interface text white. */
+body,body *,#app,#app *,#view,#view *,#publicPage,#publicPage *{
+ color:#ffffff!important;
+}
+#view input::placeholder,#view textarea::placeholder,
+#app input::placeholder,#app textarea::placeholder{
+ color:#ffffff!important;opacity:.72!important;
+}
+#view svg,#app svg{color:#ffffff}
+
+/* Black text on light/white surfaces; dark dashboard panels keep white text. */
+.notification-card,.notification-card *,
+.committee-card,.committee-card *,
+.committee-row,.committee-row *,
+.tile,.tile *,
+.modal-card,.modal-card *,
+.pipil-modal-card,.pipil-modal-card *,
+.public-data-modal-card,.public-data-modal-card *,
+.public-chat-card,.public-chat-card *,
+.welcome-card,.welcome-card *,
+.buda-cemeng-next,.buda-cemeng-next *,
+.buda-cemeng-row,.buda-cemeng-row *,
+#publicAnnouncementsCard,#publicAnnouncementsCard *,
+#publicFinanceCard,#publicFinanceCard *,
+#publicMembersCard,#publicMembersCard *,
+#publicTransactionsCard,#publicTransactionsCard *,
+#pipilRotationPublic,#pipilRotationPublic *,
+#budaCemengRotationPublic,#budaCemengRotationPublic *{
+ color:#171717!important;
+}
+input,select,textarea,
+.public-chat-compose input,.public-chat-compose textarea{
+ color:#171717!important;
+}
+input::placeholder,textarea::placeholder,
+.public-chat-compose input::placeholder,
+.public-chat-compose textarea::placeholder{
+ color:#555555!important;opacity:.75!important;
+}
+
+/* Screenshot refinements: readable committee names and gold quick-access surround. */
+#publicCommitteeCard .committee-person strong{
+ color:#171717!important;
+ -webkit-text-fill-color:#171717!important;
+ background:#ffffff!important;
+ border:1px solid #c9a64d!important;
+ border-radius:5px!important;
+}
+#publicCommitteeCard .committee-person .position{
+ color:#ffffff!important;
+ -webkit-text-fill-color:#ffffff!important;
+ background:linear-gradient(90deg,#b88724,#e4c45e,#b88724)!important;
+}
+#app .quick-access,.quick-access{
+ background:linear-gradient(120deg,#fff0a6 0%,#f5d46a 28%,#d99828 55%,#fbe78c 76%,#c27a1b 100%)!important;
+ border:1px solid #e3c66c!important;
+}
+#app .quick-access button,.quick-access button{
+ background:#101010!important;color:#ffffff!important;
+ border:1px solid #cba64b!important;
+}
+
+/* Highlight the Buda Cemeng rotation heading in metallic gold. */
+#publicPage #budaCemengRotationPublic h2,
+#publicPage #budaCemengRotationPublic h2 *,
+#budaCemengRotationPublic > h2{
+ color:#e1bd43!important;
+ -webkit-text-fill-color:#e1bd43!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
+
+/* Unified metallic-gold style for all main section titles. */
+#publicPage > .card > h2,
+#publicPage > details > summary,
+#publicPage .committee-card > h2,
+#pipilRotationPublic > h2,
+#budaCemengRotationPublic > h2,
+#publicFinanceCard > h2,
+#publicAnnouncementsCard > h2,
+#publicMembersCard > h2,
+#publicTransactionsCard > h2,
+#publicPage > .card > h2 *,
+#publicPage .committee-card > h2 *{
+ color:#e1bd43!important;
+ -webkit-text-fill-color:#e1bd43!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.48);
+}
+
+/* Financial summary cards: muted income/expense/balance backgrounds. */
+#publicFinanceCard .grid>div:nth-child(1),
+#view .grid>div:has(#totalIn),
+#cashHistorySummary>div:nth-child(1){
+ background:#dcebdc!important;
+ border:1px solid #bfd8c0!important;
+}
+#publicFinanceCard .grid>div:nth-child(2),
+#view .grid>div:has(#totalOut),
+#cashHistorySummary>div:nth-child(2){
+ background:#f5edcf!important;
+ border:1px solid #e7dcae!important;
+}
+#publicFinanceCard .grid>div:nth-child(3),
+#view .grid>div:has(#totalBalance),
+#cashHistorySummary>div:nth-child(3){
+ background:#f0dada!important;
+ border:1px solid #e2bebe!important;
+}
+#publicFinanceCard .grid>div:nth-child(1) *,
+#publicFinanceCard .grid>div:nth-child(2) *,
+#publicFinanceCard .grid>div:nth-child(3) *,
+#view .grid>div:has(#totalIn) *,
+#view .grid>div:has(#totalOut) *,
+#view .grid>div:has(#totalBalance) *,
+#cashHistorySummary>div *{
+ color:#262626!important;
+ -webkit-text-fill-color:#262626!important;
+}
+
+/* Header banner must scroll naturally with the document, never stay pinned. */
+body>header.heritage-header.image-banner,
+header.heritage-header.image-banner{
+ position:static!important;
+ top:auto!important;
+ bottom:auto!important;
+ inset:auto!important;
+ transform:none!important;
+ z-index:auto!important;
+}
