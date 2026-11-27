@@ -2926,7 +2926,7 @@ function urlBase64ToUint8Array(base64String) {
   const raw = atob((base64String + padding).replace(/-/g, '+').replace(/_/g, '/'));
   return Uint8Array.from([...raw].map(char => char.charCodeAt(0)));
 }
-async async function registerFamilyServiceWorker() {
+async function registerFamilyServiceWorker() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
   try { return await navigator.serviceWorker.register('/sw.js?v=1'); }
   catch (error) { console.warn('Service worker belum dapat didaftarkan:',error); return null; }
