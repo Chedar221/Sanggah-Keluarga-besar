@@ -776,3 +776,220 @@ html body .quick-access button{
   border:1px solid rgba(185,148,62,.82)!important;
   box-shadow:none!important;
 }
+
+
+/* ANDROID APK ONLY — precision layout for every authenticated admin screen.
+   Activated only by the app=android URL flag; normal browser layout is unchanged. */
+html.sgpr-android-app,
+html.sgpr-android-app body{
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:hidden!important;
+}
+html.sgpr-android-app body main{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:10px!important;
+}
+html.sgpr-android-app #app{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+html.sgpr-android-app #adminWorkspace{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:11px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+}
+html.sgpr-android-app #adminWorkspace > *,
+html.sgpr-android-app #view,
+html.sgpr-android-app #view > *{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+html.sgpr-android-app #appAdminWelcome{
+  padding:13px!important;
+  margin:0!important;
+}
+html.sgpr-android-app #appAdminWelcome > .row{
+  align-items:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:10px!important;
+}
+html.sgpr-android-app #appAdminWelcome .app-header-actions{
+  width:100%!important;
+  justify-content:flex-start!important;
+}
+html.sgpr-android-app #appAdminWelcome .app-header-actions button{
+  flex:1 1 120px!important;
+  min-height:42px!important;
+}
+html.sgpr-android-app #app .quick-access{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;
+  min-width:0!important;
+  gap:8px!important;
+  margin:0!important;
+  padding:0!important;
+}
+html.sgpr-android-app #app .quick-access button{
+  min-width:0!important;
+  min-height:46px!important;
+  padding:9px 7px!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  font-size:12px!important;
+}
+html.sgpr-android-app #app .nav{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:9px!important;
+  align-items:stretch!important;
+}
+html.sgpr-android-app #app .nav .nav-brand{
+  grid-column:1/-1!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:3px 2px 10px!important;
+  margin:0 0 3px!important;
+}
+html.sgpr-android-app #app .nav .nav-brand-copy{
+  min-width:0!important;
+}
+html.sgpr-android-app #app .nav .nav-brand-copy strong,
+html.sgpr-android-app #app .nav .nav-brand-copy small{
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+html.sgpr-android-app #app .nav button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:54px!important;
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  padding:8px 5px!important;
+  text-align:center!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  font-size:clamp(10px,2.8vw,12px)!important;
+  line-height:1.25!important;
+}
+html.sgpr-android-app #view{
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+html.sgpr-android-app #view .card{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0 0 11px!important;
+  padding:13px!important;
+  overflow-wrap:anywhere!important;
+}
+html.sgpr-android-app #view .row,
+html.sgpr-android-app #view .actions{
+  flex-wrap:wrap!important;
+  min-width:0!important;
+  gap:8px!important;
+}
+html.sgpr-android-app #view .row > *,
+html.sgpr-android-app #view .actions > *{
+  min-width:0!important;
+  max-width:100%!important;
+}
+html.sgpr-android-app #view .grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr))!important;
+  gap:8px!important;
+}
+html.sgpr-android-app #view input,
+html.sgpr-android-app #view select,
+html.sgpr-android-app #view textarea{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  font-size:16px!important;
+}
+html.sgpr-android-app #view button{
+  min-height:42px!important;
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+html.sgpr-android-app #view table{
+  width:100%!important;
+  max-width:100%!important;
+  border-collapse:collapse!important;
+}
+html.sgpr-android-app #view :is(.table-wrap,.table-responsive,.overflow-x-auto){
+  max-width:100%!important;
+  overflow-x:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+html.sgpr-android-app #view img,
+html.sgpr-android-app #view video,
+html.sgpr-android-app #view canvas{
+  max-width:100%!important;
+  height:auto;
+}
+html.sgpr-android-app .admin-page-modal{
+  padding:6px!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+}
+html.sgpr-android-app .admin-page-modal-card{
+  width:100%!important;
+  max-width:100%!important;
+  max-height:calc(100dvh - 12px)!important;
+  min-height:0!important;
+  border-radius:13px!important;
+}
+html.sgpr-android-app .admin-page-modal-head{
+  gap:8px!important;
+  padding:11px 12px!important;
+}
+html.sgpr-android-app .admin-page-modal-head h2{
+  font-size:14px!important;
+  overflow-wrap:anywhere!important;
+}
+html.sgpr-android-app .admin-page-modal-body{
+  min-width:0!important;
+  padding:10px 9px 16px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+html.sgpr-android-app .admin-page-modal-body #view{
+  width:100%!important;
+  max-width:100%!important;
+}
+@media(max-width:380px){
+  html.sgpr-android-app body main{padding:7px!important}
+  html.sgpr-android-app #app .nav{gap:5px!important;padding:7px!important}
+  html.sgpr-android-app #app .nav button{font-size:10px!important;padding:7px 3px!important}
+  html.sgpr-android-app #view .card{padding:10px!important}
+}
