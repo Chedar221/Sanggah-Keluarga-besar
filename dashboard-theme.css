@@ -400,3 +400,87 @@ header.heritage-header.image-banner{
   #budaCemengRotationPublic .buda-cemeng-next strong,
   #budaCemengAdminContent .buda-cemeng-next strong{font-size:18px!important}
 }
+
+
+/* Pengumuman publik: tipografi rapi dan tombol refresh kontras */
+#publicAnnouncementsCard .row{
+  align-items:center!important;
+  gap:14px!important;
+  margin-bottom:14px!important;
+}
+#publicAnnouncementsCard .row h2{
+  font-size:clamp(16px,2.4vw,20px)!important;
+  line-height:1.25!important;
+  letter-spacing:.025em!important;
+  margin:0!important;
+}
+#publicAnnouncementsCard .row button.secondary{
+  flex:0 0 auto!important;
+  min-height:42px!important;
+  padding:9px 16px!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#171717!important;
+  -webkit-text-fill-color:#171717!important;
+  border:1px solid #c9ad68!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  letter-spacing:.02em!important;
+  box-shadow:none!important;
+}
+#publicAnnouncementsCard .row button.secondary *{
+  color:#171717!important;
+  -webkit-text-fill-color:#171717!important;
+}
+#publicAnnouncements{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  font-size:14px!important;
+  line-height:1.55!important;
+}
+#publicAnnouncements .listitem{
+  padding:15px 16px!important;
+  border:1px solid rgba(201,173,104,.32)!important;
+  border-radius:13px!important;
+  background:#151515!important;
+  color:#f5f5f5!important;
+}
+#publicAnnouncements .listitem > b{
+  display:block;
+  margin:0 0 7px!important;
+  color:#e4c477!important;
+  -webkit-text-fill-color:#e4c477!important;
+  font-size:15px!important;
+  line-height:1.35!important;
+  font-weight:700!important;
+  letter-spacing:.015em!important;
+}
+#publicAnnouncements .listitem .muted{
+  color:#eeeeee!important;
+  -webkit-text-fill-color:#eeeeee!important;
+  font-size:14px!important;
+  line-height:1.65!important;
+  font-weight:400!important;
+  overflow-wrap:anywhere;
+}
+#publicAnnouncements .listitem .muted:last-child{
+  margin-top:10px!important;
+  color:#c8ad70!important;
+  -webkit-text-fill-color:#c8ad70!important;
+  font-size:11px!important;
+  line-height:1.4!important;
+  letter-spacing:.025em!important;
+}
+@media(max-width:480px){
+  #publicAnnouncementsCard .row{gap:8px!important}
+  #publicAnnouncementsCard .row h2{font-size:15px!important}
+  #publicAnnouncementsCard .row button.secondary{
+    min-height:38px!important;
+    padding:8px 11px!important;
+    font-size:11px!important;
+    white-space:nowrap;
+  }
+  #publicAnnouncements .listitem{padding:13px!important}
+  #publicAnnouncements .listitem .muted{font-size:13px!important;line-height:1.6!important}
+}
