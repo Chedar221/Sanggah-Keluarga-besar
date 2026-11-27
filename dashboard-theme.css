@@ -681,3 +681,16 @@ body.admin-modal-open{overflow:hidden!important}
     color: #ffe6a1 !important;
   }
 }
+
+
+/* Make only the admin navigation panel canvas transparent.
+   Keep all menu button fills (including teal) exactly as they are. */
+@media (max-width: 680px) {
+  html body #app #nav {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
