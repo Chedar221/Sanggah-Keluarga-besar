@@ -2139,7 +2139,15 @@ const pages = [
 ];
 
 function renderNav() {
-  $('nav').innerHTML = pages.filter(p => ((p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()) && (p[0] !== 'giliran-buda-cemeng' || isPipilOwner()) && (p[0] !== 'pengurus' || canManageGeneral())).map(p => `
+  $('nav').innerHTML = `
+    <div class="nav-brand">
+      <img src="/logo-sanggah.svg?v=3" alt="Logo Sanggah Gede Pan Rengen">
+      <div class="nav-brand-copy">
+        <strong>SANGGAH GEDE PAN RENGEN</strong>
+        <small>Satu Keluarga, Satu Tujuan</small>
+      </div>
+    </div>
+  ` + pages.filter(p => ((p[0] !== 'banner' && p[0] !== 'pesan' && p[0] !== 'aktivasi-push') || canManageGeneral()) && (p[0] !== 'giliran-buda-cemeng' || isPipilOwner()) && (p[0] !== 'pengurus' || canManageGeneral())).map(p => `
     <button
       class="${active === p[0] ? 'active' : ''}"
       onclick="go('${p[0]}')">
