@@ -73,3 +73,5 @@ jobs:
           path: android-wrapper/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+
+# Triggered on a dedicated branch so the production website remains untouched.
