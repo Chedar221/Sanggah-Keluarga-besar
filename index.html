@@ -2843,30 +2843,9 @@ function renderView() {
   }
 
   if (active === 'dashboard') {
-    v.innerHTML = `
-      <div class="card" id="pipilRotationDashboard">
-        <h2>🔄 GILIRAN PIPIL</h2>
-        <div id="pipilDashboardContent" class="muted">Memuat giliran pipil...</div>
-      </div>
-      <div class="grid">
-        <div class="card">
-          <div class="muted">Anggota keluarga</div>
-          <div class="stat" id="countMembers">—</div>
-        </div>
-        <div class="card">
-          <div class="muted">Saldo kas</div>
-          <div class="stat" id="balance">—</div>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Menu Utama</h2>
-        <p class="muted">Pilih menu untuk mengelola administrasi keluarga.</p>
-        <span class="pill">Akses: ${esc(roleName(profile.role))}</span>
-      </div>
-    `;
-
-    loadStats();
-    renderPipilRotation('pipilDashboardContent', true);
+    // Dashboard admin hanya menampilkan tombol navigasi menu di bagian atas.
+    // Konten tiap menu dibuka melalui popup masing-masing.
+    v.innerHTML = '';
     return;
   }
 
