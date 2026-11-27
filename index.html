@@ -1662,6 +1662,15 @@ input::placeholder,textarea::placeholder{color:#888888!important}
     <div class="nav" id="nav"></div>
     <div id="view"></div>
   </div>
+    <div id="adminPageModal" class="admin-page-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminPageModalTitle" onclick="if(event.target===this)closeAdminPageModal()">
+      <section class="admin-page-modal-card">
+        <header class="admin-page-modal-head">
+          <div><div class="admin-page-modal-kicker">SANGGAH GEDE PAN RENGEN · ADMINISTRASI</div><h2 id="adminPageModalTitle">MENU ADMIN</h2></div>
+          <button type="button" class="admin-page-modal-close" aria-label="Tutup menu" onclick="closeAdminPageModal()">×</button>
+        </header>
+        <div id="adminPageModalBody" class="admin-page-modal-body"></div>
+      </section>
+    </div>
 </section>
 
 <section id="setup" class="card hidden">
@@ -2151,11 +2160,39 @@ function returnAppHome() {
   $('appLanding')?.classList.remove('hidden');
 }
 
+function adminPageTitle(page) {
+  const item = pages.find(p => p[0] === page);
+  return item ? item[2] : 'MENU ADMIN';
+}
+function openAdminPageModal(page) {
+  const modal = $('adminPageModal'), body = $('adminPageModalBody'), view = $('view');
+  if (!modal || !body || !view) return;
+  const title = $('adminPageModalTitle');
+  if (title) title.textContent = adminPageTitle(page);
+  if (view.parentElement !== body) body.appendChild(view);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('admin-modal-open');
+}
+function closeAdminPageModal() {
+  const modal = $('adminPageModal'), workspace = $('adminWorkspace'), nav = $('nav'), view = $('view');
+  if (workspace && nav && view && view.parentElement !== workspace) workspace.insertBefore(view, nav.nextSibling);
+  if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
+  document.body.classList.remove('admin-modal-open');
+  active = 'dashboard';
+  renderNav();
+  if (session && profile) renderView();
+}
 function go(page) {
   active = page;
   renderNav();
+  if (page === 'dashboard') { closeAdminPageModal(); return; }
+  openAdminPageModal(page);
   renderView();
 }
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && $('adminPageModal')?.classList.contains('open')) closeAdminPageModal();
+});
 
 /* =====================================
    DASHBOARD
