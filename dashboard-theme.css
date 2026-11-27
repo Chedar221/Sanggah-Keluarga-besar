@@ -265,3 +265,138 @@ header.heritage-header.image-banner{
   color:#171717!important;
   -webkit-text-fill-color:#171717!important;
 }
+
+
+/* TYPOGRAPHY REFINEMENT — clean, elegant and minimal rotation panels */
+#pipilRotationPublic,
+#pipilRotationDashboard,
+#budaCemengRotationPublic,
+#budaCemengAdminContent{
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  letter-spacing:.01em;
+}
+#pipilRotationPublic #pipilPublicContent,
+#pipilDashboardContent{
+  font-size:14px;
+  line-height:1.5;
+}
+#pipilRotationPublic #pipilPublicContent > div:first-child,
+#pipilDashboardContent > div:first-child{
+  color:#d9c58b!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  letter-spacing:.035em;
+  margin-bottom:12px!important;
+}
+#pipilRotationPublic #pipilPublicContent > div:last-child > div,
+#pipilDashboardContent > div[style*="display:grid"] > div{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  min-height:54px;
+  padding:11px 14px!important;
+  border:1px solid rgba(201,166,77,.28)!important;
+  border-radius:13px!important;
+  background:#151515!important;
+}
+#pipilRotationPublic #pipilPublicContent > div:last-child > div span,
+#pipilDashboardContent > div[style*="display:grid"] > div span{
+  font-size:13px!important;
+  line-height:1.4!important;
+  font-weight:600!important;
+  letter-spacing:.015em;
+}
+#pipilRotationPublic .pipil-number-button,
+#pipilDashboardContent .pipil-number-button{
+  min-width:112px;
+  padding:9px 12px!important;
+  border-radius:10px!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+#budaCemengRotationPublic .buda-cemeng-next,
+#budaCemengAdminContent .buda-cemeng-next{
+  padding:17px 18px!important;
+  border-radius:16px!important;
+  line-height:1.5!important;
+}
+#budaCemengRotationPublic .buda-cemeng-next .muted,
+#budaCemengAdminContent .buda-cemeng-next .muted{
+  color:#d7c28a!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+#budaCemengRotationPublic .buda-cemeng-next strong,
+#budaCemengAdminContent .buda-cemeng-next strong{
+  display:block;
+  font-size:20px!important;
+  line-height:1.25!important;
+  font-weight:700!important;
+  letter-spacing:-.02em;
+}
+#budaCemengRotationPublic .buda-cemeng-next > div:last-child,
+#budaCemengAdminContent .buda-cemeng-next > div:last-child{
+  margin-top:8px!important;
+  font-size:13px!important;
+  color:#dedede!important;
+}
+#budaCemengRotationPublic > #budaCemengPublicContent > div[style*="font-weight:800"],
+#budaCemengAdminContent > div[style*="font-weight:800"]{
+  color:#d7c28a!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.1em!important;
+}
+#budaCemengRotationPublic .buda-cemeng-row,
+#budaCemengAdminContent .buda-cemeng-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(112px,34%)!important;
+  align-items:center!important;
+  gap:12px!important;
+  padding:12px 14px!important;
+  margin-bottom:8px!important;
+  border-radius:13px!important;
+  line-height:1.4!important;
+}
+#budaCemengRotationPublic .buda-cemeng-row span,
+#budaCemengAdminContent .buda-cemeng-row span{
+  font-size:13px!important;
+  font-weight:500!important;
+  line-height:1.45!important;
+  color:#e6e6e6!important;
+}
+#budaCemengRotationPublic .buda-cemeng-row b,
+#budaCemengAdminContent .buda-cemeng-row b{
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+  text-align:right;
+  letter-spacing:.015em;
+}
+#budaCemengRotationPublic p.muted,
+#budaCemengAdminContent p.muted{
+  color:#bdbdbd!important;
+  font-size:11px!important;
+  line-height:1.55!important;
+  margin-top:12px!important;
+}
+@media(max-width:480px){
+  #budaCemengRotationPublic .buda-cemeng-row,
+  #budaCemengAdminContent .buda-cemeng-row{
+    grid-template-columns:minmax(0,1fr) minmax(104px,38%)!important;
+    gap:8px!important;
+    padding:11px 12px!important;
+  }
+  #budaCemengRotationPublic .buda-cemeng-row span,
+  #budaCemengAdminContent .buda-cemeng-row span{font-size:12px!important}
+  #budaCemengRotationPublic .buda-cemeng-row b,
+  #budaCemengAdminContent .buda-cemeng-row b{font-size:11px!important}
+  #budaCemengRotationPublic .buda-cemeng-next strong,
+  #budaCemengAdminContent .buda-cemeng-next strong{font-size:18px!important}
+}
