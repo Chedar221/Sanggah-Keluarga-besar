@@ -42,7 +42,7 @@ jobs:
             "appName": "SANGGAH GPR",
             "webDir": "www",
             "server": {
-              "url": "https://sanggah-keluarga-besar.vercel.app",
+              "url": "https://sanggah-keluarga-besar.vercel.app/?app=android",
               "cleartext": false,
               "allowNavigation": [
                 "sanggah-keluarga-besar.vercel.app",
