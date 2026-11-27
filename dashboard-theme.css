@@ -668,3 +668,16 @@ body.admin-modal-open{overflow:hidden!important}
 
 
 
+
+
+/* Only the dark Home tile is transparent; all teal menu tiles stay unchanged */
+@media (max-width: 680px) {
+  html body #app #nav > button:first-child {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: 1px solid rgba(224,189,105,.72) !important;
+    color: #ffe6a1 !important;
+  }
+}
