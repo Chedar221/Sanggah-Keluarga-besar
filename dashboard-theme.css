@@ -752,3 +752,27 @@ body.admin-modal-open{overflow:hidden!important}
   #app .nav-brand-copy strong{font-size:11px!important;letter-spacing:.01em!important}
   #app .nav-brand-copy small{font-size:8px!important}
 }
+
+
+/* Brand typography: black title and subtitle for contrast on the gold background */
+#app .nav-brand-copy strong,
+#app .nav-brand-copy small{
+  color:#111111!important;
+}
+
+/* Transparent quick-access buttons for Data Anggota and Riwayat Kas */
+html body .quick-access{
+  background:transparent!important;
+  background-color:transparent!important;
+  border-color:rgba(185,148,62,.62)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+html body .quick-access button{
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  color:#111111!important;
+  border:1px solid rgba(185,148,62,.82)!important;
+  box-shadow:none!important;
+}
