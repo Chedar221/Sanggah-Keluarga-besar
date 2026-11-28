@@ -1041,3 +1041,254 @@ html.sgpr-android-app .admin-page-modal-body #view{
     padding:6px 6px!important;font-size:11px!important;border-radius:10px!important;
   }
 }
+
+
+/* =========================================================
+   GRAND FAMILY PORTAL — BURGUNDY / WARM IVORY VISUAL LAYER
+   CSS-only release candidate. No HTML, JS, auth, or database changes.
+   Android app layout rules above remain intentionally untouched.
+========================================================= */
+@media all{
+  html:not(.sgpr-android-app){
+    --sgpr-bg:#f7f1e9;
+    --sgpr-panel:#fffdf9;
+    --sgpr-panel-2:#f1e7dc;
+    --sgpr-line:#e7d8c8;
+    --sgpr-text:#392b2d;
+    --sgpr-muted:#81716b;
+    --sgpr-burgundy:#4b1429;
+    --sgpr-wine:#69233d;
+    --sgpr-gold:#c9a66a;
+    --sgpr-gold-soft:#ead8b6;
+  }
+  html:not(.sgpr-android-app) body{
+    background:linear-gradient(180deg,#f7f1e9 0%,#fbf8f3 48%,#f4ece2 100%)!important;
+    color:#392b2d!important;
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  }
+  html:not(.sgpr-android-app) main{
+    max-width:1440px!important;
+    padding:clamp(12px,2.2vw,30px)!important;
+  }
+
+  /* Public family portal */
+  html:not(.sgpr-android-app) #publicPage{
+    max-width:1320px!important;
+    margin:0 auto!important;
+  }
+  html:not(.sgpr-android-app) #homepageBannerArea{
+    overflow:hidden!important;
+    border-radius:20px!important;
+    margin:0 0 18px!important;
+    box-shadow:0 12px 32px rgba(69,27,42,.13)!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .card,
+  html:not(.sgpr-android-app) #publicPage .welcome-card,
+  html:not(.sgpr-android-app) #publicPage .committee-card,
+  html:not(.sgpr-android-app) #publicAnnouncementsCard,
+  html:not(.sgpr-android-app) #publicFinanceCard,
+  html:not(.sgpr-android-app) #publicMembersCard,
+  html:not(.sgpr-android-app) #publicTransactionsCard,
+  html:not(.sgpr-android-app) #pipilRotationPublic,
+  html:not(.sgpr-android-app) #budaCemengRotationPublic{
+    background:linear-gradient(145deg,#fffdf9,#f7efe5)!important;
+    color:#392b2d!important;
+    border:1px solid #e8d9c8!important;
+    border-radius:18px!important;
+    box-shadow:0 7px 22px rgba(74,35,45,.075)!important;
+  }
+  html:not(.sgpr-android-app) #publicPage h2,
+  html:not(.sgpr-android-app) #publicPage h3,
+  html:not(.sgpr-android-app) #publicPage .welcome-card h2,
+  html:not(.sgpr-android-app) #publicPage .committee-card h2{
+    color:#4b1429!important;
+    -webkit-text-fill-color:#4b1429!important;
+    text-shadow:none!important;
+    font-family:Georgia,"Times New Roman",serif!important;
+    letter-spacing:.01em!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .welcome-card{
+    padding:clamp(20px,3vw,34px)!important;
+    text-align:center!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .welcome-kicker{
+    color:#a17b4c!important;
+    letter-spacing:.22em!important;
+    font-size:10px!important;
+    font-weight:800!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .welcome-card .muted,
+  html:not(.sgpr-android-app) #publicPage .muted{
+    color:#81716b!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .welcome-description{
+    color:#665650!important;
+    background:#f4eadf!important;
+    border:1px solid #e7d8c8!important;
+    border-radius:12px!important;
+    padding:12px 15px!important;
+    text-align:left!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .homepage-action-buttons{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:10px!important;
+    margin:16px 0!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .homepage-action-buttons button,
+  html:not(.sgpr-android-app) #publicPage button.chat-entry-button{
+    background:linear-gradient(135deg,#5b1a33,#421122)!important;
+    color:#fffaf4!important;
+    border:1px solid #7a3b50!important;
+    border-radius:12px!important;
+    min-height:46px!important;
+    box-shadow:0 5px 13px rgba(75,20,41,.13)!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .quick-access{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    display:flex!important;
+    gap:10px!important;
+    flex-wrap:wrap!important;
+    margin:12px 0 18px!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .quick-access button{
+    background:#efe3d6!important;
+    color:#4b1429!important;
+    border:1px solid #ddc9b4!important;
+    border-radius:11px!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .committee-card,
+  html:not(.sgpr-android-app) #publicAnnouncementsCard,
+  html:not(.sgpr-android-app) #publicFinanceCard{
+    padding:clamp(16px,2.4vw,24px)!important;
+  }
+  html:not(.sgpr-android-app) #publicPage .committee-card h2,
+  html:not(.sgpr-android-app) #publicAnnouncementsCard h2,
+  html:not(.sgpr-android-app) #publicFinanceCard h2{
+    border-bottom:1px solid #eadbca!important;
+    padding-bottom:12px!important;
+  }
+
+  /* Admin portal: Burgundy navigation, warm cards, legible content */
+  html:not(.sgpr-android-app) #app{
+    background:transparent!important;
+    color:#392b2d!important;
+  }
+  html:not(.sgpr-android-app) #app .nav{
+    background:linear-gradient(180deg,#4b1429,#35101f)!important;
+    border:1px solid #6d3448!important;
+    border-radius:18px!important;
+    box-shadow:0 12px 30px rgba(56,16,31,.17)!important;
+  }
+  html:not(.sgpr-android-app) #app .nav:before{
+    color:#f0d9ae!important;
+    border-bottom-color:rgba(235,211,173,.24)!important;
+  }
+  html:not(.sgpr-android-app) #app .nav-brand-copy strong{
+    color:#fff8ef!important;
+  }
+  html:not(.sgpr-android-app) #app .nav-brand-copy small{
+    color:#e4cda9!important;
+  }
+  html:not(.sgpr-android-app) #app .nav button{
+    color:#f0e4d8!important;
+    border-color:transparent!important;
+  }
+  html:not(.sgpr-android-app) #app .nav button:hover{
+    background:rgba(255,255,255,.09)!important;
+    border-color:rgba(238,211,173,.3)!important;
+    color:#fff!important;
+  }
+  html:not(.sgpr-android-app) #app .nav button.active{
+    background:linear-gradient(110deg,#e6c58c,#d5ad6d)!important;
+    border:1px solid #f2d9a9!important;
+    color:#421324!important;
+    box-shadow:0 5px 14px rgba(0,0,0,.14)!important;
+  }
+  html:not(.sgpr-android-app) #appAdminWelcome,
+  html:not(.sgpr-android-app) #view .card,
+  html:not(.sgpr-android-app) #app .card{
+    background:linear-gradient(145deg,#fffdf9,#f6eee4)!important;
+    border:1px solid #e6d7c7!important;
+    color:#392b2d!important;
+    border-radius:16px!important;
+    box-shadow:0 7px 22px rgba(74,35,45,.07)!important;
+  }
+  html:not(.sgpr-android-app) #appAdminWelcome *,
+  html:not(.sgpr-android-app) #view h2,
+  html:not(.sgpr-android-app) #view h3,
+  html:not(.sgpr-android-app) #view h4,
+  html:not(.sgpr-android-app) #view b,
+  html:not(.sgpr-android-app) #view strong{
+    color:#4b1429!important;
+  }
+  html:not(.sgpr-android-app) #view .muted,
+  html:not(.sgpr-android-app) #app .muted{
+    color:#81716b!important;
+  }
+  html:not(.sgpr-android-app) #view input,
+  html:not(.sgpr-android-app) #view select,
+  html:not(.sgpr-android-app) #view textarea,
+  html:not(.sgpr-android-app) #app input,
+  html:not(.sgpr-android-app) #app select,
+  html:not(.sgpr-android-app) #app textarea{
+    background:#fffdf9!important;
+    color:#392b2d!important;
+    border:1px solid #ddcdbb!important;
+    border-radius:10px!important;
+  }
+  html:not(.sgpr-android-app) #view button:not(.secondary):not(.danger),
+  html:not(.sgpr-android-app) #app button:not(.secondary):not(.danger){
+    background:linear-gradient(135deg,#5b1a33,#421122)!important;
+    color:#fffaf4!important;
+    border:1px solid #7a3b50!important;
+    border-radius:10px!important;
+  }
+  html:not(.sgpr-android-app) #view button.secondary,
+  html:not(.sgpr-android-app) #app button.secondary{
+    background:#efe4d8!important;
+    color:#4b1429!important;
+    border:1px solid #ddc9b4!important;
+  }
+  html:not(.sgpr-android-app) #view button.danger{
+    background:#f8e7e4!important;
+    color:#8d302c!important;
+    border:1px solid #e8c5bf!important;
+  }
+  html:not(.sgpr-android-app) .admin-page-modal{
+    background:rgba(48,13,27,.62)!important;
+    backdrop-filter:blur(8px)!important;
+  }
+  html:not(.sgpr-android-app) .admin-page-modal-card{
+    background:#fbf6ef!important;
+    border:1px solid #dfcbb6!important;
+    border-radius:18px!important;
+    box-shadow:0 24px 70px rgba(35,8,18,.3)!important;
+  }
+  html:not(.sgpr-android-app) .admin-page-modal-head{
+    background:linear-gradient(110deg,#4b1429,#35101f)!important;
+    color:#fff8ef!important;
+  }
+  html:not(.sgpr-android-app) .admin-page-modal-head h2,
+  html:not(.sgpr-android-app) .admin-page-modal-kicker{
+    color:#f5e7d4!important;
+  }
+  html:not(.sgpr-android-app) #toast{
+    background:#4b1429!important;
+    color:#fffaf4!important;
+    border:1px solid #8c5366!important;
+  }
+
+  @media(max-width:680px){
+    html:not(.sgpr-android-app) main{padding:10px!important}
+    html:not(.sgpr-android-app) #publicPage .homepage-action-buttons{
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    }
+    html:not(.sgpr-android-app) #publicPage .card{border-radius:15px!important}
+    html:not(.sgpr-android-app) #app .nav{
+      background:linear-gradient(180deg,#4b1429,#35101f)!important;
+    }
+  }
+}
